@@ -1,0 +1,293 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Brand Colors (exact from /colors spec) */
+    --sg-dark: 0 0% 6%; /* #0E0F0F */
+    --sg-dark-legacy: 190 44% 14%; /* #0e2e33 */
+    --sg-green: 159 75% 51%; /* #20e28f */
+    --sg-green-dark: 160 65% 42%; /* #15a366 */
+    --sg-green-hover: 161 68% 37%; /* #10a35a */
+
+    /* Light Mode (exact values) */
+    --background: 0 0% 100%;
+    --card: 0 0% 100%;
+    --secondary: 0 0% 96%;
+    --muted: 0 0% 96%;
+    --foreground: 0 0% 10%;
+    --card-foreground: 0 0% 10%;
+    --muted-foreground: 0 0% 45%;
+    --secondary-foreground: 0 0% 10%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --accent: var(--sg-green);
+    --accent-foreground: var(--sg-dark);
+    --ring: var(--sg-green);
+    --primary: var(--sg-dark-legacy);
+    --primary-foreground: 0 0% 100%;
+    --radius: 0.5rem;
+
+    /* Resizable / Scrollbar (from /colors spec) */
+    --panel-bg: 0 0% 100%;
+    --panel-border: var(--border);
+    --resizable-handle-hex: #374151; /* gray-700 */
+    --resizable-handle-hover-hex: #4b5563; /* gray-600 */
+  }
+
+  .dark {
+    /* Dark Mode (exact values) */
+    --sg-dark: 0 0% 6%;
+    --sg-green: 159 75% 51%;
+    --sg-green-dark: 160 65% 42%;
+    --sg-green-hover: 161 68% 37%;
+
+    --background: 0 0% 0%;
+    --card: 0 0% 4%;
+    --secondary: 0 0% 10%;
+    --muted: 0 0% 10%;
+    --accent: 0 0% 15%;
+    --foreground: 0 0% 98%;
+    --card-foreground: 0 0% 98%;
+    --muted-foreground: 0 0% 60%;
+    --secondary-foreground: 0 0% 98%;
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: var(--sg-green);
+    --primary: var(--sg-green);
+    --primary-foreground: 0 0% 0%;
+
+    /* Resizable / Scrollbar */
+    --panel-bg: 0 0% 4%;
+    --panel-border: 0 0% 15%;
+    --resizable-handle-hex: #374151; /* gray-700 */
+    --resizable-handle-hover-hex: #4b5563; /* gray-600 */
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Improved code block styling */
+  pre {
+    @apply bg-card border border-border rounded-md p-4 overflow-x-auto;
+  }
+
+  code {
+    @apply text-sm;
+  }
+
+  pre code {
+    @apply bg-transparent p-0;
+  }
+}
+
+/* Syntax highlighting with better contrast */
+.hljs {
+  color: inherit;
+  background: transparent;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: #6a737d;
+  font-style: italic;
+}
+
+.hljs-variable,
+.hljs-template-variable,
+.hljs-attribute,
+.hljs-tag,
+.hljs-name,
+.hljs-regexp,
+.hljs-link,
+.hljs-selector-id,
+.hljs-selector-class {
+  color: #d73a49;
+}
+
+.hljs-number,
+.hljs-meta,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params {
+  color: #005cc5;
+}
+
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet {
+  color: #032f62;
+}
+
+.hljs-title,
+.hljs-section {
+  color: #e36209;
+}
+
+.hljs-keyword,
+.hljs-selector-tag {
+  color: #6f42c1;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: 700;
+}
+
+.dark .hljs-comment,
+.dark .hljs-quote {
+  color: #6b7280;
+}
+
+.dark .hljs-variable,
+.dark .hljs-template-variable,
+.dark .hljs-attribute,
+.dark .hljs-tag,
+.dark .hljs-name,
+.dark .hljs-regexp,
+.dark .hljs-link,
+.dark .hljs-selector-id,
+.dark .hljs-selector-class {
+  color: #f85149;
+}
+
+.dark .hljs-number,
+.dark .hljs-meta,
+.dark .hljs-built_in,
+.dark .hljs-builtin-name,
+.dark .hljs-literal,
+.dark .hljs-type,
+.dark .hljs-params {
+  color: #79c0ff;
+}
+
+.dark .hljs-string,
+.dark .hljs-symbol,
+.dark .hljs-bullet {
+  color: #a5d6ff;
+}
+
+.dark .hljs-title,
+.dark .hljs-section {
+  color: #d2a8ff;
+}
+
+.dark .hljs-keyword,
+.dark .hljs-selector-tag {
+  color: #ff7b72;
+}
+
+/* Resizable panel styles */
+.resizable-panel {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.resizable-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  cursor: col-resize;
+  background-color: var(--resizable-handle-hex);
+  z-index: 10;
+  transition: background-color 0.2s;
+}
+
+.resizable-handle:hover {
+  background-color: var(--resizable-handle-hover-hex);
+}
+
+.resizable-handle-left {
+  right: -2px;
+}
+
+.resizable-handle-right {
+  left: -2px;
+}
+
+.resizing {
+  user-select: none;
+  cursor: col-resize;
+}
+
+/* Responsive panel adjustments */
+@media (max-width: 768px) {
+  .panel-stack {
+    flex-direction: column;
+  }
+
+  .panel-stack .resizable-panel {
+    width: 100% !important;
+    min-height: 40vh;
+  }
+
+  .resizable-handle {
+    display: none;
+  }
+}
+
+  /* Message Thread Panel Specific Styles */
+  .message-thread-panel {
+    background-color: hsl(var(--panel-bg));
+    border-left: 1px solid hsl(var(--panel-border));
+    min-width: 300px;
+    transition: width 0.2s ease;
+  }
+
+/* Mobile adjustments for message panel */
+@media (max-width: 1024px) {
+  .message-thread-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 80vw;
+    max-width: 400px;
+    z-index: 50;
+    box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* Mobile overlay for when panel is open */
+@media (max-width: 1024px) {
+  .panel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 40;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .panel-overlay.open {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+/* Editor container adjustments */
+.editor-container {
+  transition: margin-right 0.3s ease;
+}
+
+@media (min-width: 1025px) {
+  .editor-container.with-panel {
+    margin-right: 0;
+  }
+}

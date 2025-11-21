@@ -1,0 +1,2 @@
+prompt = "Please create a detailed plan for implementing the following feature or task. Include architecture considerations, implementation steps, potential challenges, and estimated timeline: {{args}}"
+description = "Create a detailed implementation plan for features or tasks"

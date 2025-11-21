@@ -1,0 +1,2 @@
+prompt = "Please review the following code for best practices, potential issues, and improvements. Provide detailed feedback on code quality, performance, and maintainability: {{args}}"
+description = "Review code for best practices and improvements"

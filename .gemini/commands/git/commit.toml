@@ -1,0 +1,2 @@
+prompt = "Please help me write a meaningful commit message for the following changes. Follow conventional commit format (type: description) and include a detailed body if needed: {{args}}"
+description = "Generate conventional commit messages for changes"

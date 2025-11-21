@@ -1,0 +1,36 @@
+/* Scoped Tambo theme overrides
+   These variables are scoped to .tambo-theme so only the Tambe chat uses them
+*/
+.tambo-theme {
+  /* Card and surface */
+  --card: 0 0% 100%; /* White card */
+  --card-foreground: 0 0% 9%; /* Dark text */
+  --background: 0 0% 100%;
+  --foreground: 0 0% 9%;
+  --border: 210 20% 93%;
+
+  /* Brand primary/accent */
+  --accent: 159 75% 51%; /* SG Green */
+  --accent-foreground: 190 44% 14%; /* SG Dark */
+  --primary: 190 44% 14%;
+  --primary-foreground: 0 0% 100%;
+
+  /* Inputs and UI elements */
+  --input: 210 15% 97%;
+  --ring: 159 75% 51%;
+  --radius: 0.5rem;
+
+  /* Tambo-specific layout */
+  --panel-left-width: 450px;
+  --panel-right-width: 420px;
+}
+
+.tambo-theme.dark {
+  --card: 0 0% 6%;
+  --card-foreground: 0 0% 98%;
+  --background: 0 0% 0%;
+  --foreground: 0 0% 98%;
+  --border: 0 0% 15%;
+  --accent: 159 75% 51%;
+  --accent-foreground: 0 0% 8%;
+}

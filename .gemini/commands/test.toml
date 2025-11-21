@@ -1,0 +1,2 @@
+prompt = "Please help me write tests for the following code or component. Include unit tests, integration tests, and any edge cases that should be considered: {{args}}"
+description = "Generate tests for code components"

@@ -1,0 +1,2 @@
+prompt = "Please help me debug the following issue. Analyze the error or problem, identify potential causes, and suggest step-by-step solutions. Include any relevant code examples or configuration changes needed: {{args}}"
+description = "Help debug issues and provide solutions"

@@ -1,0 +1,318 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Social Garden Brand Colors */
+    --sg-dark: 190 44% 14%; /* #0e2e33 */
+    --sg-green: 159 75% 51%; /* #20e28f */
+    --sg-green-dark: 160 65% 42%; /* #15a366 */
+    --sg-green-hover: 161 68% 37%; /* #10a35a */
+
+    /* Light Mode - app/brand colors used by Tambo mapping */
+    --background: 0 0% 100%; /* #ffffff */
+    --foreground: 210 10% 23%; /* #3a3a3a - improved contrast */
+    --card: 0 0% 100%; /* #ffffff */
+    --card-foreground: 210 10% 23%; /* #3a3a3a */
+    --popover: 0 0% 100%; /* #ffffff */
+    --popover-foreground: 210 10% 23%; /* #3a3a3a */
+    --primary: 190 44% 14%; /* SG Dark #0e2e33 */
+    --primary-foreground: 0 0% 100%; /* White */
+    --secondary: 210 20% 96%; /* #f5f7fa - softer light gray */
+    --secondary-foreground: 210 10% 23%; /* #3a3a3a */
+    --muted: 210 20% 96%; /* #f5f7fa */
+    --muted-foreground: 215 16% 47%; /* #6b7280 - better muted text */
+    --accent: 159 75% 51%; /* SG Green #20e28f */
+    --accent-foreground: 190 44% 14%; /* SG Dark */
+    --destructive: 0 84.2% 60.2%; /* Red */
+    --destructive-foreground: 0 0% 98%; /* #fafafa */
+    --border: 214 32% 91%; /* #e2e8f0 - softer border */
+    --input: 214 32% 91%; /* #e2e8f0 */
+    --ring: 159 75% 51%; /* SG Green #20e28f */
+    --radius: 0.5rem;
+
+    /* Tambo Resizable Layout Variables (Light Mode) */
+    --panel-bg: 0 0% 100%;
+    --panel-border: 214 32% 91%;
+    --resizable-handle: 214 32% 91%;
+    --resizable-handle-hover: 159 75% 51%;
+  }
+
+  .dark {
+    /* Dark Mode Colors (map brand to Tambo variables) */
+    --sg-dark: 0 0% 6%; /* #0E0F0F */
+    --sg-green: 159 75% 51%; /* #20e28f */
+    --sg-green-dark: 160 65% 42%;
+    --sg-green-hover: 161 68% 37%;
+
+    /* Dark Mode - Softer blacks and better contrast */
+    --background: 220 13% 8%; /* #141417 - soft black instead of pure black */
+    --foreground: 210 10% 90%; /* #e4e4e7 - softer white */
+    --card: 220 13% 10%; /* #1a1a1e - slightly lighter than background */
+    --card-foreground: 210 10% 90%; /* #e4e4e7 */
+    --popover: 220 13% 10%; /* #1a1a1e */
+    --popover-foreground: 210 10% 90%; /* #e4e4e7 */
+    --primary: var(--sg-green); /* Brand primary (Green) for dark mode */
+    --primary-foreground: 220 13% 8%; /* Dark background */
+    --secondary: 220 13% 15%; /* #24242a - softer secondary */
+    --secondary-foreground: 210 10% 90%; /* #e4e4e7 */
+    --muted: 220 13% 15%; /* #24242a */
+    --muted-foreground: 215 15% 65%; /* #9ca3af - better muted text */
+    --accent: 220 13% 20%; /* #2a2a33 - softer accent background */
+    --accent-foreground: 210 10% 90%; /* #e4e4e7 */
+    --destructive: 0 62.8% 30.6%; /* Dark red */
+    --destructive-foreground: 210 10% 90%; /* #e4e4e7 */
+    --border: 220 13% 20%; /* #2a2a33 - visible but not harsh */
+    --input: 220 13% 20%; /* #2a2a33 */
+    --ring: var(--sg-green);
+
+    /* Tambo Resizable Layout Variables (Dark Mode) */
+    --panel-bg: 220 13% 10%;
+    --panel-border: 220 13% 20%;
+    --resizable-handle: 220 13% 20%;
+    --resizable-handle-hover: var(--sg-green);
+
+    /* Novel Highlight Colors (Dark Mode) - Improved contrast */
+    --novel-highlight-default: #2a2a33;
+    --novel-highlight-purple: #4a3d5b;
+    --novel-highlight-red: #5c2a2a;
+    --novel-highlight-yellow: #5c4a2a;
+    --novel-highlight-blue: #2a4a5c;
+    --novel-highlight-green: #2a5c3a;
+    --novel-highlight-orange: #5c4a2a;
+    --novel-highlight-pink: #5c2a4a;
+    --novel-highlight-gray: #4a4a4a;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Improved code block styling */
+  pre {
+    @apply bg-card border border-border rounded-md p-4 overflow-x-auto;
+  }
+
+  code {
+    @apply text-sm;
+  }
+
+  pre code {
+    @apply bg-transparent p-0;
+  }
+}
+
+/* Syntax highlighting with better contrast */
+.hljs {
+  color: inherit;
+  background: transparent;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: #6a737d;
+  font-style: italic;
+}
+
+.hljs-variable,
+.hljs-template-variable,
+.hljs-attribute,
+.hljs-tag,
+.hljs-name,
+.hljs-regexp,
+.hljs-link,
+.hljs-selector-id,
+.hljs-selector-class {
+  color: #d73a49;
+}
+
+.hljs-number,
+.hljs-meta,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params {
+  color: #005cc5;
+}
+
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet {
+  color: #032f62;
+}
+
+.hljs-title,
+.hljs-section {
+  color: #e36209;
+}
+
+.hljs-keyword,
+.hljs-selector-tag {
+  color: #6f42c1;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: 700;
+}
+
+.dark .hljs-comment,
+.dark .hljs-quote {
+  color: #6b7280;
+}
+
+.dark .hljs-variable,
+.dark .hljs-template-variable,
+.dark .hljs-attribute,
+.dark .hljs-tag,
+.dark .hljs-name,
+.dark .hljs-regexp,
+.dark .hljs-link,
+.dark .hljs-selector-id,
+.dark .hljs-selector-class {
+  color: #f85149;
+}
+
+.dark .hljs-number,
+.dark .hljs-meta,
+.dark .hljs-built_in,
+.dark .hljs-builtin-name,
+.dark .hljs-literal,
+.dark .hljs-type,
+.dark .hljs-params {
+  color: #79c0ff;
+}
+
+.dark .hljs-string,
+.dark .hljs-symbol,
+.dark .hljs-bullet {
+  color: #a5d6ff;
+}
+
+.dark .hljs-title,
+.dark .hljs-section {
+  color: #d2a8ff;
+}
+
+.dark .hljs-keyword,
+.dark .hljs-selector-tag {
+  color: #ff7b72;
+}
+
+/* Resizable panel styles */
+.resizable-panel {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.resizable-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  cursor: col-resize;
+  background-color: hsl(var(--resizable-handle));
+  z-index: 10;
+  transition: background-color 0.2s;
+}
+
+.resizable-handle:hover {
+  background-color: hsl(var(--resizable-handle-hover));
+}
+
+.resizable-handle-left {
+  right: -2px;
+}
+
+.resizable-handle-right {
+  left: -2px;
+}
+
+.resizing {
+  user-select: none;
+  cursor: col-resize;
+}
+
+/* Responsive panel adjustments */
+@media (max-width: 768px) {
+  .panel-stack {
+    flex-direction: column;
+  }
+
+  .panel-stack .resizable-panel {
+    width: 100% !important;
+    min-height: 40vh;
+  }
+
+  .resizable-handle {
+    display: none;
+  }
+}
+
+/* Message Thread Panel Specific Styles */
+.message-thread-panel {
+  background-color: hsl(var(--panel-bg));
+  border-left: 1px solid hsl(var(--panel-border));
+  min-width: 300px;
+  max-width: 50vw;
+  transition: all 0.3s ease;
+}
+
+/* Mobile adjustments for message panel */
+@media (max-width: 1024px) {
+  .message-thread-panel {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    height: 100vh;
+    width: 80vw;
+    max-width: 400px;
+    z-index: 50;
+    box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .message-thread-panel.open {
+    right: 0;
+  }
+}
+
+/* Mobile overlay for when panel is open */
+@media (max-width: 1024px) {
+  .panel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 40;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .panel-overlay.open {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+/* Editor container adjustments */
+.editor-container {
+  transition: margin-right 0.3s ease;
+}
+
+@media (min-width: 1025px) {
+  .editor-container.with-panel {
+    margin-right: 0;
+  }
+}

@@ -1,0 +1,2 @@
+prompt = "Please suggest refactoring improvements for the following code. Focus on making it more maintainable, readable, and efficient. Include code examples and explain the benefits of each suggestion: {{args}}"
+description = "Suggest refactoring improvements for code"

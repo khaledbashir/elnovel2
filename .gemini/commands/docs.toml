@@ -1,0 +1,2 @@
+prompt = "Please help me write documentation for the following code or component. Include clear explanations, usage examples, parameter descriptions, and any relevant context that would help other developers understand and use this code effectively: {{args}}"
+description = "Generate documentation for code components"
