@@ -1,0 +1,348 @@
+# Frontend Color Reference - Detailed Brief
+
+## 🎨 Brand Colors (Social Garden)
+
+### Primary Brand Colors
+- **SG Dark**: `#0e2e33` (also `#0E0F0F` / `0 0% 6%` in HSL)
+  - Used for: Primary buttons, headings, dark backgrounds, sidebar
+  - Hex: `#0e2e33` or `#0E0F0F`
+  - HSL: `0 0% 6%`
+
+- **SG Green**: `#20e28f` (also `159 75% 51%` in HSL)
+  - Used for: Accent color, buttons (dark mode), success states, highlights
+  - Hex: `#20e28f`
+  - HSL: `159 75% 51%`
+  - Alternative: `#1CBF79`, `#15a366`, `#10a35a` (darker variants)
+
+---
+
+## 🌓 Light Mode Colors
+
+### Background Colors
+- **Main Background**: `#ffffff` (White)
+  - Variable: `--background: 0 0% 100%`
+  - Usage: Body, main content areas
+
+- **Card Background**: `#ffffff` (White)
+  - Variable: `--card: 0 0% 100%`
+  - Usage: Cards, modals, dialogs
+
+- **Secondary Background**: `#f5f5f5` (Very light gray - 96%)
+  - Variable: `--secondary: 0 0% 96%`
+  - Usage: Secondary buttons, subtle backgrounds
+
+- **Muted Background**: `#f5f5f5` (Very light gray - 96%)
+  - Variable: `--muted: 0 0% 96%`
+  - Usage: Disabled states, subtle UI elements
+
+### Text Colors
+- **Primary Text**: `#1a1a1a` (Very dark gray - 10%)
+  - Variable: `--foreground: 0 0% 10%`
+  - Usage: Body text, primary content
+
+- **Card Text**: `#1a1a1a` (Very dark gray - 10%)
+  - Variable: `--card-foreground: 0 0% 10%`
+  - Usage: Text on cards
+
+- **Muted Text**: `#737373` (Medium gray - 45%)
+  - Variable: `--muted-foreground: 0 0% 45%`
+  - Usage: Secondary text, labels, placeholders
+
+- **Secondary Text**: `#1a1a1a` (Very dark gray - 10%)
+  - Variable: `--secondary-foreground: 0 0% 10%`
+  - Usage: Text on secondary backgrounds
+
+### Border Colors
+- **Default Border**: `#e5e5e5` (Light gray - 90%)
+  - Variable: `--border: 0 0% 90%`
+  - Usage: Borders, dividers
+
+- **Input Border**: `#e5e5e5` (Light gray - 90%)
+  - Variable: `--input: 0 0% 90%`
+  - Usage: Input fields, form elements
+
+### Button Colors (Light Mode)
+- **Primary Button**: 
+  - Background: `#0e2e33` (SG Dark)
+  - Text: `#ffffff` (White)
+  - Hover: Darker shade (90% opacity)
+
+- **Secondary Button**:
+  - Background: `#f5f5f5` (Very light gray)
+  - Text: `#1a1a1a` (Dark gray)
+  - Hover: 80% opacity
+
+- **Destructive Button**:
+  - Background: `#ef4444` (Red - 84.2% lightness)
+  - Text: `#fafafa` (Very light gray - 98%)
+  - Hover: Darker shade (90% opacity)
+
+- **Outline Button**:
+  - Border: `#e5e5e5` (Light gray)
+  - Background: `#ffffff` (White)
+  - Hover: Accent background with accent text
+
+- **Ghost Button**:
+  - Background: Transparent
+  - Hover: Accent background with accent text
+
+### Accent Colors (Light Mode)
+- **Accent**: `#20e28f` (SG Green)
+  - Variable: `--accent: var(--sg-green)`
+  - Usage: Hover states, focus rings, highlights
+
+- **Accent Foreground**: `#0e2e33` (SG Dark)
+  - Variable: `--accent-foreground: var(--sg-dark)`
+  - Usage: Text on accent backgrounds
+
+- **Focus Ring**: `#20e28f` (SG Green)
+  - Variable: `--ring: var(--sg-green)`
+  - Usage: Focus indicators on interactive elements
+
+---
+
+## 🌑 Dark Mode Colors
+
+### Background Colors
+- **Main Background**: `#000000` (Pure Black)
+  - Variable: `--background: 0 0% 0%`
+  - Usage: Body, main content areas
+
+- **Card Background**: `#0a0a0a` (Very dark gray - 4%)
+  - Variable: `--card: 0 0% 4%`
+  - Usage: Cards, modals, dialogs
+
+- **Secondary Background**: `#1a1a1a` (Dark gray - 10%)
+  - Variable: `--secondary: 0 0% 10%`
+  - Usage: Secondary buttons, subtle backgrounds
+
+- **Muted Background**: `#1a1a1a` (Dark gray - 10%)
+  - Variable: `--muted: 0 0% 10%`
+  - Usage: Disabled states, subtle UI elements
+
+- **Accent Background**: `#262626` (Darker gray - 15%)
+  - Variable: `--accent: 0 0% 15%`
+  - Usage: Hover states, subtle highlights
+
+### Text Colors
+- **Primary Text**: `#fafafa` (Very light gray - 98%)
+  - Variable: `--foreground: 0 0% 98%`
+  - Usage: Body text, primary content
+
+- **Card Text**: `#fafafa` (Very light gray - 98%)
+  - Variable: `--card-foreground: 0 0% 98%`
+  - Usage: Text on cards
+
+- **Muted Text**: `#999999` (Medium gray - 60%)
+  - Variable: `--muted-foreground: 0 0% 60%`
+  - Usage: Secondary text, labels, placeholders
+
+- **Secondary Text**: `#fafafa` (Very light gray - 98%)
+  - Variable: `--secondary-foreground: 0 0% 98%`
+  - Usage: Text on secondary backgrounds
+
+### Border Colors
+- **Default Border**: `#262626` (Dark gray - 15%)
+  - Variable: `--border: 0 0% 15%`
+  - Usage: Borders, dividers
+
+- **Input Border**: `#262626` (Dark gray - 15%)
+  - Variable: `--input: 0 0% 15%`
+  - Usage: Input fields, form elements
+
+### Button Colors (Dark Mode)
+- **Primary Button**: 
+  - Background: `#20e28f` (SG Green)
+  - Text: `#000000` (Black)
+  - Hover: Darker shade (90% opacity)
+
+- **Secondary Button**:
+  - Background: `#1a1a1a` (Dark gray)
+  - Text: `#fafafa` (Very light gray)
+  - Hover: 80% opacity
+
+- **Destructive Button**:
+  - Background: `#991b1b` (Dark red - 30.6% lightness)
+  - Text: `#fafafa` (Very light gray - 98%)
+  - Hover: Darker shade (90% opacity)
+
+### Accent Colors (Dark Mode)
+- **Focus Ring**: `#20e28f` (SG Green)
+  - Variable: `--ring: var(--sg-green)`
+  - Usage: Focus indicators on interactive elements
+
+---
+
+## 🎯 Component-Specific Colors
+
+### Sidebar Navigation
+- **Background**: `#0e0f0f` (Very dark, almost black)
+- **Border**: `#0E2E33` (SG Dark)
+- **Text**: White (`#ffffff`)
+- **Hover States**: `#1c1c1c` → `#222222` (Slightly lighter grays)
+- **Active States**: `#2b3c3a` → `#26312d` (Dark teal/green tones)
+
+### Chat Interface
+- **Chat Panel Background**: `#0e0f0f` (Very dark)
+- **Chat Border**: `#0E2E33` (SG Dark)
+- **Message Backgrounds**: 
+  - User messages: `#0E2E33` with borders `#1b5e5e`
+  - Bot messages: Various dark shades
+- **Code Blocks**: 
+  - Background: `#1e1e1e` with border `#808080`
+  - Header: `#252526` (Slightly lighter)
+- **Success Badge**: `#50b983` background with green-700 text
+- **JSON Blocks**: `#f9fafb` background in light mode, dark backgrounds in dark mode
+
+### Tables & Pricing
+- **Table Header**: `#0e2e33` background, white text
+- **Table Rows**: 
+  - Light mode: White with borders `#1b5e5e/30`
+  - Dark mode: `white/5` background with borders
+- **Hover States**: `#1b5e5e/10` (Subtle teal highlight)
+- **Code in Tables**: `white/10` background, `#20e28f` text
+
+### Buttons (Specific Instances)
+- **Success Button**: `#15a366` background → `#10a35a` on hover (Green variants)
+- **Secondary Button**: `#1c1c1c` background → `#222` on hover with border `#2a2a2a`
+- **Action Buttons**: `#2b3c3a` background → `#26312d` on hover
+
+### Badges
+- **Default Badge**: Primary color background with primary-foreground text
+- **Secondary Badge**: Secondary color background with secondary-foreground text
+- **Destructive Badge**: Red background with white text
+- **Outline Badge**: Transparent background, foreground text
+
+### Scrollbars
+- **Scrollbar Track**: Transparent
+- **Scrollbar Thumb**: `#374151` (gray-700)
+- **Scrollbar Thumb Hover**: `#4b5563` (gray-600)
+
+### Resize Handles
+- **Resize Handle**: `#374151` (gray-700)
+- **Resize Handle Hover**: `#4b5563` (gray-600)
+- **Resize Handle Active**: `#1CBF79` (Green)
+
+---
+
+## 📋 Tailwind Color Classes Used
+
+### Background Classes
+- `bg-background` - Main background
+- `bg-card` - Card backgrounds
+- `bg-primary` - Primary button/emphasis backgrounds
+- `bg-secondary` - Secondary backgrounds
+- `bg-muted` - Muted/subtle backgrounds
+- `bg-accent` - Accent highlights
+- `bg-destructive` - Error/destructive actions
+- `bg-sg-dark` - Brand dark color
+- `bg-sg-green` - Brand green color
+- `bg-[#0e0f0f]` - Hardcoded dark background
+- `bg-[#0E2E33]` - Hardcoded SG dark
+- `bg-white` - Pure white
+- `bg-black` - Pure black
+
+### Text Classes
+- `text-foreground` - Primary text
+- `text-card-foreground` - Text on cards
+- `text-primary-foreground` - Text on primary backgrounds
+- `text-secondary-foreground` - Text on secondary backgrounds
+- `text-muted-foreground` - Muted/secondary text
+- `text-accent-foreground` - Text on accent backgrounds
+- `text-destructive-foreground` - Text on destructive backgrounds
+- `text-sg-dark` - Brand dark text
+- `text-sg-green` - Brand green text
+- `text-white` - White text
+- `text-gray-200` - Light gray text
+- `text-gray-300` - Medium-light gray text
+- `text-gray-400` - Medium gray text
+- `text-gray-600` - Medium-dark gray text
+
+### Border Classes
+- `border-border` - Default borders
+- `border-input` - Input borders
+- `border-primary` - Primary colored borders
+- `border-sg-dark` - Brand dark borders
+- `border-sg-green` - Brand green borders
+- `border-[#0E2E33]` - Hardcoded SG dark border
+- `border-[#1b5e5e]` - Hardcoded teal/green border
+
+---
+
+## 🎨 Novel Editor Highlight Colors
+
+The inline editor uses special highlight colors:
+
+- **Default Highlight**: `#ffffff` (White)
+- **Purple**: `#f6f3f8`
+- **Red**: `#fdebeb`
+- **Yellow**: `#fbf4a2`
+- **Blue**: `#c1ecf9`
+- **Green**: `#acf79f`
+- **Orange**: `#faebdd`
+- **Pink**: `#faf1f5`
+- **Gray**: `#f1f1ef`
+
+Variables: `--novel-highlight-*`
+
+---
+
+## 🔍 Special Color Notes
+
+1. **Inconsistency Alert**: There are two slightly different dark colors:
+   - `#0e2e33` (older SG dark)
+   - `#0E0F0F` / `#0e0f0f` (newer, darker variant)
+   - Both are used in the codebase
+
+2. **Green Variations**: Multiple green shades are used:
+   - `#20e28f` - Primary brand green
+   - `#1CBF79` - Active states, highlights
+   - `#15a366` - Success buttons
+   - `#10a35a` - Hover states on success buttons
+
+3. **Gray Scale**: Extensive gray scale for text hierarchy:
+   - `gray-200` - Very light (for dark backgrounds)
+   - `gray-300` - Light
+   - `gray-400` - Medium-light
+   - `gray-600` - Medium-dark
+   - `gray-700` - Dark (scrollbars)
+   - `gray-800` - Very dark
+
+4. **Opacity Usage**: Many components use opacity variations:
+   - `/5` - 5% opacity (subtle backgrounds)
+   - `/10` - 10% opacity (very subtle)
+   - `/30` - 30% opacity (semi-transparent)
+   - `/50` - 50% opacity (half-transparent)
+   - `/80` - 80% opacity (mostly opaque)
+   - `/90` - 90% opacity (nearly opaque)
+
+---
+
+## 📝 Color Usage Guidelines
+
+### Light Mode
+- Clean, minimal white backgrounds
+- Dark text for readability
+- Brand green as accent/CTA color
+- Subtle grays for hierarchy
+
+### Dark Mode
+- Pitch black backgrounds for contrast
+- Bright green (`#20e28f`) as primary action color
+- Light text on dark backgrounds
+- Subtle borders and dividers
+
+### Consistency Rules
+1. **Brand Colors**: Always use SG Dark and SG Green for brand elements
+2. **Semantic Colors**: Use CSS variables for theme-aware components
+3. **Hardcoded Colors**: Only use hardcoded hex values for specific brand elements
+4. **Accessibility**: Ensure sufficient contrast ratios (4.5:1 for text, 3:1 for UI)
+
+---
+
+**Last Updated**: January 2025
+**Source Files**:
+- `frontend/styles/globals.css`
+- `frontend/tailwind.config.ts`
+- `frontend/components/tailwind/**/*.tsx`
+
