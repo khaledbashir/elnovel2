@@ -74,20 +74,20 @@ export function SimpleTamboChat({ className }: SimpleTamboChatProps) {
         <h2 className="text-sm font-medium text-foreground">
           {thread?.name || "Chat"}
         </h2>
-        {threadList && threadList.length > 0 && (
+        {threadList && Array.isArray(threadList) && threadList.length > 0 && (
           <select
             onChange={(e) => {
               if (e.target.value) {
                 switchCurrentThread(e.target.value);
               } else {
-                switchCurrentThread(null);
+                switchCurrentThread(undefined as any);
               }
             }}
             value={thread?.id || ""}
             className="text-xs bg-background border border-border rounded px-2 py-1"
           >
             <option value="">New Chat</option>
-            {threadList.map((t) => (
+            {threadList.map((t: any) => (
               <option key={t.id} value={t.id}>
                 {t.name || "Untitled"}
               </option>
@@ -117,16 +117,14 @@ export function SimpleTamboChat({ className }: SimpleTamboChatProps) {
                   className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`flex flex-col ${
-                      isUser ? "max-w-3xl" : "w-full"
-                    }`}
+                    className={`flex flex-col ${isUser ? "max-w-3xl" : "w-full"
+                      }`}
                   >
                     <div
-                      className={`rounded-3xl px-4 py-2 text-[15px] leading-relaxed transition-all duration-200 font-medium ${
-                        isUser
-                          ? "bg-foreground text-background"
-                          : "text-foreground"
-                      }`}
+                      className={`rounded-3xl px-4 py-2 text-[15px] leading-relaxed transition-all duration-200 font-medium ${isUser
+                        ? "bg-foreground text-background"
+                        : "text-foreground"
+                        }`}
                     >
                       {Array.isArray(message.content) ? (
                         message.content

@@ -32,10 +32,11 @@ const hljs = require("highlight.js");
 
 const extensions = [...defaultExtensions, slashCommand];
 
-const TailwindAdvancedEditor = () => {
-  const [initialContent, setInitialContent] = useState<null | JSONContent>(null);
+const TailwindAdvancedEditor = ({ documentId, workspaceId }: { documentId: string | null; workspaceId: string | null }) => {
+  const [initialContent, setInitialContent] = useState<JSONContent | null>(defaultEditorContent);
   const [saveStatus, setSaveStatus] = useState("Saved");
   const [charsCount, setCharsCount] = useState();
+  const [isLoading, setIsLoading] = useState(true);
 
   const [openNode, setOpenNode] = useState(false);
   const [openColor, setOpenColor] = useState(false);
@@ -56,6 +57,8 @@ const TailwindAdvancedEditor = () => {
   const debouncedUpdates = useDebouncedCallback(async (editor: EditorInstance) => {
     const json = editor.getJSON();
     setCharsCount(editor.storage.characterCount.words());
+
+    // Save to localStorage as fallback
     window.localStorage.setItem("html-content", highlightCodeblocks(editor.getHTML()));
     window.localStorage.setItem("novel-content", JSON.stringify(json));
     try {
@@ -68,14 +71,70 @@ const TailwindAdvancedEditor = () => {
         window.localStorage.setItem("markdown", "");
       }
     }
-    setSaveStatus("Saved");
+
+    // Save to database if documentId is available
+    if (documentId) {
+      try {
+        const response = await fetch(`/api/editor-content`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            documentId,
+            content: json,
+            html: highlightCodeblocks(editor.getHTML()),
+          }),
+        });
+
+        if (response.ok) {
+          setSaveStatus("Saved");
+        } else {
+          setSaveStatus("Error");
+        }
+      } catch (error) {
+        console.error("Failed to save to database:", error);
+        setSaveStatus("Error");
+      }
+    } else {
+      setSaveStatus("Saved");
+    }
   }, 500);
 
   useEffect(() => {
-    const content = window.localStorage.getItem("novel-content");
-    if (content) setInitialContent(JSON.parse(content));
-    else setInitialContent(defaultEditorContent);
-  }, []);
+    // Load content from database if documentId is available
+    const loadContent = async () => {
+      setIsLoading(true);
+
+      if (documentId) {
+        try {
+          const response = await fetch(`/api/editor-content?documentId=${documentId}`);
+          if (response.ok) {
+            const data = await response.json();
+            if (data.content) {
+              setInitialContent(data.content);
+              setIsLoading(false);
+              return;
+            }
+          }
+        } catch (error) {
+          console.error("Failed to load content from database:", error);
+        }
+
+        // Fallback to localStorage if database load fails
+        const content = window.localStorage.getItem("novel-content");
+        if (content) setInitialContent(JSON.parse(content));
+      } else {
+        // Load from localStorage if no documentId
+        const content = window.localStorage.getItem("novel-content");
+        if (content) setInitialContent(JSON.parse(content));
+      }
+
+      setIsLoading(false);
+    };
+
+    loadContent();
+  }, [documentId]);
 
   // Listen for custom event to open AI selector from slash command
   useEffect(() => {
@@ -92,7 +151,109 @@ const TailwindAdvancedEditor = () => {
     };
   }, []);
 
-  if (!initialContent) return null;
+  // Listen for SOW content insertion event
+  useEffect(() => {
+    const handleInsertSOW = (event: CustomEvent) => {
+      const { scopes, projectTitle, clientName, projectOverview, budgetNotes, totals, discount } = event.detail;
+
+      // Build markdown content
+      let markdown = `# ${projectTitle}\n\n`;
+      markdown += `**Client:** ${clientName}\n\n`;
+      markdown += `---\n\n`;
+
+      // Each scope
+      scopes.forEach((scope: any, idx: number) => {
+        markdown += `## Scope ${idx + 1}: ${scope.title}\n\n`;
+        markdown += `*${scope.description}*\n\n`;
+
+        // Deliverables
+        if (scope.deliverables && scope.deliverables.length > 0) {
+          markdown += `### Deliverables\n\n`;
+          scope.deliverables.forEach((item: string) => {
+            markdown += `- ${item}\n`;
+          });
+          markdown += `\n`;
+        }
+
+        // Pricing table
+        markdown += `### Pricing\n\n`;
+        markdown += `| Task | Role | Hours | Rate (AUD) | Cost (AUD) |\n`;
+        markdown += `|------|------|-------|------------|------------|\n`;
+        (scope.roles || []).forEach((row: any) => {
+          const rate = row.rate || 0;
+          const hours = row.hours || 0;
+          const cost = (hours * rate * 1.1).toFixed(2);
+          markdown += `| ${row.task} | ${row.role} | ${hours} | $${rate.toFixed(2)} | $${cost} |\n`;
+        });
+        markdown += `\n`;
+
+        const scopeTotal = (scope.roles || []).reduce((sum: number, row: any) => sum + ((row.hours || 0) * (row.rate || 0)), 0);
+        const scopeGST = scopeTotal * 0.1;
+        const scopeTotalWithGST = scopeTotal + scopeGST;
+        markdown += `**Scope Total:** $${scopeTotalWithGST.toFixed(2)} AUD (inc. GST)\n\n`;
+
+        // Assumptions
+        if (scope.assumptions && scope.assumptions.length > 0) {
+          markdown += `### Assumptions\n\n`;
+          scope.assumptions.forEach((item: string) => {
+            markdown += `- ${item}\n`;
+          });
+          markdown += `\n`;
+        }
+
+        markdown += `---\n\n`;
+      });
+
+      // Financial summary
+      markdown += `## Financial Summary\n\n`;
+      markdown += `- **Subtotal:** $${totals.subtotal.toFixed(2)} AUD\n`;
+      if (discount > 0) {
+        markdown += `- **Discount (${discount}%):** -$${totals.discountAmount.toFixed(2)} AUD\n`;
+        markdown += `- **After Discount:** $${totals.afterDiscount.toFixed(2)} AUD\n`;
+      }
+      markdown += `- **GST (10%):** +$${totals.gst.toFixed(2)} AUD\n`;
+      markdown += `- **Grand Total:** $${totals.total.toFixed(2)} AUD\n\n`;
+
+      if (projectOverview) {
+        markdown += `## Project Overview\n\n${projectOverview}\n\n`;
+      }
+
+      if (budgetNotes) {
+        markdown += `## Budget Notes\n\n${budgetNotes}\n\n`;
+      }
+
+      // Insert into editor by dispatching a paste event
+      const pasteEvent = new ClipboardEvent('paste', {
+        clipboardData: new DataTransfer(),
+        bubbles: true,
+        cancelable: true
+      });
+
+      pasteEvent.clipboardData?.setData('text/plain', markdown);
+
+      // Find the editor element and dispatch the paste event
+      const editorElement = document.querySelector('.ProseMirror');
+      if (editorElement) {
+        editorElement.dispatchEvent(pasteEvent);
+
+        // Show success message
+        setTimeout(() => {
+          alert('SOW content inserted into editor!');
+        }, 100);
+      } else {
+        console.error('Editor element not found');
+        alert('Could not find editor. Please try again.');
+      }
+    };
+
+    window.addEventListener("insert-sow-content", handleInsertSOW as EventListener);
+    return () => {
+      window.removeEventListener("insert-sow-content", handleInsertSOW as EventListener);
+    };
+  }, []);
+
+
+  if (isLoading) return null;
 
   return (
     <div className="relative w-full">
@@ -109,7 +270,8 @@ const TailwindAdvancedEditor = () => {
           <ColorSelector open={openColor} onOpenChange={setOpenColor} />
         </div>
         <EditorContent
-          initialContent={initialContent}
+          immediatelyRender={false}
+          initialContent={initialContent ?? undefined}
           extensions={extensions}
           className="relative w-full border-muted bg-background sm:rounded-lg sm:border sm:shadow-lg"
           editorProps={{
@@ -135,7 +297,7 @@ const TailwindAdvancedEditor = () => {
               {suggestionItems.map((item) => (
                 <EditorCommandItem
                   value={item.title}
-                  onCommand={item.command}
+                  onCommand={item.command ?? (() => { })}
                   className="flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-accent aria-selected:bg-accent"
                   key={item.title}
                 >
@@ -150,9 +312,9 @@ const TailwindAdvancedEditor = () => {
               ))}
             </EditorCommandList>
           </EditorCommand>
-          <GenerativeMenuSwitch open={openAI} onOpenChange={setOpenAI}>
+          {/* <GenerativeMenuSwitch open={openAI} onOpenChange={setOpenAI}>
             <Separator orientation="vertical" />
-          </GenerativeMenuSwitch>
+          </GenerativeMenuSwitch> */}
         </EditorContent>
       </EditorRoot>
     </div>

@@ -38,6 +38,7 @@ const AISelectorCommands = ({ onSelect }: AISelectorCommandsProps) => {
         {options.map((option) => (
           <CommandItem
             onSelect={(value) => {
+              if (!editor) return;
               const slice = editor.state.selection.content();
               const text = editor.storage.markdown.serializer.serialize(slice.content);
               onSelect(text, value);
@@ -55,6 +56,7 @@ const AISelectorCommands = ({ onSelect }: AISelectorCommandsProps) => {
       <CommandGroup heading="Use AI to do more">
         <CommandItem
           onSelect={() => {
+            if (!editor) return;
             const pos = editor.state.selection.from;
             const text = getPrevText(editor, pos);
             onSelect(text, "continue");

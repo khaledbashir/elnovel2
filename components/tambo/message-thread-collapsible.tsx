@@ -55,11 +55,11 @@ const CollapsibleContainer = React.forwardRef<
       "transition-[width,height] duration-300 ease-in-out",
       isOpen
         ? cn(
-            "top-14 left-0 right-0 bottom-0 w-full rounded-none",
-            "sm:inset-auto sm:bottom-4 sm:right-4 sm:rounded-lg",
-            "sm:w-[448px] md:w-[512px] lg:w-[640px] xl:w-[768px] 2xl:w-[896px]",
-            "sm:h-auto sm:max-w-[90vw]",
-          )
+          "top-14 left-0 right-0 bottom-0 w-full rounded-none",
+          "sm:inset-auto sm:bottom-4 sm:right-4 sm:rounded-lg",
+          "sm:w-[448px] md:w-[512px] lg:w-[640px] xl:w-[768px] 2xl:w-[896px]",
+          "sm:h-auto sm:max-w-[90vw]",
+        )
         : "bottom-4 right-4 rounded-full w-16 h-16 p-0 flex items-center justify-center",
       className,
     )}
@@ -126,6 +126,7 @@ export const MessageThreadCollapsible = React.forwardRef<HTMLDivElement, Message
 
     const starterMessage: TamboThreadMessage = {
       id: "starter-login-prompt",
+      threadId: thread?.id || "default",
       role: "assistant",
       content: [{ type: "text", text: "Ask me anything about tambo." }],
       createdAt: new Date().toISOString(),
@@ -159,7 +160,7 @@ export const MessageThreadCollapsible = React.forwardRef<HTMLDivElement, Message
             </MessageInput>
           </div>
 
-          <MessageSuggestions initialSuggestions={[]}> 
+          <MessageSuggestions initialSuggestions={[]}>
             <MessageSuggestionsList />
           </MessageSuggestions>
         </div>

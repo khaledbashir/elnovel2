@@ -1,0 +1,39 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { getDocumentsByWorkspace, createDocument } from '@/lib/db-operations';
+import { v4 as uuidv4 } from 'uuid';
+
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const workspaceId = searchParams.get('workspaceId');
+
+    if (!workspaceId) {
+      return NextResponse.json({ error: 'workspaceId is required' }, { status: 400 });
+    }
+
+    const documents = await getDocumentsByWorkspace(workspaceId);
+    return NextResponse.json(documents);
+  } catch (error) {
+    console.error('Error fetching documents:', error);
+    return NextResponse.json({ error: 'Failed to fetch documents' }, { status: 500 });
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const { name, workspaceId, tamboThreadId } = await request.json();
+
+    if (!name || !workspaceId) {
+      return NextResponse.json({ error: 'Name and workspaceId are required' }, { status: 400 });
+    }
+
+    const id = uuidv4();
+    const threadId = tamboThreadId || uuidv4();
+    const newDocument = await createDocument(id, workspaceId, name, threadId);
+
+    return NextResponse.json(newDocument, { status: 201 });
+  } catch (error) {
+    console.error('Error creating document:', error);
+    return NextResponse.json({ error: 'Failed to create document' }, { status: 500 });
+  }
+}

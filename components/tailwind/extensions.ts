@@ -17,7 +17,6 @@ import {
   TiptapLink,
   TiptapUnderline,
   Twitter,
-  UpdatedImage,
   UploadImagesPlugin,
   Youtube,
 } from "novel";
@@ -54,11 +53,7 @@ const tiptapImage = TiptapImage.extend({
   },
 });
 
-const updatedImage = UpdatedImage.configure({
-  HTMLAttributes: {
-    class: cx("rounded-lg border border-muted"),
-  },
-});
+
 
 const taskList = TaskList.configure({
   HTMLAttributes: {
@@ -99,37 +94,34 @@ const starterKit = StarterKit.configure({
       class: cx("border-l-4 border-primary"),
     },
   },
-  codeBlock: {
-    HTMLAttributes: {
-      class: cx("rounded-md bg-muted text-muted-foreground border p-5 font-mono font-medium"),
-    },
-  },
   code: {
     HTMLAttributes: {
       class: cx("rounded-md bg-muted  px-1.5 py-1 font-mono font-medium"),
       spellcheck: "false",
     },
   },
-  table: {
-    HTMLAttributes: {
-      class: cx("border-collapse table-auto w-full my-4 border border-border"),
-    },
-  },
-  tableRow: {
-    HTMLAttributes: {
-      class: cx("border-b border-border"),
-    },
-  },
-  tableCell: {
-    HTMLAttributes: {
-      class: cx("border border-border px-4 py-2 text-foreground"),
-    },
-  },
-  tableHeader: {
-    HTMLAttributes: {
-      class: cx("border border-border px-4 py-2 bg-muted/50 font-semibold text-foreground"),
-    },
-  },
+  codeBlock: false,
+  // Table configuration removed - not supported in current StarterKit version
+  // table: {
+  //   HTMLAttributes: {
+  //     class: cx("border-collapse table-auto w-full my-4 border border-border"),
+  //   },
+  // },
+  // tableRow: {
+  //   HTMLAttributes: {
+  //     class: cx("border-b border-border"),
+  //   },
+  // },
+  // tableCell: {
+  //   HTMLAttributes: {
+  //     class: cx("border border-border px-4 py-2 text-foreground"),
+  //   },
+  // },
+  // tableHeader: {
+  //   HTMLAttributes: {
+  //     class: cx("border border-border px-4 py-2 bg-muted/50 font-semibold text-foreground"),
+  //   },
+  // },
   horizontalRule: false,
   dropcursor: {
     color: "#DBEAFE",
@@ -185,7 +177,6 @@ export const defaultExtensions = [
   placeholder,
   tiptapLink,
   tiptapImage,
-  updatedImage,
   taskList,
   taskItem,
   horizontalRule,

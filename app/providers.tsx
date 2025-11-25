@@ -1,20 +1,19 @@
 "use client";
 
-import { type Dispatch, type ReactNode, type SetStateAction, createContext } from "react";
+import React, { type Dispatch, type ReactNode, type SetStateAction, createContext } from "react";
 import { ThemeProvider, useTheme } from "next-themes";
 import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/react";
 import { TamboProvider } from "@tambo-ai/react";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { getTamboConfig } from "@/lib/tambo/setup";
-import { ThemeToggle } from "@/components/tailwind/ui/theme-toggle";
 
 export const AppContext = createContext<{
   font: string;
   setFont: Dispatch<SetStateAction<string>>;
 }>({
   font: "Default",
-  setFont: () => {},
+  setFont: () => { },
 });
 
 const ToasterProvider = () => {
@@ -25,7 +24,7 @@ const ToasterProvider = () => {
 };
 
 const TamboProviderWrapper = ({ children }: { children: ReactNode }) => {
-  const config = getTamboConfig();
+  const config = React.useMemo(() => getTamboConfig(), []);
 
   // Only render TamboProvider if API key is configured
   if (!config.apiKey) {
@@ -50,7 +49,14 @@ const TamboProviderWrapper = ({ children }: { children: ReactNode }) => {
 };
 
 export default function Providers({ children }: { children: ReactNode }) {
-  const [font, setFont] = useLocalStorage<string>("novel__font", "Default");
+  const [font, setFontValue] = useLocalStorage<string>("novel__font", "Default");
+  const setFont = React.useCallback((value: React.SetStateAction<string>) => {
+    if (typeof value === 'function') {
+      setFontValue(value(font));
+    } else {
+      setFontValue(value);
+    }
+  }, [setFontValue, font]);
 
   return (
     <ThemeProvider attribute="class" enableSystem disableTransitionOnChange defaultTheme="system">
@@ -62,11 +68,6 @@ export default function Providers({ children }: { children: ReactNode }) {
       >
         <TamboProviderWrapper>
           <ToasterProvider />
-          <div className="sticky top-0 z-30 w-full bg-background/90 backdrop-blur border-b">
-            <div className="flex w-full max-w-screen-lg mx-auto items-center justify-end gap-2 px-4 py-2">
-              <ThemeToggle />
-            </div>
-          </div>
           {children}
           <Analytics />
         </TamboProviderWrapper>

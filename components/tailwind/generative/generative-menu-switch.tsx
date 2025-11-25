@@ -13,8 +13,8 @@ const GenerativeMenuSwitch = ({ children, open, onOpenChange }: GenerativeMenuSw
   const { editor } = useEditor();
 
   useEffect(() => {
-    if (!open) removeAIHighlight(editor);
-  }, [open]);
+    if (!open && editor) removeAIHighlight(editor);
+  }, [open, editor]);
   const selectionEmpty = !!editor?.state.selection.empty;
   return (
     <>
@@ -23,7 +23,7 @@ const GenerativeMenuSwitch = ({ children, open, onOpenChange }: GenerativeMenuSw
             placement: selectionEmpty ? "top" : "bottom-start",
           onHidden: () => {
             onOpenChange(false);
-            editor.chain().unsetHighlight().run();
+            if (editor) editor.chain().unsetHighlight().run();
           },
         }}
         className="flex w-fit max-w-[90vw] overflow-hidden rounded-md border border-muted bg-background shadow-xl z-50">

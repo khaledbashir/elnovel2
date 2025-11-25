@@ -1,0 +1,218 @@
+# COMPREHENSIVE AI CODER TASK LIST
+## AI-Augmented Notion-Style Editor + SOW Validation Platform
+
+Based on my thorough analysis of the current application state, here's the structured breakdown of everything that needs to be done:
+
+***
+
+## **SECTION 1: THINGS THAT NEED FIXING VISUALLY**
+
+### Layout & Scrolling Issues (CRITICAL)
+1. **Fixed viewport layout**: Currently behaves like a blog post (page scrolling). Needs to switch to "Fixed Layout with Independent Scrolling" (VS Code/Discord pattern):
+   - Main container: `height: 100vh`, `overflow: hidden`
+   - Left pane (editor): `flex: 1`, `height: 100%`, `overflow-y: auto`
+   - Right pane (chat): `height: 100%`, fixed position, flex column layout
+   - Chat messages: `flex-grow: 1`, `overflow-y: auto`
+   - Chat input: `flex-shrink: 0`, pinned to bottom always visible
+
+2. **Editor scrollbar appearance**: Scrollbar is visible but styling doesn't match Notion aesthetic (color, width, padding)
+
+3. **Chat panel positioning**: When editor content scrolls, chat panel should remain completely static (not move at all)
+
+4. **Sidebar/Navigation missing**: No visible left sidebar for documents/threads/folders navigation - currently only shows "Tambo Conversations" at bottom
+
+5. **Top action bar missing**: No save button, export button, or document title visible at top - UI feels incomplete
+
+6. **Visual separation clarity**: The divider between editor (left) and chat (right) needs better visual definition (color contrast, shadow, or thicker border)
+
+7. **Chat input box styling**: Input area needs better visual prominence - currently looks flat/generic compared to send button
+
+8. **Message list styling**: No visible chat history/threading UI - only shows placeholder text
+
+9. **Theme/color inconsistency**: Dark theme applied inconsistently across components (some areas too dark, others not dark enough)
+
+10. **Responsive design gaps**: Layout doesn't adapt properly at smaller viewport widths - sidebar/panes overlap poorly
+
+### Icon & Button Styling Issues
+11. **Microphone icon**: Shows recording state but no visual feedback (spinner, pulse, or animation)
+12. **Send button**: Green send button (+) lacks hover state and doesn't provide clear visual feedback
+13. **Attachment button**: Paper clip icon barely visible, low contrast
+14. **Button tooltip/labels**: No hover tooltips explaining button functions
+
+### Typography & Spacing
+15. **Line height**: Content appears cramped with insufficient line spacing in editor
+16. **Font consistency**: Some text weights are undefined (bold/regular not always clear)
+17. **Heading hierarchy**: Headings and regular text don't have enough visual differentiation
+18. **Padding/margins**: Left editor pane has irregular margins; right chat pane has inconsistent padding
+
+***
+
+## **SECTION 2: THINGS TO BE ADDED**
+
+### Critical Missing Components
+1. **Left sidebar navigation**: 
+   - Collapsible folders/documents tree structure
+   - Search across documents
+   - Thread list with thread names
+   - Drag-and-drop reordering support
+   - Persistent state (remember collapsed/expanded state on reload)
+
+2. **Document/Editor header bar**:
+   - Document title input (editable)
+   - Save/auto-save indicator
+   - Export button (PDF, CSV, XLS)
+   - Share/permission controls
+   - More options menu (delete, duplicate, etc.)
+
+3. **Threaded chat system**:
+   - Thread history with timestamps
+   - User avatars/names
+   - Reply threading (not just linear)
+   - Message editing capability
+   - Undo/delete message options
+   - Message reactions/reactions button
+
+4. **Chat attachments & upload handling**:
+   - File upload UI (drag-drop zone)
+   - Progress indicator during upload
+   - File preview thumbnails
+   - File type badge indicators
+   - Attachment list in chat history
+
+5. **AI Features**:
+   - Streaming response indicators (animated dots)
+   - "AI is thinking" status message
+   - Context awareness display (which doc is being analyzed)
+   - Agent tool execution status
+   - Error/fallback messages with retry button
+
+6. **Pricing/SOW table component** (per requirements):
+   - Editable spreadsheet-like grid
+   - Drag-to-reorder rows
+   - Inline editing (click to edit, press Enter to save)
+   - Add/remove row buttons
+   - Discount field, GST field
+   - Total calculation display
+   - Export to PDF/CSV/XLS with branding
+
+7. **Notification/Toast system**:
+   - Toast notifications for save success/failure
+   - Error alerts with actionable messages
+   - Confirmation dialogs (for destructive actions)
+   - Rate limit warnings
+   - Connection status indicator ("Connected", "Reconnecting", "Offline")
+
+8. **Slash commands menu** (Notion-style):
+   - `/` trigger to show available commands
+   - `/table`, `/code`, `/quote`, `/list`, `/heading`, etc.
+   - Recent commands section
+   - Command search/filter
+
+9. **Block formatting toolbar**:
+   - Text selection menu (bold, italic, underline, strikethrough)
+   - Color picker
+   - Font size selector
+   - Alignment options
+   - Code language selector (for code blocks)
+
+10. **Drag-and-drop support**:
+    - Drag blocks within editor
+    - Reorder list items
+    - Drag files to upload
+    - Drag to resize sidebar width
+
+11. **Session/Auth UI** (for production):
+    - Login page
+    - Role/permission indicators
+    - User profile menu
+    - Logout button
+
+12. **Agent validation report display**:
+    - JSON validation results UI
+    - Pass/fail status indicators
+    - Requirement checklist rendering
+    - Detailed field breakdowns
+    - Suggested fixes/improvements
+
+13. **Analytics/Dashboard** (for admin):
+    - Usage metrics
+    - Agent execution history
+    - Error logs
+    - Export/download tracking
+
+14. **Keyboard shortcuts help**:
+    - Help modal showing all shortcuts
+    - Quick reference in UI
+    - Keyboard navigation support (Tab, Arrow keys)
+
+15. **Search functionality**:
+    - Full-text search across documents
+    - Search in current doc only
+    - Filter by date, type, author
+    - Search history
+
+***
+
+## **SECTION 3: INFRASTRUCTURE & BACKEND INTEGRATION**
+
+### Data Persistence & State Management
+1. **Sidebar state persistence**: Save folder expand/collapse, selected thread, scroll position
+2. **Editor content auto-save**: Save on blur/every 30 seconds, show save indicator
+3. **Chat history persistence**: Store all messages, threads, attachments in database
+4. **Session storage**: Preserve user session across page reloads
+
+### Agent & Validation Logic
+5. **SOW validation agent**: 
+   - Accepts brief/SOW document as input
+   - Runs requirements checklist against document
+   - Audits rates, deliverables, bespoke items
+   - Returns JSON report with pass/fail per requirement
+   - Provides structured feedback
+
+6. **File parser**: Handles PDF, Word, Google Docs, plain text uploads
+7. **PDF analysis**: Extract tables, sections, and structured data from PDFs
+8. **Error handling & fallback**: Retry logic for failed agent calls, graceful degradation
+
+### API & Backend
+9. **Rate limiting**: Show user-facing rate limit warnings (Upstash KV integration working)
+10. **Streaming responses**: Ensure Vercel AI SDK properly handles token streaming from OpenAI
+11. **MCP agent tools**: Robust execution of MCP prompts with decision loops
+12. **Logging system**: Log all agent runs, exports, saves, errors to database/console
+13. **Analytics events**: Track user actions (save, export, agent run, chat message)
+
+### Provider & Context Setup
+14. **TamboProvider wrapping**: Ensure all child components properly wrapped, no "null context" errors
+15. **Context registry**: Document all required providers and their dependencies
+16. **Type safety**: Full TypeScript typing for all context/provider values
+
+### Authentication (Production)
+17. **NextAuth/Supabase/WorkOS integration**: Session management, user identification
+18. **Role-based access control**: Viewer, Editor, Admin roles
+19. **Permission checks**: Validate user can access/modify documents
+
+### Database Schema
+20. **Documents table**: Store document content, metadata, ownership
+21. **Threads table**: Store chat threads, messages, attachments
+22. **SOW/Pricing table**: Store SOW records with validation results
+23. **Users table**: User profiles, roles, settings
+24. **Agent runs table**: Track all agent executions, results, timestamps
+
+### Export Functionality
+25. **PDF export with branding**: Logo, fonts, colors, custom layouts
+26. **CSV/XLS export**: Spreadsheet-compatible format for tables
+27. **Markdown export**: For document portability
+28. **ZIP bundle export**: Multiple documents + attachments
+
+### Performance & Monitoring
+29. **Lazy loading**: Components/blocks load on-demand
+30. **Error boundary UI**: Catch component crashes, show fallback UI
+31. **Performance monitoring**: Track page load, render times
+32. **Accessibility audit**: ARIA labels, keyboard navigation, screen reader support
+
+***
+
+## **QUICK REFERENCE: Top 3 Blocking Issues**
+
+1. **LAYOUT FIX** (Blocks everything): Implement fixed viewport with independent scrolling - without this, scrolling breaks UX
+2. **SIDEBAR + HEADER** (UX critical): Add left nav + top action bar - app currently feels incomplete/missing core nav
+3. **CHAT THREADING** (Feature critical): Implement proper threaded chat UI with history - currently shows no messages/state

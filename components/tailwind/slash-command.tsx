@@ -194,15 +194,16 @@ export const suggestionItems = createSuggestionItems([
     icon: <Code size={18} />,
     command: ({ editor, range }) => editor.chain().focus().deleteRange(range).toggleCodeBlock().run(),
   },
-  {
-    title: "Table",
-    description: "Insert a table.",
-    searchTerms: ["table", "grid", "spreadsheet"],
-    icon: <Table size={18} />,
-    command: ({ editor, range }) => {
-      editor.chain().focus().deleteRange(range).insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
-    },
-  },
+  // Table command disabled - insertTable not available in current tiptap version
+  // {
+  //   title: "Table",
+  //   description: "Insert a table.",
+  //   searchTerms: ["table", "grid", "spreadsheet"],
+  //   icon: <Table size={18} />,
+  //   command: ({ editor, range }) => {
+  //     editor.chain().focus().deleteRange(range).insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+  //   },
+  // },
   {
     title: "Image",
     description: "Upload an image from your computer.",
@@ -236,7 +237,8 @@ export const suggestionItems = createSuggestionItems([
         /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/,
       );
 
-      if (ytregex.test(videoLink)) {
+
+      if (videoLink && ytregex.test(videoLink)) {
         editor
           .chain()
           .focus()
@@ -261,7 +263,8 @@ export const suggestionItems = createSuggestionItems([
       const tweetLink = prompt("Please enter Twitter Link");
       const tweetRegex = new RegExp(/^https?:\/\/(www\.)?x\.com\/([a-zA-Z0-9_]{1,15})(\/status\/(\d+))?(\/\S*)?$/);
 
-      if (tweetRegex.test(tweetLink)) {
+
+      if (tweetLink && tweetRegex.test(tweetLink)) {
         editor
           .chain()
           .focus()
