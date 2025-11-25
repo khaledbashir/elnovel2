@@ -124,13 +124,16 @@ export const tamboContextHelpers = {
   // This injects the Social Garden Rate Card into every AI request
   rateCard: async () => {
     try {
-      const response = await fetch('/api/rate-card');
-      const data = await response.json();
+      // Import rate card directly to avoid API/filesystem issues in Docker
+      const rateCardData = await import("./ratecard.json");
+      // Handle both default export (if JSON module) and direct array
+      const rateCard = rateCardData.default || rateCardData;
+
       return {
-        socialGardenRateCard: data.rateCard,
-        totalRoles: data.metadata.totalRoles,
+        socialGardenRateCard: rateCard,
+        totalRoles: Array.isArray(rateCard) ? rateCard.length : 0,
         currency: 'AUD', // Display currency (base rates are USD)
-        message: `Social Garden Rate Card loaded with ${data.metadata.totalRoles} roles. MUST use exact roles and rates from this card.`,
+        message: `Social Garden Rate Card loaded with ${Array.isArray(rateCard) ? rateCard.length : 0} roles. MUST use exact roles and rates from this card.`,
       };
     } catch (error) {
       console.error('Failed to load rate card:', error);
