@@ -14,7 +14,7 @@ import {
   handleImageDrop,
   handleImagePaste,
 } from "novel";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { defaultExtensions } from "./extensions";
 import { ColorSelector } from "./selectors/color-selector";
@@ -27,6 +27,7 @@ import GenerativeMenuSwitch from "./generative/generative-menu-switch";
 import { uploadFn } from "./image-upload";
 import { TextButtons } from "./selectors/text-buttons";
 import { slashCommand, suggestionItems } from "./slash-command";
+import { insertSOWToEditor } from "@/lib/editor/insert-sow";
 
 const hljs = require("highlight.js");
 
@@ -37,6 +38,7 @@ const TailwindAdvancedEditor = ({ documentId, workspaceId }: { documentId: strin
   const [saveStatus, setSaveStatus] = useState("Saved");
   const [charsCount, setCharsCount] = useState();
   const [isLoading, setIsLoading] = useState(true);
+  const editorRef = useRef<EditorInstance | null>(null);
 
   const [openNode, setOpenNode] = useState(false);
   const [openColor, setOpenColor] = useState(false);
@@ -154,95 +156,49 @@ const TailwindAdvancedEditor = ({ documentId, workspaceId }: { documentId: strin
   // Listen for SOW content insertion event
   useEffect(() => {
     const handleInsertSOW = (event: CustomEvent) => {
-      const { scopes, projectTitle, clientName, projectOverview, budgetNotes, totals, discount } = event.detail;
+      const { scopes, projectTitle, clientName, projectOverview, budgetNotes, discount } = event.detail;
 
-      // Build markdown content
-      let markdown = `# ${projectTitle}\n\n`;
-      markdown += `**Client:** ${clientName}\n\n`;
-      markdown += `---\n\n`;
-
-      // Each scope
-      scopes.forEach((scope: any, idx: number) => {
-        markdown += `## Scope ${idx + 1}: ${scope.title}\n\n`;
-        markdown += `*${scope.description}*\n\n`;
-
-        // Deliverables
-        if (scope.deliverables && scope.deliverables.length > 0) {
-          markdown += `### Deliverables\n\n`;
-          scope.deliverables.forEach((item: string) => {
-            markdown += `- ${item}\n`;
-          });
-          markdown += `\n`;
-        }
-
-        // Pricing table
-        markdown += `### Pricing\n\n`;
-        markdown += `| Task | Role | Hours | Rate (AUD) | Cost (AUD) |\n`;
-        markdown += `|------|------|-------|------------|------------|\n`;
-        (scope.roles || []).forEach((row: any) => {
-          const rate = row.rate || 0;
-          const hours = row.hours || 0;
-          const cost = (hours * rate * 1.1).toFixed(2);
-          markdown += `| ${row.task} | ${row.role} | ${hours} | $${rate.toFixed(2)} | $${cost} |\n`;
-        });
-        markdown += `\n`;
-
-        const scopeTotal = (scope.roles || []).reduce((sum: number, row: any) => sum + ((row.hours || 0) * (row.rate || 0)), 0);
-        const scopeGST = scopeTotal * 0.1;
-        const scopeTotalWithGST = scopeTotal + scopeGST;
-        markdown += `**Scope Total:** $${scopeTotalWithGST.toFixed(2)} AUD (inc. GST)\n\n`;
-
-        // Assumptions
-        if (scope.assumptions && scope.assumptions.length > 0) {
-          markdown += `### Assumptions\n\n`;
-          scope.assumptions.forEach((item: string) => {
-            markdown += `- ${item}\n`;
-          });
-          markdown += `\n`;
-        }
-
-        markdown += `---\n\n`;
-      });
-
-      // Financial summary
-      markdown += `## Financial Summary\n\n`;
-      markdown += `- **Subtotal:** $${totals.subtotal.toFixed(2)} AUD\n`;
-      if (discount > 0) {
-        markdown += `- **Discount (${discount}%):** -$${totals.discountAmount.toFixed(2)} AUD\n`;
-        markdown += `- **After Discount:** $${totals.afterDiscount.toFixed(2)} AUD\n`;
-      }
-      markdown += `- **GST (10%):** +$${totals.gst.toFixed(2)} AUD\n`;
-      markdown += `- **Grand Total:** $${totals.total.toFixed(2)} AUD\n\n`;
-
-      if (projectOverview) {
-        markdown += `## Project Overview\n\n${projectOverview}\n\n`;
+      // Check if editor is available
+      if (!editorRef.current) {
+        console.error('Editor not available');
+        alert('Editor not ready. Please try again.');
+        return;
       }
 
-      if (budgetNotes) {
-        markdown += `## Budget Notes\n\n${budgetNotes}\n\n`;
-      }
+      try {
+        // Transform the data to match the expected format
+        const sowData = {
+          clientName,
+          projectTitle,
+          scopes: scopes.map((scope: any, idx: number) => ({
+            id: `scope-${idx}`,
+            title: scope.title,
+            description: scope.description,
+            roles: (scope.roles || []).map((row: any, rowIdx: number) => ({
+              id: `role-${idx}-${rowIdx}`,
+              task: row.task,
+              role: row.role,
+              hours: row.hours || 0,
+              rate: row.rate || 0,
+            })),
+            deliverables: scope.deliverables || [],
+            assumptions: scope.assumptions || [],
+          })),
+          projectOverview,
+          budgetNotes,
+          discount,
+        };
 
-      // Insert into editor by dispatching a paste event
-      const pasteEvent = new ClipboardEvent('paste', {
-        clipboardData: new DataTransfer(),
-        bubbles: true,
-        cancelable: true
-      });
-
-      pasteEvent.clipboardData?.setData('text/plain', markdown);
-
-      // Find the editor element and dispatch the paste event
-      const editorElement = document.querySelector('.ProseMirror');
-      if (editorElement) {
-        editorElement.dispatchEvent(pasteEvent);
+        // Use the proper insertSOWToEditor function
+        insertSOWToEditor(editorRef.current, sowData);
 
         // Show success message
         setTimeout(() => {
           alert('SOW content inserted into editor!');
         }, 100);
-      } else {
-        console.error('Editor element not found');
-        alert('Could not find editor. Please try again.');
+      } catch (error) {
+        console.error('Error inserting SOW content:', error);
+        alert('Failed to insert SOW content. Please try again.');
       }
     };
 
@@ -288,6 +244,9 @@ const TailwindAdvancedEditor = ({ documentId, workspaceId }: { documentId: strin
           onUpdate={({ editor }) => {
             debouncedUpdates(editor);
             setSaveStatus("Unsaved");
+          }}
+          onCreate={({ editor }) => {
+            editorRef.current = editor;
           }}
           slotAfter={<ImageResizer />}
         >
