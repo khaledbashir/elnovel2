@@ -22,6 +22,7 @@ import {
 import { Command, createSuggestionItems, renderItems } from "novel";
 import { uploadFn } from "./image-upload";
 import Magic from "./ui/icons/magic";
+import { notifications } from "@/lib/utils";
 
 const dispatchOpenAI = (detail: Record<string, any>) =>
     Promise.resolve().then(() =>

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import SOWFileUpload from "@/components/ui/file-upload/sow/sow-file-upload";
 import { UploadedFile } from "@/hooks/use-file-upload";
 import { FileText, ArrowRight } from "lucide-react";
+import { notifications } from "@/lib/utils";
 
 export const SimpleSOWPage = () => {
     const [files, setFiles] = useState<UploadedFile[]>([]);

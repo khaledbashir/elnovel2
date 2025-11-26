@@ -22,9 +22,8 @@ import { ColorSelector } from "./selectors/color-selector";
 import { LinkSelector } from "./selectors/link-selector";
 import { MathSelector } from "./selectors/math-selector";
 import { NodeSelector } from "./selectors/node-selector";
-import { Separator } from "@/components/ui/separator";
-import { notifications } from "@/lib/utils";
 import { Separator } from "./ui/separator";
+import { notifications } from "@/lib/utils";
 
 import GenerativeMenuSwitch from "./generative/generative-menu-switch";
 import { uploadFn } from "./image-upload";
@@ -203,48 +202,6 @@ const TailwindAdvancedEditor = ({
                 discount,
             } = event.detail;
 
-            // Check if editor is available
-            if (!editorRef.current) {
-                console.error(
-                    "Editor not available - waiting for initialization",
-                );
-                // Wait a moment and try again
-                setTimeout(() => {
-                    if (editorRef.current) {
-                        // Retry the insertSOW operation
-                        insertSOW(editorRef.current, {
-                            sowType,
-                            clientName,
-                            projectName,
-                            projectScope,
-                            deliverables,
-                            timeline,
-                            pricing,
-                            assumptions,
-                            exclusions,
-                            changeRequests,
-                            paymentTerms,
-                            acceptanceCriteria,
-                            teamResources,
-                            projectManager,
-                            projectLead,
-                            businessAnalyst,
-                            budgetNotes,
-                            discount,
-                        });
-                    } else {
-                        console.error(
-                            "Editor still not available after timeout",
-                        );
-                        notifications.error(
-                            "Editor initialization failed",
-                            "Editor is taking too long to initialize. Please refresh the page and try again.",
-                        );
-                    }
-                }, 2000);
-                return;
-            }
-
             try {
                 // Transform the data to match the expected format
                 const sowData = {
@@ -273,37 +230,38 @@ const TailwindAdvancedEditor = ({
 
                 console.log("Inserting SOW data:", sowData);
 
-                // Use the proper insertSOWToEditor function
-                // Check if editor is available before inserting
+                // Check if editor is available
                 if (editorRef.current) {
                     insertSOWToEditor(editorRef.current, sowData);
                 } else {
-                    console.error("Editor not initialized, cannot insert SOW");
-                    notifications.error(
-                        "Editor not ready",
-                        "Please wait for the editor to fully load before inserting content.",
+                    console.error(
+                        "Editor not available - waiting for initialization",
                     );
-                    // Wait a bit and retry
+                    notifications.warning(
+                        "Editor loading...",
+                        "Waiting for editor to initialize before inserting content.",
+                    );
+
+                    // Wait a moment and try again
                     setTimeout(() => {
                         if (editorRef.current) {
+                            // Retry the insertSOW operation
                             insertSOWToEditor(editorRef.current, sowData);
+                        } else {
+                            console.error(
+                                "Editor still not available after timeout",
+                            );
+                            notifications.error(
+                                "Editor initialization failed",
+                                "Editor is taking too long to initialize. Please refresh the page and try again.",
+                            );
                         }
                     }, 2000);
                 }
-
-                console.log("SOW insertion completed successfully");
             } catch (error) {
-                console.error("Error inserting SOW content:", error);
-                console.error(
-                    "Error stack:",
-                    error instanceof Error ? error.stack : "No stack trace",
-                );
-                console.error(
-                    "Error message:",
-                    error instanceof Error ? error.message : String(error),
-                );
+                console.error("Error preparing SOW content:", error);
                 notifications.error(
-                    "Failed to insert SOW content",
+                    "Failed to prepare SOW content",
                     error instanceof Error ? error.message : String(error),
                 );
             }
