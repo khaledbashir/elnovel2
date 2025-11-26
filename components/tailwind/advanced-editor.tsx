@@ -394,8 +394,17 @@ const TailwindAdvancedEditor = ({
         if (!openAI && editorRef.current) removeAIHighlight(editorRef.current);
     }, [openAI, editorRef.current]);
 
-    if (isLoading) return null;
-    if (!editorRef.current) return null;
+    // Show loading spinner while content is being fetched
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center h-full w-full">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+            </div>
+        );
+    }
+
+    // Editor will render even if editorRef.current is null initially
+    // It will be set when the EditorContent component calls onCreate
 
     return (
         <div className="relative w-full h-full flex flex-col overflow-hidden">
@@ -425,6 +434,10 @@ const TailwindAdvancedEditor = ({
                             className="min-h-full"
                             onCreate={({ editor }) => {
                                 editorRef.current = editor;
+                                console.log("Editor initialized successfully");
+                            }}
+                            onDestroy={() => {
+                                editorRef.current = null;
                             }}
                             editorProps={{
                                 handleDOMEvents: {
