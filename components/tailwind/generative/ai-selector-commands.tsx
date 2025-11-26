@@ -39,9 +39,32 @@ const AISelectorCommands = ({ onSelect }: AISelectorCommandsProps) => {
           <CommandItem
             onSelect={(value) => {
               if (!editor) return;
+
+              // Get the current selection
+              const { from, to } = editor.state.selection;
               const slice = editor.state.selection.content();
-              const text = editor.storage.markdown.serializer.serialize(slice.content);
-              onSelect(text, value);
+
+              // Try to get text from selection
+              let text = "";
+
+              if (slice.content.size > 0) {
+                // Use markdown serializer if available
+                try {
+                  text = editor.storage.markdown.serializer.serialize(slice.content);
+                } catch (e) {
+                  // Fallback to plain text
+                  text = editor.state.doc.textBetween(from, to, " ");
+                }
+              }
+
+              // If we have text, use it; otherwise show a message
+              if (text && text.trim()) {
+                console.log(`AI ${value} with text:`, text);
+                onSelect(text, value);
+              } else {
+                console.warn("No text selected for AI command");
+                // You could show a toast here
+              }
             }}
             className="flex gap-2 px-4"
             key={option.value}

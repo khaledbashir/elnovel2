@@ -33,7 +33,7 @@ export const suggestionItems = createSuggestionItems([
         title: "Ask AI",
         description: "Use AI to generate or edit content.",
         searchTerms: ["ai", "generate", "ask", "magic"],
-        icon: <Magic className="h-[18px] w-[18px] text-purple-500" />,
+        icon: <Magic className="h-[18px] w-[18px] text-emerald-600" />,
         command: ({ editor, range }) => {
             editor.chain().focus().deleteRange(range).run();
             // Dispatch event to open AI selector (overlay now handles display when no selection exists)
@@ -44,7 +44,7 @@ export const suggestionItems = createSuggestionItems([
         title: "Continue Writing",
         description: "AI will continue from where you left off.",
         searchTerms: ["continue", "ai", "generate"],
-        icon: <StepForward size={18} className="text-purple-500" />,
+        icon: <StepForward size={18} className="text-emerald-600" />,
         command: ({ editor, range }) => {
             editor.chain().focus().deleteRange(range).run();
             dispatchOpenAI({ option: "continue" });
@@ -54,7 +54,7 @@ export const suggestionItems = createSuggestionItems([
         title: "Improve Writing",
         description: "AI will improve the selected text.",
         searchTerms: ["improve", "enhance", "better", "ai"],
-        icon: <RefreshCcwDot size={18} className="text-purple-500" />,
+        icon: <RefreshCcwDot size={18} className="text-emerald-600" />,
         command: ({ editor, range }) => {
             const selectedText = editor.state.doc.textBetween(
                 range.from,
@@ -72,7 +72,7 @@ export const suggestionItems = createSuggestionItems([
         title: "Fix Grammar",
         description: "AI will fix grammar and spelling errors.",
         searchTerms: ["fix", "grammar", "spell", "correct", "ai"],
-        icon: <CheckCheck size={18} className="text-purple-500" />,
+        icon: <CheckCheck size={18} className="text-emerald-600" />,
         command: ({ editor, range }) => {
             const selectedText = editor.state.doc.textBetween(
                 range.from,
@@ -90,7 +90,7 @@ export const suggestionItems = createSuggestionItems([
         title: "Make Shorter",
         description: "AI will make the text more concise.",
         searchTerms: ["shorter", "concise", "summarize", "ai"],
-        icon: <ArrowDownWideNarrow size={18} className="text-purple-500" />,
+        icon: <ArrowDownWideNarrow size={18} className="text-emerald-600" />,
         command: ({ editor, range }) => {
             const selectedText = editor.state.doc.textBetween(
                 range.from,
@@ -108,7 +108,7 @@ export const suggestionItems = createSuggestionItems([
         title: "Make Longer",
         description: "AI will expand the text with more details.",
         searchTerms: ["longer", "expand", "elaborate", "ai"],
-        icon: <WrapText size={18} className="text-purple-500" />,
+        icon: <WrapText size={18} className="text-emerald-600" />,
         command: ({ editor, range }) => {
             const selectedText = editor.state.doc.textBetween(
                 range.from,
