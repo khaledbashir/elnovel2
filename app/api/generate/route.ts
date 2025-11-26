@@ -55,8 +55,9 @@ export async function POST(req: Request): Promise<Response> {
         content:
           "You are an AI writing assistant that continues existing text based on context from prior text. " +
           "Give more weight/priority to the later characters than the beginning ones. " +
-          "Limit your response to no more than 200 characters, but make sure to construct complete sentences." +
-          "Use Markdown formatting when appropriate.",
+          "Limit your response to no more than 200 characters, but make sure to construct complete sentences. " +
+          "Use Markdown formatting when appropriate. " +
+          "You MUST respond ONLY in English.",
       },
       {
         role: "user",
@@ -68,8 +69,9 @@ export async function POST(req: Request): Promise<Response> {
         role: "system",
         content:
           "You are an AI writing assistant that improves existing text. " +
-          "Limit your response to no more than 200 characters, but make sure to construct complete sentences." +
-          "Use Markdown formatting when appropriate.",
+          "Limit your response to no more than 200 characters, but make sure to construct complete sentences. " +
+          "Use Markdown formatting when appropriate. " +
+          "You MUST respond ONLY in English.",
       },
       {
         role: "user",
@@ -80,7 +82,9 @@ export async function POST(req: Request): Promise<Response> {
       {
         role: "system",
         content:
-          "You are an AI writing assistant that shortens existing text. " + "Use Markdown formatting when appropriate.",
+          "You are an AI writing assistant that shortens existing text. " +
+          "Use Markdown formatting when appropriate. " +
+          "You MUST respond ONLY in English.",
       },
       {
         role: "user",
@@ -92,7 +96,8 @@ export async function POST(req: Request): Promise<Response> {
         role: "system",
         content:
           "You are an AI writing assistant that lengthens existing text. " +
-          "Use Markdown formatting when appropriate.",
+          "Use Markdown formatting when appropriate. " +
+          "You MUST respond ONLY in English.",
       },
       {
         role: "user",
@@ -104,8 +109,9 @@ export async function POST(req: Request): Promise<Response> {
         role: "system",
         content:
           "You are an AI writing assistant that fixes grammar and spelling errors in existing text. " +
-          "Limit your response to no more than 200 characters, but make sure to construct complete sentences." +
-          "Use Markdown formatting when appropriate.",
+          "Limit your response to no more than 200 characters, but make sure to construct complete sentences. " +
+          "Use Markdown formatting when appropriate. " +
+          "You MUST respond ONLY in English.",
       },
       {
         role: "user",
@@ -116,9 +122,10 @@ export async function POST(req: Request): Promise<Response> {
       {
         role: "system",
         content:
-          "You area an AI writing assistant that generates text based on a prompt. " +
-          "You take an input from the user and a command for manipulating the text" +
-          "Use Markdown formatting when appropriate.",
+          "You are an AI writing assistant that generates text based on a prompt. " +
+          "You take an input from the user and a command for manipulating the text. " +
+          "Use Markdown formatting when appropriate. " +
+          "You MUST respond ONLY in English.",
       },
       {
         role: "user",
