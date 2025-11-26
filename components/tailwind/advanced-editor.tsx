@@ -279,12 +279,12 @@ const TailwindAdvancedEditor = ({
                     },
                 };
 
-                // Generate PDF
-                html2pdf()
-                    .from(element)
-                    .set(opt)
+                // Create a worker instance to handle PDF generation
+                const worker = html2pdf().set(opt).from(element);
+
+                // Generate PDF with custom modifications
+                worker
                     .toPdf()
-                    .get("pdf")
                     .then((pdf: any) => {
                         // Add Green Footer Bar to every page
                         const totalPages = pdf.internal.getNumberOfPages();
@@ -306,7 +306,10 @@ const TailwindAdvancedEditor = ({
                             }
                         }
                     })
-                    .save();
+                    .then(() => {
+                        // Save the PDF after modifications
+                        worker.save();
+                    });
             } catch (error) {
                 console.error("PDF Export failed:", error);
                 alert("Failed to export PDF. Please try again.");
