@@ -252,7 +252,12 @@ const TailwindAdvancedEditor = ({
 
                 // Configure PDF options
                 const opt = {
-                    margin: [10, 10, 20, 10], // Top, Left, Bottom, Right (mm)
+                    margin: [10, 10, 20, 10] as [
+                        number,
+                        number,
+                        number,
+                        number,
+                    ], // Top, Left, Bottom, Right (mm)
                     filename: "SOW_Export.pdf",
                     image: { type: "jpeg", quality: 0.98 },
                     html2canvas: { scale: 2, useCORS: true, logging: false },
