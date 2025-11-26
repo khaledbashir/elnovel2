@@ -795,9 +795,9 @@ const FullSOWDocumentBase: React.FC<FullSOWProps> = ({
     };
 
     return (
-        <div className="sow-print-container w-full max-w-7xl mx-auto p-8 bg-white dark:bg-white rounded-lg border border-gray-200 shadow-lg space-y-8">
+        <div className="sow-print-container w-full max-w-7xl mx-auto p-8 bg-card rounded-lg border border-border shadow-lg space-y-8">
             {/* Header - Centered Logo */}
-            <div className="flex flex-col items-center border-b border-gray-200 pb-8 mb-8">
+            <div className="flex flex-col items-center border-b border-border pb-8 mb-8">
                 <img
                     src="/images/logogreendark.png"
                     alt="Social Garden"
@@ -834,8 +834,8 @@ const FullSOWDocumentBase: React.FC<FullSOWProps> = ({
                                         </tr>
 
                                         {/* Scope Description Row - Full Width */}
-                                        <tr className="border-b border-gray-200 bg-white">
-                                            <td colSpan={7} className="px-4 py-3 text-gray-700 italic">
+                                        <tr className="border-b border-border bg-card">
+                                            <td colSpan={7} className="px-4 py-3 text-muted-foreground italic">
                                                 {scope.description}
                                             </td>
                                         </tr>
