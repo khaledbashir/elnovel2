@@ -401,9 +401,6 @@ const TailwindAdvancedEditor = ({
                                 debouncedUpdates(editor);
                                 setSaveStatus("Unsaved");
                             }}
-                            onCreate={({ editor }) => {
-                                editorRef.current = editor;
-                            }}
                             slotAfter={<ImageResizer />}
                         >
                             <EditorCommand className="z-50 h-auto max-h-[330px] overflow-y-auto rounded-md border border-muted bg-background px-1 py-2 shadow-md transition-all">
@@ -414,7 +411,17 @@ const TailwindAdvancedEditor = ({
                                     {suggestionItems.map((item) => (
                                         <EditorCommandItem
                                             value={item.title}
-                                            onCommand={(val) => item.command(val, editorRef.current)}
+                                            onCommand={() => {
+                                                if (item.command && editorRef.current) {
+                                                    item.command({
+                                                        editor: editorRef.current,
+                                                        range: {
+                                                            from: editorRef.current.state.selection.from,
+                                                            to: editorRef.current.state.selection.to,
+                                                        },
+                                                    });
+                                                }
+                                            }}
                                             className={`flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-accent aria-selected:bg-accent `}
                                             key={item.title}
                                         >

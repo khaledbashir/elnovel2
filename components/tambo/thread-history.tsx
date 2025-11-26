@@ -81,12 +81,15 @@ const ThreadHistory = React.forwardRef<HTMLDivElement, ThreadHistoryProps>(
     const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed);
     const [shouldFocusSearch, setShouldFocusSearch] = React.useState(false);
 
+    // Get projectId from env to bypass broken SDK query
+    const projectId = process.env.NEXT_PUBLIC_TAMBO_PROJECT_ID;
+
     const {
       data: threads,
       isLoading,
       error,
       refetch,
-    } = useTamboThreadList({ contextKey });
+    } = useTamboThreadList({ contextKey, projectId });
 
     const {
       switchCurrentThread,
