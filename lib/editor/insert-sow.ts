@@ -295,8 +295,7 @@ export async function insertSOWToEditor(
                 // Add table to scope content
                 scopeContent.push(tableNode);
 
-                // Add paragraph after table to ensure cursor is out
-                scopeContent.push({ type: "paragraph" });
+                // Removed explicit empty paragraph after table to reduce spacing
 
                 // Add scope total
                 const scopeTotal = calculateScopeTotal(scope);
@@ -387,7 +386,7 @@ export async function insertSOWToEditor(
 
             if (scopeIndex < sowData.scopes.length - 1) {
                 chain.insertContent({ type: "horizontalRule" });
-                chain.insertContent({ type: "paragraph" });
+                // Removed explicit empty paragraph after horizontal rule
             }
         });
 
