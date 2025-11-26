@@ -46,7 +46,12 @@ const nextConfig = {
         ];
     },
     productionBrowserSourceMaps: true,
-    output: 'standalone', // Required for Docker deployment
+    output: "standalone", // Required for Docker deployment
+    experimental: {
+        outputFileTracingIncludes: {
+            "*": ["public/**/*", ".next/static/**/*"],
+        },
+    },
 };
 
 module.exports = nextConfig;
