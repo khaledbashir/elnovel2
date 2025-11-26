@@ -22,6 +22,8 @@ import { ColorSelector } from "./selectors/color-selector";
 import { LinkSelector } from "./selectors/link-selector";
 import { MathSelector } from "./selectors/math-selector";
 import { NodeSelector } from "./selectors/node-selector";
+import { Separator } from "@/components/ui/separator";
+import { notifications } from "@/lib/utils";
 import { Separator } from "./ui/separator";
 
 import GenerativeMenuSwitch from "./generative/generative-menu-switch";
@@ -234,8 +236,9 @@ const TailwindAdvancedEditor = ({
                         console.error(
                             "Editor still not available after timeout",
                         );
-                        alert(
-                            "Editor initialization is taking longer than expected. Please refresh the page and try again.",
+                        notifications.error(
+                            "Editor initialization failed",
+                            "Editor is taking too long to initialize. Please refresh the page and try again.",
                         );
                     }
                 }, 2000);
@@ -284,15 +287,19 @@ const TailwindAdvancedEditor = ({
                     "Error message:",
                     error instanceof Error ? error.message : String(error),
                 );
-                alert(
-                    `Failed to insert SOW content: ${error instanceof Error ? error.message : String(error)}`,
+                notifications.error(
+                    "Failed to insert SOW content",
+                    error instanceof Error ? error.message : String(error),
                 );
             }
         };
 
         const handleExportPDF = async () => {
             if (!editorRef.current) {
-                alert("Editor not ready");
+                notifications.error(
+                    "Editor not ready",
+                    "Please wait for the editor to fully load.",
+                );
                 return;
             }
 
@@ -365,7 +372,10 @@ const TailwindAdvancedEditor = ({
                     });
             } catch (error) {
                 console.error("PDF Export failed:", error);
-                alert("Failed to export PDF. Please try again.");
+                notifications.error(
+                    "PDF export failed",
+                    "Failed to export PDF. Please try again.",
+                );
             }
         };
 

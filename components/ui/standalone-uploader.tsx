@@ -9,7 +9,7 @@ import {
     Loader2,
     Paperclip,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, notifications } from "@/lib/utils";
 import { Tooltip } from "@/components/tambo/suggestions-tooltip";
 
 interface StandaloneUploaderProps {
@@ -46,12 +46,15 @@ export function StandaloneUploader({
         const validTypes = [".pdf", ".doc", ".docx"];
 
         if (!validTypes.includes(fileExt)) {
-            alert("Please upload PDF or Word documents only");
+            notifications.error(
+                "Invalid file type",
+                "Please upload PDF or Word documents only",
+            );
             return;
         }
 
         if (file.size > 10 * 1024 * 1024) {
-            alert("File is too large. Maximum size is 10MB");
+            notifications.error("File too large", "Maximum file size is 10MB");
             return;
         }
 
@@ -119,7 +122,7 @@ export function StandaloneUploader({
                     "Network error. Please check your internet connection and try again.";
             }
 
-            alert(userMessage);
+            notifications.error("Upload failed", userMessage);
             setUploadedFile(null);
         } finally {
             setIsUploading(false);

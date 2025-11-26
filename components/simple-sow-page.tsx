@@ -36,7 +36,12 @@ export const SimpleSOWPage = () => {
                         <div className="mt-8 flex justify-end">
                             <button
                                 className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium"
-                                onClick={() => alert("SOW Generation started with " + files.length + " files!")}
+                                onClick={() =>
+                                    notifications.success(
+                                        "SOW Generation Started",
+                                        `Started with ${files.length} file${files.length !== 1 ? "s" : ""}`,
+                                    )
+                                }
                             >
                                 Generate SOW
                                 <ArrowRight size={18} />

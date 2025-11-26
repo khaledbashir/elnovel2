@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import { Upload, File, X, FileText } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, notifications } from "@/lib/utils";
 
 export interface UploadedFile {
     id: string;
@@ -45,7 +45,10 @@ const FileUpload: React.FC<FileUploadProps> = ({
         const totalFiles = files.length + fileList.length;
 
         if (totalFiles > maxFiles) {
-            alert(`You can only upload a maximum of ${maxFiles} files.`);
+            notifications.error(
+                "Too many files",
+                `You can only upload a maximum of ${maxFiles} files.`,
+            );
             return;
         }
 
@@ -60,7 +63,8 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 };
                 newFiles.push(uploadedFile);
             } else {
-                alert(
+                notifications.error(
+                    "Invalid file type",
                     `${file.name} is not a supported file type. Please upload PDF or Word documents.`,
                 );
             }

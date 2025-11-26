@@ -257,12 +257,16 @@ export const suggestionItems = createSuggestionItems([
                     console.error(
                         "Table insertion failed - command returned false",
                     );
-                    alert("Failed to insert table. Check console for details.");
+                    notifications.error(
+                        "Table insertion failed",
+                        "Check console for more details.",
+                    );
                 }
             } catch (error) {
                 console.error("Error inserting table:", error);
-                alert(
-                    `Error inserting table: ${error instanceof Error ? error.message : String(error)}`,
+                notifications.error(
+                    "Error inserting table",
+                    error instanceof Error ? error.message : String(error),
                 );
             }
         },
@@ -311,7 +315,10 @@ export const suggestionItems = createSuggestionItems([
                     .run();
             } else {
                 if (videoLink !== null) {
-                    alert("Please enter a correct Youtube Video Link");
+                    notifications.error(
+                        "Invalid YouTube link",
+                        "Please enter a correct YouTube video link.",
+                    );
                 }
             }
         },
@@ -338,7 +345,10 @@ export const suggestionItems = createSuggestionItems([
                     .run();
             } else {
                 if (tweetLink !== null) {
-                    alert("Please enter a correct Twitter Link");
+                    notifications.error(
+                        "Invalid Twitter link",
+                        "Please enter a correct Twitter link.",
+                    );
                 }
             }
         },
