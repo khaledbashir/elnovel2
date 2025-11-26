@@ -56,6 +56,16 @@ export function insertSOWToEditor(editor: Editor, sowData: {
     chain.insertContent({ type: 'horizontalRule' });
     chain.insertContent({ type: 'paragraph' });
 
+    // Logo - Centered
+    chain.insertContent({
+        type: 'image',
+        attrs: {
+            src: '/images/logogreendark.png',
+            alt: 'Social Garden',
+            title: 'Social Garden'
+        }
+    });
+
     // Title
     chain.insertContent({ type: 'heading', attrs: { level: 1 }, content: [{ type: 'text', text: sowData.projectTitle }] });
     chain.insertContent({ type: 'paragraph', content: [{ type: 'text', marks: [{ type: 'bold' }], text: 'Client: ' }, { type: 'text', text: sowData.clientName }] });

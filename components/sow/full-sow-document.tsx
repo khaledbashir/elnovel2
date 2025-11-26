@@ -1139,9 +1139,9 @@ const FullSOWDocumentBase: React.FC<FullSOWProps> = ({
                 <div className="grid grid-cols-2 gap-3">
                     {/* Export to PDF Button */}
                     <button
-                        onClick={handleExportPDF}
+                        onClick={() => window.dispatchEvent(new CustomEvent('export-editor-pdf'))}
                         className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-600 text-white rounded-lg transition-all hover:shadow-lg text-base font-semibold"
-                        title="Export SOW to PDF"
+                        title="Export SOW to PDF from Editor"
                     >
                         <FileDown size={20} />
                         Export to PDF
