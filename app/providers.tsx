@@ -26,16 +26,16 @@ const ToasterProvider = () => {
 const TamboProviderWrapper = ({ children }: { children: ReactNode }) => {
   const config = React.useMemo(() => getTamboConfig(), []);
 
-  // Only render TamboProvider if API key and projectId are configured
-  if (!config.apiKey || !config.projectId) {
-    console.warn("Tambo provider not initialized - missing API key or project ID");
+  // Only render TamboProvider if API key is configured
+  // Note: projectId is handled internally by the SDK, not passed as a prop
+  if (!config.apiKey) {
+    console.warn("Tambo provider not initialized - missing API key");
     return <>{children}</>;
   }
 
   return (
     <TamboProvider
       apiKey={config.apiKey}
-      projectId={config.projectId}
       tamboUrl={config.tamboUrl}
       components={config.components}
       tools={config.tools}
