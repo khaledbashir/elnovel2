@@ -320,21 +320,49 @@ const FullSOWDocumentBase: React.FC<FullSOWProps> = ({
     };
 
     // Export SOW to PDF using jsPDF
-    const handleExportPDF = () => {
+    const handleExportPDF = async () => {
         if (!scopes || scopes.length === 0) {
             alert('No SOW content to export yet!');
             return;
         }
 
         const doc = new jsPDF();
+        const logoUrl = '/images/logo-dark.png'; // Updated path based on user feedback
 
-        // Title
+        try {
+            // Helper to load image
+            const loadImage = (url: string): Promise<HTMLImageElement> => {
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.src = url;
+                    img.onload = () => resolve(img);
+                    img.onerror = reject;
+                });
+            };
+
+            // Try to load logo
+            try {
+                const img = await loadImage(logoUrl);
+                // Add logo (width: 40mm, aspect ratio preserved)
+                const imgWidth = 40;
+                const imgHeight = (img.height * imgWidth) / img.width;
+                doc.addImage(img, 'PNG', 14, 10, imgWidth, imgHeight);
+            } catch (e) {
+                console.warn('Logo not found, skipping');
+            }
+        } catch (error) {
+            console.error('Error loading logo:', error);
+        }
+
+        // Title (adjusted Y position if logo exists or not, but fixed for now)
         doc.setFontSize(20);
-        doc.text(projectTitle, 14, 20);
+        doc.setFont('helvetica', 'bold');
+        doc.text(projectTitle, 14, 35); // Moved down to make room for logo
         doc.setFontSize(12);
-        doc.text(`Client: ${clientName}`, 14, 30);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Client: ${clientName}`, 14, 42);
 
-        let yPosition = 40;
+        let yPosition = 55; // Start content lower
 
         // Process each scope
         scopes.forEach((scope, scopeIndex) => {

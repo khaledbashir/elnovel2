@@ -286,7 +286,7 @@ const TailwindAdvancedEditor = ({
                         handleDrop: (view, event, _slice, moved) =>
                             handleImageDrop(view, event, moved, uploadFn),
                         attributes: {
-                            class: "prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full",
+                            class: "prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full prose-a:text-sg-green hover:prose-a:text-sg-green-hover prose-blockquote:border-sg-green prose-strong:text-foreground prose-headings:text-foreground prose-p:text-foreground dark:prose-p:text-foreground",
                         },
                     }}
                     onUpdate={({ editor }) => {
@@ -306,7 +306,7 @@ const TailwindAdvancedEditor = ({
                             {suggestionItems.map((item) => (
                                 <EditorCommandItem
                                     value={item.title}
-                                    onCommand={item.command ?? (() => {})}
+                                    onCommand={item.command ?? (() => { })}
                                     className="flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-accent aria-selected:bg-accent"
                                     key={item.title}
                                 >
