@@ -64,47 +64,6 @@ export async function insertSOWToEditor(
         // Now focus the end, which should be the new paragraph we just added
         editor.commands.focus("end");
 
-        // Add a spacer paragraph to ensure separation from previous content
-        editor
-            .chain()
-            .focus("end")
-            .insertContent({ type: "horizontalRule" })
-            .run();
-        editor.chain().focus("end").insertContent({ type: "paragraph" }).run();
-
-        // Insert logo at the very beginning - fetch and convert to base64
-        console.log("Fetching and inserting logo...");
-        try {
-            const response = await fetch("/images/logogreendark.png");
-            const blob = await response.blob();
-            const reader = new FileReader();
-
-            const base64Promise = new Promise<string>((resolve) => {
-                reader.onloadend = () => resolve(reader.result as string);
-                reader.readAsDataURL(blob);
-            });
-
-            const base64Url = await base64Promise;
-
-            const logoInserted = editor
-                .chain()
-                .insertContentAt(0, {
-                    type: "image",
-                    attrs: {
-                        src: base64Url,
-                        alt: "Social Garden",
-                        title: "Social Garden",
-                    },
-                })
-                .insertContentAt(1, { type: "paragraph" })
-                .run();
-            console.log("Logo inserted:", logoInserted);
-        } catch (logoError) {
-            console.error("Failed to insert logo:", logoError);
-        }
-
-        editor.commands.focus("end");
-
         // Start a new chain for the rest of the content
         const chain = editor.chain().focus("end");
 
@@ -121,7 +80,6 @@ export async function insertSOWToEditor(
                 { type: "text", text: sowData.clientName },
             ],
         });
-        chain.insertContent({ type: "horizontalRule" });
 
         // Each Scope
         sowData.scopes.forEach((scope, scopeIndex) => {
@@ -511,32 +469,6 @@ export async function insertSOWToEditor(
                 type: "paragraph",
                 content: [{ type: "text", text: sowData.budgetNotes }],
             });
-        }
-
-        // Footer - insert Pattern 2.jpg as base64
-        console.log("Inserting footer image...");
-        try {
-            const footerResponse = await fetch("/Pattern 2.jpg");
-            const footerBlob = await footerResponse.blob();
-            const footerReader = new FileReader();
-
-            const footerBase64 = await new Promise<string>((resolve) => {
-                footerReader.onloadend = () =>
-                    resolve(footerReader.result as string);
-                footerReader.readAsDataURL(footerBlob);
-            });
-
-            chain.insertContent({ type: "horizontalRule" });
-            chain.insertContent({
-                type: "image",
-                attrs: {
-                    src: footerBase64,
-                    alt: "Footer Pattern",
-                },
-            });
-            console.log("Footer image inserted");
-        } catch (footerError) {
-            console.error("Failed to insert footer:", footerError);
         }
 
         // Execute all commands

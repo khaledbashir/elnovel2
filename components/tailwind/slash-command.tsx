@@ -23,6 +23,84 @@ import { Command, createSuggestionItems, renderItems } from "novel";
 import { uploadFn } from "./image-upload";
 import Magic from "./ui/icons/magic";
 import { notifications } from "@/lib/utils";
+import { InputDialog } from "./ui/input-dialog";
+import { useState } from "react";
+
+// State management for dialogs
+let setYoutubeDialogOpen: ((open: boolean) => void) | null = null;
+let setTwitterDialogOpen: ((open: boolean) => void) | null = null;
+let currentEditor: any = null;
+let currentRange: any = null;
+
+export function SlashCommandDialogs() {
+    const [youtubeOpen, setYoutubeOpen] = useState(false);
+    const [twitterOpen, setTwitterOpen] = useState(false);
+
+    // Expose setters globally
+    setYoutubeDialogOpen = setYoutubeOpen;
+    setTwitterDialogOpen = setTwitterOpen;
+
+    return (
+        <>
+            <InputDialog
+                open={youtubeOpen}
+                onOpenChange={setYoutubeOpen}
+                title="Embed YouTube Video"
+                description="Enter a YouTube video URL"
+                placeholder="https://www.youtube.com/watch?v=..."
+                onSubmit={(videoLink) => {
+                    const ytregex = new RegExp(
+                        /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)?([\w\-]+)(\S+)?$/,
+                    );
+
+                    if (videoLink && ytregex.test(videoLink)) {
+                        currentEditor
+                            ?.chain()
+                            .focus()
+                            .deleteRange(currentRange)
+                            .setYoutubeVideo({
+                                src: videoLink,
+                            })
+                            .run();
+                    } else {
+                        notifications.error(
+                            "Invalid YouTube link",
+                            "Please enter a correct YouTube video link.",
+                        );
+                    }
+                }}
+            />
+            <InputDialog
+                open={twitterOpen}
+                onOpenChange={setTwitterOpen}
+                title="Embed Tweet"
+                description="Enter a Twitter/X post URL"
+                placeholder="https://x.com/username/status/..."
+                onSubmit={(tweetLink) => {
+                    const tweetRegex = new RegExp(
+                        /^https?:\/\/(www\.)?(x\.com|twitter\.com)\/([a-zA-Z0-9_]{1,15})(\/status\/(\d+))?(\/\S*)?$/,
+                    );
+
+                    if (tweetLink && tweetRegex.test(tweetLink)) {
+                        currentEditor
+                            ?.chain()
+                            .focus()
+                            .deleteRange(currentRange)
+                            .setTweet({
+                                src: tweetLink,
+                            })
+                            .run();
+                    } else {
+                        notifications.error(
+                            "Invalid Twitter link",
+                            "Please enter a correct Twitter/X link.",
+                        );
+                    }
+                }}
+            />
+        </>
+    );
+}
 
 const dispatchOpenAI = (detail: Record<string, any>) =>
     Promise.resolve().then(() =>
@@ -299,29 +377,10 @@ export const suggestionItems = createSuggestionItems([
         searchTerms: ["video", "youtube", "embed"],
         icon: <Youtube size={18} />,
         command: ({ editor, range }) => {
-            const videoLink = prompt("Please enter Youtube Video Link");
-            //From https://regexr.com/3dj5t
-            const ytregex = new RegExp(
-                /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/,
-            );
-
-            if (videoLink && ytregex.test(videoLink)) {
-                editor
-                    .chain()
-                    .focus()
-                    .deleteRange(range)
-                    .setYoutubeVideo({
-                        src: videoLink,
-                    })
-                    .run();
-            } else {
-                if (videoLink !== null) {
-                    notifications.error(
-                        "Invalid YouTube link",
-                        "Please enter a correct YouTube video link.",
-                    );
-                }
-            }
+            editor.chain().focus().deleteRange(range).run();
+            currentEditor = editor;
+            currentRange = range;
+            setYoutubeDialogOpen?.(true);
         },
     },
     {
@@ -330,28 +389,10 @@ export const suggestionItems = createSuggestionItems([
         searchTerms: ["twitter", "embed"],
         icon: <Twitter size={18} />,
         command: ({ editor, range }) => {
-            const tweetLink = prompt("Please enter Twitter Link");
-            const tweetRegex = new RegExp(
-                /^https?:\/\/(www\.)?x\.com\/([a-zA-Z0-9_]{1,15})(\/status\/(\d+))?(\/\S*)?$/,
-            );
-
-            if (tweetLink && tweetRegex.test(tweetLink)) {
-                editor
-                    .chain()
-                    .focus()
-                    .deleteRange(range)
-                    .setTweet({
-                        src: tweetLink,
-                    })
-                    .run();
-            } else {
-                if (tweetLink !== null) {
-                    notifications.error(
-                        "Invalid Twitter link",
-                        "Please enter a correct Twitter link.",
-                    );
-                }
-            }
+            editor.chain().focus().deleteRange(range).run();
+            currentEditor = editor;
+            currentRange = range;
+            setTwitterDialogOpen?.(true);
         },
     },
 ]);

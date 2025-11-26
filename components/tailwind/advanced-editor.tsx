@@ -29,7 +29,7 @@ import GenerativeMenuSwitch from "./generative/generative-menu-switch";
 import { uploadFn } from "./image-upload";
 import { TextButtons } from "./selectors/text-buttons";
 import { TableSelector } from "./selectors/table-selector";
-import { slashCommand, suggestionItems } from "./slash-command";
+import { slashCommand, suggestionItems, SlashCommandDialogs } from "./slash-command";
 import Magic from "./ui/icons/magic";
 import { AISelector } from "./generative/ai-selector";
 import { removeAIHighlight } from "novel";
@@ -391,6 +391,7 @@ const TailwindAdvancedEditor = ({
 
     return (
         <div className="relative w-full h-full flex flex-col overflow-hidden">
+            <SlashCommandDialogs />
             <EditorRoot>
                 <div className="sticky top-0 z-50 w-full bg-background border-b border-border px-3 py-2 flex items-center gap-2 flex-shrink-0 shadow-sm">
                     <NodeSelector open={openNode} onOpenChange={setOpenNode} />
