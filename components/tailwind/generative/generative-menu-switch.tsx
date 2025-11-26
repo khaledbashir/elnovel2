@@ -35,7 +35,7 @@ const GenerativeMenuSwitch = ({ children, open, onOpenChange }: GenerativeMenuSw
               onClick={() => onOpenChange(true)}
               size="sm"
             >
-              <Magic className="h-5 w-5" />
+              <Magic className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
               Ask AI
             </Button>
             {children}
