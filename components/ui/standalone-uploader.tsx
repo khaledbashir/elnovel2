@@ -49,14 +49,27 @@ export function StandaloneUploader({ variant = "dropzone", className }: Standalo
             const formData = new FormData();
             formData.append("file", file);
 
+            console.log("Uploading file to API...");
+
             const response = await fetch("/api/ingest-brief", {
                 method: "POST",
                 body: formData,
             });
 
+            console.log("API response status:", response.status);
+            console.log("API response ok:", response.ok);
+
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || "Upload failed");
+                let errorMessage = "Upload failed";
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.error || errorMessage;
+                    console.error("API error response:", errorData);
+                } catch (e) {
+                    console.error("Failed to parse error response:", e);
+                    errorMessage = `Upload failed with status ${response.status}`;
+                }
+                throw new Error(errorMessage);
             }
 
             const result = await response.json();
@@ -84,8 +97,17 @@ export function StandaloneUploader({ variant = "dropzone", className }: Standalo
 
         } catch (error: any) {
             console.error("Upload error:", error);
-            alert(error.message || "Failed to upload document");
+            console.error("Error stack:", error.stack);
+
+            // Provide more user-friendly error messages
+            let userMessage = error.message || "Failed to upload document";
+            if (error.message.includes("Failed to fetch")) {
+                userMessage = "Network error. Please check your internet connection and try again.";
+            }
+
+            alert(userMessage);
             setUploadedFile(null);
+        }
         } finally {
             setIsUploading(false);
             if (fileInputRef.current) {
