@@ -203,8 +203,42 @@ const TailwindAdvancedEditor = ({
 
             // Check if editor is available
             if (!editorRef.current) {
-                console.error("Editor not available");
-                alert("Editor not ready. Please try again.");
+                console.error(
+                    "Editor not available - waiting for initialization",
+                );
+                // Wait a moment and try again
+                setTimeout(() => {
+                    if (editorRef.current) {
+                        // Retry the insertSOW operation
+                        insertSOW(editorRef.current, {
+                            sowType,
+                            clientName,
+                            projectName,
+                            projectScope,
+                            deliverables,
+                            timeline,
+                            pricing,
+                            assumptions,
+                            exclusions,
+                            changeRequests,
+                            paymentTerms,
+                            acceptanceCriteria,
+                            teamResources,
+                            projectManager,
+                            projectLead,
+                            businessAnalyst,
+                            budgetNotes,
+                            discount,
+                        });
+                    } else {
+                        console.error(
+                            "Editor still not available after timeout",
+                        );
+                        alert(
+                            "Editor initialization is taking longer than expected. Please refresh the page and try again.",
+                        );
+                    }
+                }, 2000);
                 return;
             }
 
@@ -234,17 +268,25 @@ const TailwindAdvancedEditor = ({
                     discount,
                 };
 
-                console.log('Inserting SOW data:', sowData);
+                console.log("Inserting SOW data:", sowData);
 
                 // Use the proper insertSOWToEditor function
                 insertSOWToEditor(editorRef.current, sowData);
 
-                console.log('SOW insertion completed successfully');
+                console.log("SOW insertion completed successfully");
             } catch (error) {
                 console.error("Error inserting SOW content:", error);
-                console.error("Error stack:", error instanceof Error ? error.stack : 'No stack trace');
-                console.error("Error message:", error instanceof Error ? error.message : String(error));
-                alert(`Failed to insert SOW content: ${error instanceof Error ? error.message : String(error)}`);
+                console.error(
+                    "Error stack:",
+                    error instanceof Error ? error.stack : "No stack trace",
+                );
+                console.error(
+                    "Error message:",
+                    error instanceof Error ? error.message : String(error),
+                );
+                alert(
+                    `Failed to insert SOW content: ${error instanceof Error ? error.message : String(error)}`,
+                );
             }
         };
 
@@ -392,7 +434,12 @@ const TailwindAdvancedEditor = ({
                                 handlePaste: (view, event) =>
                                     handleImagePaste(view, event, uploadFn),
                                 handleDrop: (view, event, _slice, moved) =>
-                                    handleImageDrop(view, event, moved, uploadFn),
+                                    handleImageDrop(
+                                        view,
+                                        event,
+                                        moved,
+                                        uploadFn,
+                                    ),
                                 attributes: {
                                     class: `prose prose-lg dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full prose-a:text-sg-green hover:prose-a:text-sg-green-hover prose-blockquote:border-sg-green prose-strong:text-foreground prose-headings:text-foreground prose-p:text-foreground dark:prose-p:text-foreground`,
                                 },
@@ -412,12 +459,19 @@ const TailwindAdvancedEditor = ({
                                         <EditorCommandItem
                                             value={item.title}
                                             onCommand={() => {
-                                                if (item.command && editorRef.current) {
+                                                if (
+                                                    item.command &&
+                                                    editorRef.current
+                                                ) {
                                                     item.command({
                                                         editor: editorRef.current,
                                                         range: {
-                                                            from: editorRef.current.state.selection.from,
-                                                            to: editorRef.current.state.selection.to,
+                                                            from: editorRef
+                                                                .current.state
+                                                                .selection.from,
+                                                            to: editorRef
+                                                                .current.state
+                                                                .selection.to,
                                                         },
                                                     });
                                                 }
@@ -445,25 +499,40 @@ const TailwindAdvancedEditor = ({
                                     placement: "top",
                                     onHidden: () => {
                                         setOpenAI(false);
-                                        editorRef.current?.chain().unsetHighlight().run();
+                                        editorRef.current
+                                            ?.chain()
+                                            .unsetHighlight()
+                                            .run();
                                     },
                                 }}
                                 className="flex w-fit max-w-[90vw] overflow-hidden rounded-md border border-muted bg-background shadow-xl"
                             >
                                 {openAI ? (
-                                    <AISelector open={openAI} onOpenChange={setOpenAI} />
+                                    <AISelector
+                                        open={openAI}
+                                        onOpenChange={setOpenAI}
+                                    />
                                 ) : (
                                     <>
                                         <Separator orientation="vertical" />
-                                        <NodeSelector open={openNode} onOpenChange={setOpenNode} />
+                                        <NodeSelector
+                                            open={openNode}
+                                            onOpenChange={setOpenNode}
+                                        />
                                         <Separator orientation="vertical" />
-                                        <LinkSelector open={openLink} onOpenChange={setOpenLink} />
+                                        <LinkSelector
+                                            open={openLink}
+                                            onOpenChange={setOpenLink}
+                                        />
                                         <Separator orientation="vertical" />
                                         <TextButtons />
                                         <Separator orientation="vertical" />
                                         <TableSelector />
                                         <Separator orientation="vertical" />
-                                        <ColorSelector open={openColor} onOpenChange={setOpenColor} />
+                                        <ColorSelector
+                                            open={openColor}
+                                            onOpenChange={setOpenColor}
+                                        />
                                         <Separator orientation="vertical" />
                                         <button
                                             onClick={() => setOpenAI(true)}
