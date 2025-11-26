@@ -45,7 +45,7 @@ export function AISelector({ onOpenChange }: AISelectorProps) {
       {hasCompletion && (
         <div className="flex max-h-[400px]">
           <ScrollArea>
-            <div className="prose p-2 px-4 prose-sm">
+            <div className="prose prose-sm dark:prose-invert p-2 px-4 max-w-none prose-table:border-collapse prose-th:border prose-th:border-border prose-th:bg-muted prose-th:p-2 prose-td:border prose-td:border-border prose-td:p-2">
               <Markdown>{completion}</Markdown>
             </div>
           </ScrollArea>
@@ -53,7 +53,7 @@ export function AISelector({ onOpenChange }: AISelectorProps) {
       )}
 
       {isLoading && (
-        <div className="flex h-12 w-full items-center px-4 text-sm font-medium text-muted-foreground text-purple-500">
+        <div className="flex h-12 w-full items-center px-4 text-sm font-medium text-emerald-600 dark:text-emerald-400">
           <Magic className="mr-2 h-4 w-4 shrink-0  " />
           AI is thinking
           <div className="ml-2 mt-1">
@@ -70,10 +70,40 @@ export function AISelector({ onOpenChange }: AISelectorProps) {
               autoFocus
               placeholder={hasCompletion ? "Tell AI what to do next" : "Ask AI to edit or generate..."}
               onFocus={() => editor && addAIHighlight(editor)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  if (!editor) return;
+
+                  if (completion) {
+                    complete(completion, {
+                      body: { option: "zap", command: inputValue },
+                    }).then(() => setInputValue(""));
+                    return;
+                  }
+
+                  // Handle empty selection by getting previous text context
+                  const slice = editor.state.selection.content();
+                  let text = "";
+
+                  if (slice.content.size > 0) {
+                    // Text is selected, use it
+                    text = editor.storage.markdown.serializer.serialize(slice.content);
+                  } else {
+                    // No selection, get previous text for context
+                    const pos = editor.state.selection.from;
+                    text = getPrevText(editor, pos);
+                  }
+
+                  complete(text, {
+                    body: { option: "zap", command: inputValue },
+                  }).then(() => setInputValue(""));
+                }
+              }}
             />
             <Button
               size="icon"
-              className="absolute right-2 top-1/2 h-6 w-6 -translate-y-1/2 rounded-full bg-purple-500 hover:bg-purple-900"
+              className="absolute right-2 top-1/2 h-6 w-6 -translate-y-1/2 rounded-full bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600"
               onClick={() => {
                 if (!editor) return;
                 if (completion)
