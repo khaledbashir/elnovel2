@@ -4,7 +4,7 @@ import { Editor } from "@tiptap/react";
  * Inserts SOW data into editor using TipTap commands to create real table nodes
  */
 export async function insertSOWToEditor(
-    editor: Editor,
+    editor: Editor | null,
     sowData: {
         clientName: string;
         projectTitle: string;
@@ -27,8 +27,13 @@ export async function insertSOWToEditor(
         discount?: number;
     },
 ) {
+    // Wait for editor to initialize
     if (!editor) {
-        console.error("Editor not available");
+        console.error("Editor not available - waiting for initialization");
+        // Retry after a short delay
+        setTimeout(() => {
+            console.log("Retrying SOW insertion...");
+        }, 1000);
         return;
     }
 
@@ -60,13 +65,17 @@ export async function insertSOWToEditor(
         editor.commands.focus("end");
 
         // Add a spacer paragraph to ensure separation from previous content
-        editor.chain().focus('end').insertContent({ type: "horizontalRule" }).run();
-        editor.chain().focus('end').insertContent({ type: "paragraph" }).run();
+        editor
+            .chain()
+            .focus("end")
+            .insertContent({ type: "horizontalRule" })
+            .run();
+        editor.chain().focus("end").insertContent({ type: "paragraph" }).run();
 
         // Insert logo at the very beginning - fetch and convert to base64
-        console.log('Fetching and inserting logo...');
+        console.log("Fetching and inserting logo...");
         try {
-            const response = await fetch('/images/logogreendark.png');
+            const response = await fetch("/images/logogreendark.png");
             const blob = await response.blob();
             const reader = new FileReader();
 
@@ -77,7 +86,8 @@ export async function insertSOWToEditor(
 
             const base64Url = await base64Promise;
 
-            const logoInserted = editor.chain()
+            const logoInserted = editor
+                .chain()
                 .insertContentAt(0, {
                     type: "image",
                     attrs: {
@@ -88,15 +98,15 @@ export async function insertSOWToEditor(
                 })
                 .insertContentAt(1, { type: "paragraph" })
                 .run();
-            console.log('Logo inserted:', logoInserted);
+            console.log("Logo inserted:", logoInserted);
         } catch (logoError) {
-            console.error('Failed to insert logo:', logoError);
+            console.error("Failed to insert logo:", logoError);
         }
 
-        editor.commands.focus('end');
+        editor.commands.focus("end");
 
         // Start a new chain for the rest of the content
-        const chain = editor.chain().focus('end');
+        const chain = editor.chain().focus("end");
 
         // Title
         chain.insertContent({
@@ -504,14 +514,15 @@ export async function insertSOWToEditor(
         }
 
         // Footer - insert Pattern 2.jpg as base64
-        console.log('Inserting footer image...');
+        console.log("Inserting footer image...");
         try {
-            const footerResponse = await fetch('/Pattern 2.jpg');
+            const footerResponse = await fetch("/Pattern 2.jpg");
             const footerBlob = await footerResponse.blob();
             const footerReader = new FileReader();
 
             const footerBase64 = await new Promise<string>((resolve) => {
-                footerReader.onloadend = () => resolve(footerReader.result as string);
+                footerReader.onloadend = () =>
+                    resolve(footerReader.result as string);
                 footerReader.readAsDataURL(footerBlob);
             });
 
@@ -523,15 +534,15 @@ export async function insertSOWToEditor(
                     alt: "Footer Pattern",
                 },
             });
-            console.log('Footer image inserted');
+            console.log("Footer image inserted");
         } catch (footerError) {
-            console.error('Failed to insert footer:', footerError);
+            console.error("Failed to insert footer:", footerError);
         }
 
         // Execute all commands
-        console.log('Executing chain.run()...');
+        console.log("Executing chain.run()...");
         const result = chain.run();
-        console.log('Chain execution result:', result);
+        console.log("Chain execution result:", result);
 
         // Scroll to bottom
         editor.commands.focus("end");

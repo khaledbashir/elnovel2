@@ -274,7 +274,22 @@ const TailwindAdvancedEditor = ({
                 console.log("Inserting SOW data:", sowData);
 
                 // Use the proper insertSOWToEditor function
-                insertSOWToEditor(editorRef.current, sowData);
+                // Check if editor is available before inserting
+                if (editorRef.current) {
+                    insertSOWToEditor(editorRef.current, sowData);
+                } else {
+                    console.error("Editor not initialized, cannot insert SOW");
+                    notifications.error(
+                        "Editor not ready",
+                        "Please wait for the editor to fully load before inserting content.",
+                    );
+                    // Wait a bit and retry
+                    setTimeout(() => {
+                        if (editorRef.current) {
+                            insertSOWToEditor(editorRef.current, sowData);
+                        }
+                    }, 2000);
+                }
 
                 console.log("SOW insertion completed successfully");
             } catch (error) {
