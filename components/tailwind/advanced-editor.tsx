@@ -250,21 +250,32 @@ const TailwindAdvancedEditor = ({
 
                 const element = editorRef.current.view.dom;
 
-                // Configure PDF options
-                const opt = {
-                    margin: [10, 10, 20, 10] as [
-                        number,
-                        number,
-                        number,
-                        number,
-                    ], // Top, Left, Bottom, Right (mm)
+                // Configure PDF options with explicit typing to prevent incremental errors
+                type Html2PdfOptions = {
+                    margin: [number, number, number, number];
+                    filename: string;
+                    image: { type: "jpeg" | "png" | "webp"; quality: number };
+                    html2canvas: {
+                        scale: number;
+                        useCORS: boolean;
+                        logging: boolean;
+                    };
+                    jsPDF: {
+                        unit: "mm";
+                        format: "a4" | "letter" | "legal" | "tabloid";
+                        orientation: "portrait" | "landscape";
+                    };
+                };
+
+                const opt: Html2PdfOptions = {
+                    margin: [10, 10, 20, 10], // Top, Left, Bottom, Right (mm)
                     filename: "SOW_Export.pdf",
-                    image: { type: "jpeg" as const, quality: 0.98 },
+                    image: { type: "jpeg", quality: 0.98 },
                     html2canvas: { scale: 2, useCORS: true, logging: false },
                     jsPDF: {
                         unit: "mm",
                         format: "a4",
-                        orientation: "portrait" as const,
+                        orientation: "portrait",
                     },
                 };
 
