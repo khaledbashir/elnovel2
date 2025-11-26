@@ -1,5 +1,5 @@
 .ProseMirror {
-  @apply p-4 sm:p-6;
+  @apply p-12 px-8 sm:px-12;
   max-width: none !important;
 }
 
