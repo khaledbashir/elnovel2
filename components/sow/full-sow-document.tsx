@@ -327,7 +327,7 @@ const FullSOWDocumentBase: React.FC<FullSOWProps> = ({
         }
 
         const doc = new jsPDF();
-        const logoUrl = '/images/logo-dark.png'; // Updated path based on user feedback
+        const logoUrl = '/images/logogreendark.png'; // Actual uploaded logo filename
 
         try {
             // Helper to load image
