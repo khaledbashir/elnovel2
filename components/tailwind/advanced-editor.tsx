@@ -259,7 +259,7 @@ const TailwindAdvancedEditor = ({
                         number,
                     ], // Top, Left, Bottom, Right (mm)
                     filename: "SOW_Export.pdf",
-                    image: { type: "jpeg", quality: 0.98 },
+                    image: { type: "jpeg" as const, quality: 0.98 },
                     html2canvas: { scale: 2, useCORS: true, logging: false },
                     jsPDF: {
                         unit: "mm",
