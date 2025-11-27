@@ -62,43 +62,39 @@ export function insertSOWToEditor(editor: Editor, sowData: {
         }).format(n);
 
     // Start building content using TipTap commands
-    // We use a single chain to ensure atomicity and prevent race conditions
-
-    // CRITICAL FIX: Ensure we are not inside a table by inserting a paragraph at the very end of the document
+    // We break the chain into smaller chunks to ensure proper rendering and avoid nested structures
     // editor.state.doc.content.size gives the position at the end of the document
     const endPos = editor.state.doc.content.size;
     editor.chain().insertContentAt(endPos, { type: 'paragraph' }).run();
-
+    
     // Now focus the end, which should be the new paragraph we just added
     editor.commands.focus('end');
 
-    // Start a new chain for the rest of the content
-    const chain = editor.chain().focus('end');
-
     // Title
-    chain.insertContent({ type: 'heading', attrs: { level: 1 }, content: [{ type: 'text', text: sowData.projectTitle }] });
-    chain.insertContent({ type: 'paragraph', content: [{ type: 'text', marks: [{ type: 'bold' }], text: 'Client: ' }, { type: 'text', text: sowData.clientName }] });
+    editor.chain().focus('end').insertContent({ type: 'heading', attrs: { level: 1 }, content: [{ type: 'text', text: sowData.projectTitle }] }).run();
+    editor.chain().focus('end').insertContent({ type: 'paragraph', content: [{ type: 'text', marks: [{ type: 'bold' }], text: 'Client: ' }, { type: 'text', text: sowData.clientName }] }).run();
 
     // Each Scope
     sowData.scopes.forEach((scope, scopeIndex) => {
         // Scope heading
-        chain.insertContent({ type: 'heading', attrs: { level: 2 }, content: [{ type: 'text', text: 'Scope ' + (scopeIndex + 1) + ': ' + scope.title }] });
-        chain.insertContent({ type: 'paragraph', content: [{ type: 'text', marks: [{ type: 'italic' }], text: scope.description }] });
+        editor.chain().focus('end').insertContent({ type: 'heading', attrs: { level: 2 }, content: [{ type: 'text', text: 'Scope ' + (scopeIndex + 1) + ': ' + scope.title }] }).run();
+        editor.chain().focus('end').insertContent({ type: 'paragraph', content: [{ type: 'text', marks: [{ type: 'italic' }], text: scope.description }] }).run();
 
         // Deliverables
         if (scope.deliverables && scope.deliverables.length > 0) {
-            chain.insertContent({ type: 'heading', attrs: { level: 3 }, content: [{ type: 'text', text: 'Deliverables' }] });
+            editor.chain().focus('end').insertContent({ type: 'heading', attrs: { level: 3 }, content: [{ type: 'text', text: 'Deliverables' }] }).run();
 
             // Create bullet list
             const listItems = scope.deliverables.map(item => ({
                 type: 'listItem',
                 content: [{ type: 'paragraph', content: [{ type: 'text', text: item }] }]
             }));
-            chain.insertContent({ type: 'bulletList', content: listItems });
+            editor.chain().focus('end').insertContent({ type: 'bulletList', content: listItems }).run();
+            editor.chain().focus('end').insertContent({ type: 'paragraph' }).run(); // Add spacing
         }
 
         // Pricing Table
-        chain.insertContent({ type: 'heading', attrs: { level: 3 }, content: [{ type: 'text', text: 'Pricing' }] });
+        editor.chain().focus('end').insertContent({ type: 'heading', attrs: { level: 3 }, content: [{ type: 'text', text: 'Pricing' }] }).run();
 
         if (scope.roles && scope.roles.length > 0) {
             // Create table
@@ -132,63 +128,59 @@ export function insertSOWToEditor(editor: Editor, sowData: {
                 })
             ];
 
-            chain.insertContent({ type: 'table', content: tableRows });
-            chain.insertContent({ type: 'paragraph' }); // Empty paragraph after table
+            editor.chain().focus('end').insertContent({ type: 'table', content: tableRows }).run();
+            editor.chain().focus('end').insertContent({ type: 'paragraph' }).run(); // Empty paragraph after table
 
             // Scope total
             const scopeTotal = calculateScopeTotal(scope);
             const scopeGST = scopeTotal * 0.1;
             const scopeTotalWithGST = scopeTotal + scopeGST;
-            chain.insertContent({ type: 'paragraph', content: [{ type: 'text', marks: [{ type: 'bold' }], text: 'Scope Total: ' }, { type: 'text', text: `AUD $${formatAUD(scopeTotalWithGST)} (inc. GST)` }] });
+            editor.chain().focus('end').insertContent({ type: 'paragraph', content: [{ type: 'text', marks: [{ type: 'bold' }], text: 'Scope Total: ' }, { type: 'text', text: `AUD $${formatAUD(scopeTotalWithGST)} (inc. GST)` }] }).run();
         }
 
         // Assumptions
         if (scope.assumptions && scope.assumptions.length > 0) {
-            chain.insertContent({ type: 'heading', attrs: { level: 3 }, content: [{ type: 'text', text: 'Assumptions' }] });
+            editor.chain().focus('end').insertContent({ type: 'heading', attrs: { level: 3 }, content: [{ type: 'text', text: 'Assumptions' }] }).run();
 
             const assumptionItems = scope.assumptions.map(item => ({
                 type: 'listItem',
                 content: [{ type: 'paragraph', content: [{ type: 'text', text: item }] }]
             }));
-            chain.insertContent({ type: 'bulletList', content: assumptionItems });
+            editor.chain().focus('end').insertContent({ type: 'bulletList', content: assumptionItems }).run();
+            editor.chain().focus('end').insertContent({ type: 'paragraph' }).run(); // Add spacing
         }
 
         if (scopeIndex < sowData.scopes.length - 1) {
-            chain.insertContent({ type: 'horizontalRule' });
-            chain.insertContent({ type: 'paragraph' }); // Empty paragraph after separator
+            editor.chain().focus('end').insertContent({ type: 'horizontalRule' }).run();
+            editor.chain().focus('end').insertContent({ type: 'paragraph' }).run(); // Empty paragraph after separator
         }
     });
 
     // Financial Summary
-    chain.insertContent({ type: 'horizontalRule' });
-    chain.insertContent({ type: 'heading', attrs: { level: 2 }, content: [{ type: 'text', text: 'Financial Summary' }] });
-    chain.insertContent({ type: 'paragraph', content: [{ type: 'text', text: `Subtotal: AUD $${formatAUD(subtotal)}` }] });
+    editor.chain().focus('end').insertContent({ type: 'horizontalRule' }).run();
+    editor.chain().focus('end').insertContent({ type: 'heading', attrs: { level: 2 }, content: [{ type: 'text', text: 'Financial Summary' }] }).run();
+    editor.chain().focus('end').insertContent({ type: 'paragraph', content: [{ type: 'text', text: `Subtotal: AUD $${formatAUD(subtotal)}` }] }).run();
 
     if (sowData.discount && sowData.discount > 0) {
-        chain.insertContent({ type: 'paragraph', content: [{ type: 'text', text: `Discount (${sowData.discount}%): AUD -$${formatAUD(discountAmount)}` }] });
-        chain.insertContent({ type: 'paragraph', content: [{ type: 'text', text: `After Discount: AUD $${formatAUD(afterDiscount)}` }] });
+        editor.chain().focus('end').insertContent({ type: 'paragraph', content: [{ type: 'text', text: `Discount (${sowData.discount}%): AUD -$${formatAUD(discountAmount)}` }] }).run();
+        editor.chain().focus('end').insertContent({ type: 'paragraph', content: [{ type: 'text', text: `After Discount: AUD $${formatAUD(afterDiscount)}` }] }).run();
     }
 
-    chain.insertContent({ type: 'paragraph', content: [{ type: 'text', text: `GST (10%): AUD +$${formatAUD(gst)}` }] });
-    chain.insertContent({ type: 'paragraph', content: [{ type: 'text', marks: [{ type: 'bold' }], text: 'Grand Total: ' }, { type: 'text', text: `AUD $${formatAUD(total)}` }] });
+    editor.chain().focus('end').insertContent({ type: 'paragraph', content: [{ type: 'text', text: `GST (10%): AUD +$${formatAUD(gst)}` }] }).run();
+    editor.chain().focus('end').insertContent({ type: 'paragraph', content: [{ type: 'text', marks: [{ type: 'bold' }], text: 'Grand Total: ' }, { type: 'text', text: `AUD $${formatAUD(total)}` }] }).run();
 
     // Project Overview
     if (sowData.projectOverview) {
-        chain.insertContent({ type: 'horizontalRule' });
-        chain.insertContent({ type: 'heading', attrs: { level: 2 }, content: [{ type: 'text', text: 'Project Overview' }] });
-        chain.insertContent({ type: 'paragraph', content: [{ type: 'text', text: sowData.projectOverview }] });
+        editor.chain().focus('end').insertContent({ type: 'horizontalRule' }).run();
+        editor.chain().focus('end').insertContent({ type: 'heading', attrs: { level: 2 }, content: [{ type: 'text', text: 'Project Overview' }] }).run();
+        editor.chain().focus('end').insertContent({ type: 'paragraph', content: [{ type: 'text', text: sowData.projectOverview }] }).run();
     }
 
     // Budget Notes
     if (sowData.budgetNotes) {
-        chain.insertContent({ type: 'heading', attrs: { level: 2 }, content: [{ type: 'text', text: 'Budget Notes' }] });
-        chain.insertContent({ type: 'paragraph', content: [{ type: 'text', text: sowData.budgetNotes }] });
+        editor.chain().focus('end').insertContent({ type: 'heading', attrs: { level: 2 }, content: [{ type: 'text', text: 'Budget Notes' }] }).run();
+        editor.chain().focus('end').insertContent({ type: 'paragraph', content: [{ type: 'text', text: sowData.budgetNotes }] }).run();
     }
-
-    // Execute all commands
-    console.log('Executing chain.run()...');
-    const result = chain.run();
-    console.log('Chain execution result:', result);
 
     // Scroll to bottom
     editor.commands.focus('end');
