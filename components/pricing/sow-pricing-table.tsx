@@ -294,7 +294,7 @@ const SOWPricingTableBase: React.FC<SOWPricingProps> = ({
                                         value={row.description}
                                         onChange={(e) => updateRow(row.id, 'description', e.target.value)}
                                         placeholder="e.g., Backend development"
-                                        className="w-full px-3 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                                        className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                                     />
                                 </td>
                                 <td className="px-4 py-3">
@@ -304,7 +304,7 @@ const SOWPricingTableBase: React.FC<SOWPricingProps> = ({
                                         onChange={(e) => updateRow(row.id, 'hours', parseFloat(e.target.value) || 0)}
                                         min="0"
                                         step="0.5"
-                                        className="w-full px-3 py-2 border border-input rounded-md text-center bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                                        className="w-full px-3 py-2 border border-input rounded-md text-center bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                                     />
                                 </td>
                                 <td className="px-4 py-3">
@@ -313,7 +313,7 @@ const SOWPricingTableBase: React.FC<SOWPricingProps> = ({
                                         value={row.rate}
                                         onChange={(e) => updateRow(row.id, 'rate', parseFloat(e.target.value) || 0)}
                                         min="0"
-                                        className="w-full px-3 py-2 border border-input rounded-md text-center bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                                        className="w-full px-3 py-2 border border-input rounded-md text-center bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                                     />
                                 </td>
                                 <td className="px-4 py-3 text-right font-semibold text-foreground">
@@ -349,7 +349,7 @@ const SOWPricingTableBase: React.FC<SOWPricingProps> = ({
                                     onChange={(e) => setDiscount(Math.max(0, Math.min(100, parseFloat(e.target.value) || 0)))}
                                     min="0"
                                     max="100"
-                                    className="w-20 px-3 py-1 border border-input rounded-md text-right bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                                    className="w-20 px-3 py-1 border border-input rounded-md text-right bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                                 />
                             </div>
 

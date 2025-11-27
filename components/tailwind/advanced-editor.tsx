@@ -338,6 +338,26 @@ const TailwindAdvancedEditor = ({
                                     }
                                 });
                             }
+
+                            // CRITICAL: Force input values to appear in PDF
+                            // html2canvas sometimes ignores input values, so we explicitly set them
+                            const inputs = clonedDoc.querySelectorAll('input');
+                            inputs.forEach((input) => {
+                                const htmlInput = input as HTMLInputElement;
+                                // Force the value to appear as text for the PDF
+                                htmlInput.style.color = 'black';
+                                htmlInput.style.backgroundColor = 'white';
+                                // HTML2Canvas quirk: sometimes needs value explicitly set as attribute
+                                htmlInput.setAttribute('value', htmlInput.value || '');
+                            });
+
+                            // Also handle select/dropdown values
+                            const selects = clonedDoc.querySelectorAll('select');
+                            selects.forEach((select) => {
+                                const htmlSelect = select as HTMLSelectElement;
+                                htmlSelect.style.color = 'black';
+                                htmlSelect.style.backgroundColor = 'white';
+                            });
                         }
                     },
                     jsPDF: {
