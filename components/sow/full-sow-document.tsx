@@ -979,7 +979,7 @@ const FullSOWDocumentBase: React.FC<FullSOWProps> = ({
                                             <th className="px-4 py-3 text-left text-sm font-semibold text-white w-[400px] min-w-[400px]">
                                                 ITEMS
                                             </th>
-                                            <th className="px-4 py-3 text-left text-sm font-semibold text-white whitespace-nowrap">
+                                            <th className="px-4 py-3 text-left text-sm font-semibold text-white min-w-[300px]">
                                                 ROLE
                                             </th>
                                             <th className="px-4 py-3 text-center text-sm font-semibold text-white w-24 whitespace-nowrap">
