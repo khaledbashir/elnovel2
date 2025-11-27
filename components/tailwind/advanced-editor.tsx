@@ -276,66 +276,14 @@ const TailwindAdvancedEditor = ({
                 return;
             }
 
-            // Create temporary container for clean export
-            let tempContainer: HTMLDivElement | null = null;
-
             try {
                 // Dynamically import html2pdf to avoid SSR issues
                 const html2pdf = (await import("html2pdf.js")).default;
 
+                // Target the live editor element directly
                 const element = editorRef.current.view.dom;
 
-                // CLONE AND CLEAN STRATEGY: Force light mode for PDF export
-                // Create a deep clone of the editor content
-                const clone = element.cloneNode(true) as HTMLElement;
-
-                // Create temporary off-screen container
-                tempContainer = document.createElement("div");
-                tempContainer.style.position = "absolute";
-                tempContainer.style.left = "-9999px";
-                tempContainer.style.top = "0";
-                tempContainer.style.width = "210mm"; // A4 width
-                tempContainer.style.padding = "20px";
-
-                // Force light mode styling on the container
-                tempContainer.style.backgroundColor = "white";
-                tempContainer.style.color = "black";
-
-                // Append clone to temp container
-                tempContainer.appendChild(clone);
-
-                // Append temp container to body
-                document.body.appendChild(tempContainer);
-
-                // Force styles on the cloned content to ensure clean PDF
-                // Target the ProseMirror editor specifically
-                const proseMirrorClone = clone.querySelector(".ProseMirror") as HTMLElement;
-                if (proseMirrorClone) {
-                    proseMirrorClone.style.backgroundColor = "white";
-                    proseMirrorClone.style.color = "black";
-                }
-
-                // Force all text elements to black
-                clone.style.color = "black";
-                clone.style.backgroundColor = "white";
-
-                // Force table styling for clean output
-                const tables = clone.querySelectorAll("table");
-                tables.forEach((table) => {
-                    (table as HTMLElement).style.backgroundColor = "white";
-                    (table as HTMLElement).style.color = "black";
-                    (table as HTMLElement).style.borderColor = "#cccccc";
-                });
-
-                // Force all cells to have proper colors
-                const cells = clone.querySelectorAll("th, td");
-                cells.forEach((cell) => {
-                    (cell as HTMLElement).style.backgroundColor = "white";
-                    (cell as HTMLElement).style.color = "black";
-                    (cell as HTMLElement).style.borderColor = "#cccccc";
-                });
-
-                // Configure PDF options
+                // Configure PDF options with onclone callback for style overrides
                 type Html2PdfOptions = {
                     margin: [number, number, number, number];
                     filename: string;
@@ -345,6 +293,7 @@ const TailwindAdvancedEditor = ({
                         useCORS: boolean;
                         logging: boolean;
                         backgroundColor: string;
+                        onclone: (clonedDoc: Document) => void;
                     };
                     jsPDF: {
                         unit: "mm";
@@ -361,7 +310,35 @@ const TailwindAdvancedEditor = ({
                         scale: 2,
                         useCORS: true,
                         logging: false,
-                        backgroundColor: "#ffffff" // Force white background
+                        backgroundColor: "#ffffff", // Force white background
+                        onclone: (clonedDoc: Document) => {
+                            // Find the editor element in the cloned virtual DOM
+                            const editorElement = clonedDoc.querySelector('.ProseMirror') as HTMLElement;
+
+                            if (editorElement) {
+                                // Force light mode styling on the cloned editor
+                                editorElement.style.backgroundColor = 'white';
+                                editorElement.style.color = 'black';
+
+                                // Force all child elements to have black text and light borders
+                                const allElements = editorElement.querySelectorAll('*');
+                                allElements.forEach((el) => {
+                                    const htmlEl = el as HTMLElement;
+                                    htmlEl.style.color = 'black';
+                                    htmlEl.style.borderColor = '#e5e7eb'; // Light gray borders
+
+                                    // Force table cells to white background
+                                    if (htmlEl.tagName === 'TD' || htmlEl.tagName === 'TH') {
+                                        htmlEl.style.backgroundColor = 'white';
+                                    }
+
+                                    // Force table backgrounds
+                                    if (htmlEl.tagName === 'TABLE') {
+                                        htmlEl.style.backgroundColor = 'white';
+                                    }
+                                });
+                            }
+                        }
                     },
                     jsPDF: {
                         unit: "mm",
@@ -370,8 +347,8 @@ const TailwindAdvancedEditor = ({
                     },
                 };
 
-                // Use the cleaned clone for PDF generation
-                const worker = html2pdf().set(opt).from(tempContainer);
+                // Generate PDF from the live element (html2canvas will clone internally)
+                const worker = html2pdf().set(opt).from(element);
 
                 // Generate PDF with custom modifications
                 await worker
@@ -409,11 +386,6 @@ const TailwindAdvancedEditor = ({
                     "PDF export failed",
                     "Failed to export PDF. Please try again.",
                 );
-            } finally {
-                // Clean up: Remove temporary container from DOM
-                if (tempContainer && document.body.contains(tempContainer)) {
-                    document.body.removeChild(tempContainer);
-                }
             }
         };
 
