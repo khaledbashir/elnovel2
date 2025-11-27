@@ -409,8 +409,8 @@ const TailwindAdvancedEditor = ({
                         onOpenChange={setOpenColor}
                     />
                 </div>
-                <div className="flex-1 min-h-0 overflow-y-auto overflow-x-auto [scrollbar-gutter:stable]">
-                    <div className="w-full min-w-0 max-w-screen-lg mx-auto">
+                <div className="flex-1 min-h-0 overflow-y-auto overflow-x-auto [scrollbar-gutter:stable] p-4">
+                    <div className="w-full min-w-0 max-w-[900px] xl:max-w-[1200px] mx-auto bg-card p-6 md:p-12 rounded-lg border border-border shadow-sm">
                         <EditorContent
                             immediatelyRender={false}
                             initialContent={initialContent ?? undefined}
