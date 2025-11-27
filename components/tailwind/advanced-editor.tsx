@@ -409,13 +409,13 @@ const TailwindAdvancedEditor = ({
                         onOpenChange={setOpenColor}
                     />
                 </div>
-                <div className="flex-1 min-h-0 overflow-y-auto [scrollbar-gutter:stable]">
-                    <div className="w-full">
+                <div className="flex-1 min-h-0 overflow-y-auto [scrollbar-gutter:stable] flex justify-center">
+                    <div className="w-full max-w-screen-lg">
                         <EditorContent
                             immediatelyRender={false}
                             initialContent={initialContent ?? undefined}
                             extensions={extensions}
-                            className="block mx-auto w-full max-w-[1000px] min-h-[500px]"
+                            className="w-full min-h-[500px] px-4 sm:px-12 py-8"
                             onCreate={({ editor }) => {
                                 editorRef.current = editor;
                                 console.log("Editor initialized successfully");
