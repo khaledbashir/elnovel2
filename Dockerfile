@@ -13,6 +13,7 @@ RUN npm install -g pnpm
 COPY package.json pnpm-lock.yaml ./
 
 # Install dependencies
+    RUN pnpm config set store-dir /root/.local/share/pnpm/store
     RUN pnpm install --no-frozen-lockfile
     
     # Rebuild the source code only when needed
