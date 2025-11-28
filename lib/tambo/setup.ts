@@ -160,8 +160,10 @@ export const tamboContextHelpers = {
   userTime: currentTimeContextHelper,
   userPage: currentPageContextHelper,
 
-  // CRITICAL: Rate Card Context for SOW Generation
-  // This injects the Social Garden Rate Card into every AI request
+  // DISABLED: Rate Card Context for SOW Generation
+  // These context helpers were forcing the AI to talk about SOW
+  // Uncomment if you want SOW-specific features
+  /*
   rateCard: async () => {
     try {
       // Import rate card directly to avoid API/filesystem issues in Docker
@@ -198,6 +200,7 @@ export const tamboContextHelpers = {
       roundingTargets: [100, 1000, 5000],
     };
   },
+  */
 
   // Force English Language
   languageRule: () => {

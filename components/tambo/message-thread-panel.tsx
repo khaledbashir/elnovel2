@@ -20,6 +20,8 @@ import {
 } from "@/components/tambo/thread-content";
 import type { messageVariants } from "@/components/tambo/message";
 import { ScrollableMessageContainer } from "@/components/tambo/scrollable-message-container";
+import { AgentSelector } from "@/components/agents/agent-selector";
+import { AgentBuilder } from "@/components/agents/agent-builder";
 import { cn } from "@/lib/utils";
 import type { VariantProps } from "class-variance-authority";
 import * as React from "react";
@@ -35,8 +37,9 @@ export interface MessageThreadPanelProps
 export const MessageThreadPanel = React.forwardRef<
   HTMLDivElement,
   MessageThreadPanelProps
->(({ className, contextKey, variant, ...props }, ref) => {
+>((({ className, contextKey, variant, ...props }, ref) => {
   const { thread, isIdle } = useTambo();
+  const [showAgentBuilder, setShowAgentBuilder] = React.useState(false);
 
   // 🔍 DEBUG: Log thread state and reasoning data from Tambo
   React.useEffect(() => {
@@ -75,17 +78,21 @@ export const MessageThreadPanel = React.forwardRef<
   ];
 
   return (
-    <div
-      ref={ref}
-      className={cn("flex flex-col h-full bg-card", className)}
-      {...props}
-    >
-      {/* Messages Area */}
-      <ScrollableMessageContainer className="flex-1 min-h-0 p-4">
-        <ThreadContent variant={variant}>
-          <ThreadContentMessages />
-        </ThreadContent>
-      </ScrollableMessageContainer>
+    <>
+      <div
+        ref={ref}
+        className={cn("flex flex-col h-full bg-card", className)}
+        {...props}
+      >
+        {/* Agent Selector */}
+        <AgentSelector onManageAgents={() => setShowAgentBuilder(true)} />
+
+        {/* Messages Area */}
+        <ScrollableMessageContainer className="flex-1 min-h-0 p-4">
+          <ThreadContent variant={variant}>
+            <ThreadContentMessages />
+          </ThreadContent>
+        </ScrollableMessageContainer>
 
       {/* Suggestions */}
       <div className="px-4">
@@ -110,7 +117,14 @@ export const MessageThreadPanel = React.forwardRef<
         </MessageInput>
       </div>
     </div>
+
+    {/* Agent Builder Dialog */}
+    <AgentBuilder
+      open={showAgentBuilder}
+      onOpenChange={setShowAgentBuilder}
+    />
+  </>
   );
-});
+}));
 MessageThreadPanel.displayName = "MessageThreadPanel";
 
