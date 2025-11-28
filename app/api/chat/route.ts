@@ -1,4 +1,4 @@
-```
+
 import { openai } from '@ai-sdk/openai';
 import { streamText, convertToCoreMessages } from 'ai';
 import { query } from '@/lib/database';
@@ -9,9 +9,9 @@ import { z } from 'zod';
 const apiKey = "18f65090a96a425898a8398a5c4518ce.DDtUvTTnUmK020Wx";
 
 if (!apiKey) {
-  console.error("CRITICAL: No API Key found");
+    console.error("CRITICAL: No API Key found");
 } else {
-  console.log(`[Chat API] API Key found(Length: ${ apiKey.length })`);
+    console.log("Chat API: Key found, length:", apiKey.length);
 }
 
 const zai = openai('gpt-4o', {
@@ -22,13 +22,13 @@ const zai = openai('gpt-4o', {
 export async function POST(req: Request) {
     try {
         const { messages, id: threadId, system } = await req.json();
-        console.log(`[Chat API] Received request for thread ${ threadId }`);
+        console.log(`[Chat API] Received request for thread ${threadId}`);
 
         // 1. Ensure thread exists or create it
         try {
             const existingThread = await query('SELECT id FROM threads WHERE id = ?', [threadId]);
             if (!Array.isArray(existingThread) || existingThread.length === 0) {
-                console.log(`[Chat API] Creating new thread ${ threadId } `);
+                console.log(`[Chat API] Creating new thread ${threadId} `);
                 await query('INSERT INTO threads (id, title) VALUES (?, ?)', [threadId, messages[0].content.substring(0, 50)]);
             }
         } catch (dbError) {
