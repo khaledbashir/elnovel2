@@ -1,0 +1,3 @@
+[submodule "tambo-cloud"]
+	path = tambo-cloud
+	url = https://github.com/tambo-ai/tambo-cloud.git
