@@ -3,6 +3,7 @@ import { openai } from '@ai-sdk/openai';
 import { streamText, convertToCoreMessages } from 'ai';
 import { query } from '@/lib/database';
 import { v4 as uuidv4 } from 'uuid';
+import { z } from 'zod';
 
 // Configure OpenAI provider to use Z.AI
 const apiKey = "18f65090a96a425898a8398a5c4518ce.DDtUvTTnUmK020Wx";
@@ -54,15 +55,53 @@ export async function POST(req: Request) {
         const result = await streamText({
             model: zai,
             messages: convertToCoreMessages(messages),
-            system: system,
-            onFinish: async ({ text }) => {
-                console.log('[Chat API] LLM Finished. Saving response.');
+            system: system || `You are an advanced AI Agent.
+
+    WORKFLOW:
+1. When a user gives a complex task, FIRST call 'create_plan' to outline the steps.
+      2. As you execute, call 'update_step' to show progress.
+      3. Finally, call 'render_artifact' to show the result.
+      
+      Always be transparent about what you are doing.`,
+            tools: {
+                create_plan: {
+                    description: 'Create a visible plan of steps for the task',
+                    parameters: z.object({
+                        title: z.string(),
+                        steps: z.array(z.object({
+                            id: z.string(),
+                            label: z.string(),
+                        }))
+                    }),
+                },
+                update_step: {
+                    description: 'Update the status of a step',
+                    parameters: z.object({
+                        stepId: z.string(),
+                        status: z.enum(['pending', 'running', 'completed', 'failed']),
+                        details: z.string().optional(),
+                    }),
+                },
+                render_artifact: {
+                    description: 'Render the final interactive artifact (HTML/React)',
+                    parameters: z.object({
+                        title: z.string(),
+                        type: z.enum(['html', 'react', 'markdown']),
+                        content: z.string(),
+                    }),
+                },
+            },
+            onFinish: async ({ text, toolCalls }) => {
+                console.log('[Chat API] LLM Finished.');
+                // Save assistant message (text + tool calls)
+                // Note: For simplicity, we are saving just the text for now, 
+                // but a real implementation would save tool calls too.
                 try {
                     await query('INSERT INTO messages (id, thread_id, role, content) VALUES (?, ?, ?, ?)', [
                         uuidv4(),
                         threadId,
                         'assistant',
-                        text
+                        text || JSON.stringify(toolCalls) // Fallback if only tool calls
                     ]);
                 } catch (saveError) {
                     console.error('[Chat API] Failed to save assistant message:', saveError);
