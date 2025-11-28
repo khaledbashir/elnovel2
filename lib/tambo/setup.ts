@@ -215,9 +215,11 @@ export const tamboContextHelpers = {
  * Get configuration from environment variables
  */
 export function getTamboConfig() {
-  const apiKey = process.env.NEXT_PUBLIC_TAMBO_API_KEY;
+  // HARDCODED KEY FROM SCREENSHOT TO FIX "TOKEN EXPIRED" ERROR
+  const apiKey = "tambo_BAZaoNBh+R1jm35j++sSE/Gs03oR4xVHzcNSp5TWT4Vk1n8YZ0f1id5MaFeinbJcXkNT0hAwzudQX3og1vxQ0CxJH05DhBq0x5OCsV1HFXM";
+  
   const tamboUrl = process.env.NEXT_PUBLIC_TAMBO_URL || "https://api.tambo.co";
-  const projectId = process.env.NEXT_PUBLIC_TAMBO_PROJECT_ID;
+  const projectId = process.env.NEXT_PUBLIC_TAMBO_PROJECT_ID || "p_OKGBSNDp.60d984";
 
   if (!apiKey) {
     console.warn(
