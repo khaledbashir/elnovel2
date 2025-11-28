@@ -395,7 +395,7 @@ const FullSOWDocumentBase: React.FC<FullSOWProps> = ({
         const brandGreen: [number, number, number] = [0, 208, 132]; // #00D084
         const lightGray: [number, number, number] = [249, 250, 251]; // #F9FAFB
         const gray: [number, number, number] = [229, 231, 235]; // #E5E7EB
-        const logoUrl = "/images/logogreendark.png";
+        const logoUrl = "/images/logo.png";
 
         // Load Plus Jakarta Sans font
         try {

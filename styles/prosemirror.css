@@ -270,7 +270,7 @@ mark[style]>strong {
 }
 
 /* Center logo images */
-.ProseMirror img[src*="logogreendark"] {
+.ProseMirror img[src*="logo"] {
   display: block;
   margin-left: auto;
   margin-right: auto;
@@ -278,9 +278,7 @@ mark[style]>strong {
 }
 
 /* Invert logo in dark mode */
-:global(.dark) .ProseMirror img[src*="logogreendark"] {
-  filter: brightness(0) invert(1);
-}
+/* Logo is designed for both themes, no inversion needed */
 
 /* Prevent table page breaks and force full width */
 .ProseMirror table {

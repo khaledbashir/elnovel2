@@ -6,15 +6,16 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import Providers from "./providers";
 
-const title = "Social Garden SOW Generator";
+const title = "Papyrus - AI Document Platform";
 const description =
-  "Professional Scope of Work generator with AI-powered assistance. Built for Social Garden.";
+  "AI-powered document management platform blending ancient tradition with modern technology. Create, collaborate, and manage professional documents with intelligent assistance.";
 
 export const metadata: Metadata = {
   title,
   description,
   icons: {
-    icon: '/favicropped-Site-Icon-32x32.png',
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
   },
   openGraph: {
     title,
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     creator: "@steventey",
   },
-  metadataBase: new URL("https://novel.sh"),
+  metadataBase: new URL("https://papyrus.app"),
 };
 
 export const viewport: Viewport = {

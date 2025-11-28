@@ -16,7 +16,7 @@ The SOW editor now includes a **branded template system** that automatically app
 - Every inserted SOW document includes the Social Garden logo at the top
 - Logo is automatically centered
 - Maximum width: 200px for optimal display
-- Source: `/images/logogreendark.png`
+- Source: `/images/logo.png`
 
 ### 3. **Professional Footer**
 - Each document concludes with:
@@ -82,7 +82,7 @@ Edit `/styles/prosemirror.css`:
 ```
 
 ### Changing Logo
-1. Replace `/public/images/logogreendark.png` with your logo
+1. Replace `/public/images/logo.png` with your logo
 2. Or update the path in `/lib/editor/insert-sow.ts`:
 
 ```typescript

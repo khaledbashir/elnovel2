@@ -247,9 +247,9 @@ export function Sidebar({
                 <div className="p-6 border-b border-border/50 bg-gradient-to-r from-primary/5 to-primary/10">
                     <div className="flex items-center justify-center">
                         <img
-                            src="/images/footer-logo.svg"
+                            src="/images/logo.png"
                             alt="Logo"
-                            className="h-8 w-auto invert hue-rotate-180 dark:invert-0 dark:hue-rotate-0"
+                            className="h-8 w-auto"
                         />
                     </div>
                 </div>
