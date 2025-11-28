@@ -147,7 +147,7 @@ export async function POST(req: Request): Promise<Response> {
       presencePenalty: 0,
     });
 
-    return result.toDataStreamResponse();
+    return result.toTextStreamResponse();
   } catch (error: any) {
     console.error("Z.AI API Error:", error);
     console.error("Error details:", JSON.stringify(error, null, 2));

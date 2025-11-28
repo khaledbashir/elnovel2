@@ -39,8 +39,9 @@ export async function POST(request: NextRequest) {
                 .where(eq(agents.isDefault, true));
         }
 
-        const newAgent = await db.insert(agents).values({
-            id: nanoid(),
+        const id = nanoid();
+        await db.insert(agents).values({
+            id,
             name,
             description: description || null,
             systemInstructions,
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest) {
         });
 
         return NextResponse.json(
-            { message: "Agent created successfully", id: newAgent.insertId },
+            { message: "Agent created successfully", id },
             { status: 201 }
         );
     } catch (error) {

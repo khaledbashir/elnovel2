@@ -13,9 +13,9 @@ RUN npm install -g pnpm
 COPY package.json pnpm-lock.yaml ./
 
 # Install dependencies
-RUN pnpm install --frozen-lockfile
-
-# Rebuild the source code only when needed
+    RUN pnpm install --no-frozen-lockfile
+    
+    # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
@@ -25,7 +25,7 @@ COPY . .
 RUN npm install -g pnpm
 
 # Set environment variables for build
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # Build the application
 RUN pnpm build
@@ -34,8 +34,8 @@ RUN pnpm build
 FROM base AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
@@ -53,7 +53,7 @@ USER nextjs
 
 EXPOSE 3000
 
-ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
 CMD ["node", "server.js"]

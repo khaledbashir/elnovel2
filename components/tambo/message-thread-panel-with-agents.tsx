@@ -48,7 +48,7 @@ export const MessageThreadPanelWithAgents = React.forwardRef<
     HTMLDivElement,
     MessageThreadPanelWithAgentsProps
 >(({ className, contextKey, variant, showAgentSelector = true, ...props }, ref) => {
-    const { thread, isIdle, sendMessage } = useTambo();
+    const { thread, isIdle } = useTambo();
     const [selectedAgent, setSelectedAgent] = React.useState<Agent | null>(null);
     const [isBuilderOpen, setIsBuilderOpen] = React.useState(false);
 
@@ -126,10 +126,6 @@ export const MessageThreadPanelWithAgents = React.forwardRef<
                 <div className="flex-shrink-0 p-4 border-t border-border bg-background/50">
                     <MessageInput
                         contextKey={contextKey}
-                        initialMessages={selectedAgent ? [{
-                            role: "system",
-                            content: selectedAgent.systemInstructions,
-                        }] : undefined}
                     >
                         <div className="relative flex flex-col w-full overflow-hidden rounded-lg border bg-background shadow-sm">
                             <MessageInputTextarea placeholder="Type your message or paste images..." className="min-h-[60px] w-full resize-none border-0 bg-transparent p-4 pr-20 focus:ring-0 sm:text-sm" />
