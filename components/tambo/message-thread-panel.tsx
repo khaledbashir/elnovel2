@@ -92,27 +92,50 @@ export const MessageThreadPanel = React.forwardRef<
         {/* Agent Selector */}
         <AgentSelector
           onManageAgents={() => setShowAgentBuilder(true)}
-        // We need to update AgentSelector to pass system instructions back up
-        // For now, we assume it sets internal state, but we'll need to wire this up
         />
 
         {/* Messages Area */}
         <ScrollableMessageContainer className="flex-1 min-h-0 p-4">
-          <div className="flex flex-col space-y-4">
+          <div className="flex flex-col space-y-6 max-w-3xl mx-auto w-full">
             {messages.map((m) => (
-              <div key={m.id} className={cn("flex flex-col", m.role === "user" ? "items-end" : "items-start")}>
+              <div key={m.id} className={cn("flex gap-4", m.role === "user" ? "flex-row-reverse" : "flex-row")}>
+                {/* Avatar */}
                 <div className={cn(
-                  "max-w-[80%] rounded-lg p-3 text-sm",
-                  m.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted"
+                  "w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-medium border",
+                  m.role === "user" ? "bg-primary text-primary-foreground border-primary" : "bg-muted border-border"
                 )}>
-                  {m.content}
+                  {m.role === "user" ? "U" : "AI"}
+                </div>
+
+                {/* Message Bubble */}
+                <div className={cn(
+                  "flex flex-col gap-1 min-w-0 max-w-[85%]",
+                  m.role === "user" ? "items-end" : "items-start"
+                )}>
+                  <div className={cn(
+                    "rounded-2xl px-4 py-3 text-sm shadow-sm whitespace-pre-wrap leading-relaxed",
+                    m.role === "user"
+                      ? "bg-primary text-primary-foreground rounded-tr-sm"
+                      : "bg-card border border-border text-card-foreground rounded-tl-sm"
+                  )}>
+                    {m.content}
+                  </div>
+                  {/* Timestamp or Status (Optional) */}
+                  {/* <span className="text-[10px] text-muted-foreground opacity-50">Just now</span> */}
                 </div>
               </div>
             ))}
+
+            {/* Loading State */}
             {isLoading && (
-              <div className="flex items-start">
-                <div className="bg-muted max-w-[80%] rounded-lg p-3 text-sm animate-pulse">
-                  Thinking...
+              <div className="flex gap-4">
+                <div className="w-8 h-8 rounded-full bg-muted border border-border flex items-center justify-center flex-shrink-0 text-xs">AI</div>
+                <div className="flex flex-col gap-1 items-start">
+                  <div className="bg-card border border-border rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm flex items-center gap-2">
+                    <div className="w-2 h-2 bg-primary/50 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                    <div className="w-2 h-2 bg-primary/50 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                    <div className="w-2 h-2 bg-primary/50 rounded-full animate-bounce"></div>
+                  </div>
                 </div>
               </div>
             )}
@@ -121,16 +144,16 @@ export const MessageThreadPanel = React.forwardRef<
 
         {/* Suggestions */}
         {messages.length === 0 && (
-          <div className="px-4">
+          <div className="px-4 pb-4 max-w-3xl mx-auto w-full">
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
               {defaultSuggestions.map((s) => (
                 <button
                   key={s.id}
                   onClick={() => handleSuggestionClick(s.detailedSuggestion)}
-                  className="flex flex-col items-start p-3 space-y-1 text-left border rounded-lg hover:bg-accent transition-colors"
+                  className="flex flex-col items-start p-3 space-y-1 text-left border rounded-xl hover:bg-accent/50 transition-all duration-200 group"
                 >
-                  <span className="text-sm font-medium">{s.title}</span>
-                  <span className="text-xs text-muted-foreground">{s.detailedSuggestion}</span>
+                  <span className="text-sm font-medium group-hover:text-primary transition-colors">{s.title}</span>
+                  <span className="text-xs text-muted-foreground line-clamp-2">{s.detailedSuggestion}</span>
                 </button>
               ))}
             </div>
@@ -138,30 +161,40 @@ export const MessageThreadPanel = React.forwardRef<
         )}
 
         {/* Input Area */}
-        <div className="flex-shrink-0 p-4 border-t border-border bg-background/50">
-          <form onSubmit={handleSubmit} className="relative flex flex-col w-full overflow-hidden rounded-lg border bg-background shadow-sm">
-            <textarea
-              value={input}
-              onChange={handleInputChange}
-              placeholder="Type your message..."
-              className="min-h-[60px] w-full resize-none border-0 bg-transparent p-4 pr-20 focus:ring-0 sm:text-sm focus:outline-none"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSubmit(e as any);
-                }
-              }}
-            />
-            <div className="absolute bottom-2 right-2 flex items-center">
-              <button
-                type="submit"
-                disabled={isLoading || !input.trim()}
-                className="p-2 bg-primary text-primary-foreground rounded-md disabled:opacity-50"
-              >
-                Send
-              </button>
+        <div className="flex-shrink-0 p-4 border-t border-border bg-background/80 backdrop-blur-sm">
+          <div className="max-w-3xl mx-auto w-full">
+            <form onSubmit={handleSubmit} className="relative flex flex-col w-full overflow-hidden rounded-xl border bg-card shadow-sm focus-within:ring-1 focus-within:ring-primary/20 transition-all">
+              <textarea
+                value={input}
+                onChange={handleInputChange}
+                placeholder="Type your message..."
+                className="min-h-[60px] w-full resize-none border-0 bg-transparent p-4 pr-20 focus:ring-0 sm:text-sm focus:outline-none placeholder:text-muted-foreground/50"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmit(e as any);
+                  }
+                }}
+              />
+              <div className="absolute bottom-2 right-2 flex items-center gap-1">
+                {/* Placeholder for File Upload Button */}
+                <button type="button" className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={isLoading || !input.trim()}
+                  className="p-2 bg-primary text-primary-foreground rounded-lg disabled:opacity-50 hover:bg-primary/90 transition-all shadow-sm"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </button>
+              </div>
+            </form>
+            <div className="text-center mt-2">
+              <span className="text-[10px] text-muted-foreground/60">AI can make mistakes. Check important info.</span>
             </div>
-          </form>
+          </div>
         </div>
       </div>
 
