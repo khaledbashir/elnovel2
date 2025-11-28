@@ -31,21 +31,27 @@ export function AgentSelector({ onManageAgents }: AgentSelectorProps) {
       try {
         const res = await fetch("/api/agents");
         const data = await res.json();
-        setAgents(data);
+        
+        if (Array.isArray(data)) {
+          setAgents(data);
 
-        // Auto-select default agent
-        const defaultAgent = data.find((a: Agent) => a.is_default);
-        if (defaultAgent) {
-          setSelectedAgentId(defaultAgent.id);
-          // Start thread with default agent's system instructions
-          startNewThread?.({
-            initialMessages: [
-              {
-                role: "system",
-                content: defaultAgent.system_instructions,
-              },
-            ],
-          });
+          // Auto-select default agent
+          const defaultAgent = data.find((a: Agent) => a.is_default);
+          if (defaultAgent) {
+            setSelectedAgentId(defaultAgent.id);
+            // Start thread with default agent's system instructions
+            startNewThread?.({
+              initialMessages: [
+                {
+                  role: "system",
+                  content: defaultAgent.system_instructions,
+                },
+              ],
+            });
+          }
+        } else {
+          console.error("Failed to load agents:", data);
+          setAgents([]);
         }
       } catch (error) {
         console.error("Failed to load agents:", error);
