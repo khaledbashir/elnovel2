@@ -221,6 +221,8 @@ export function getTamboConfig() {
   const tamboUrl = process.env.NEXT_PUBLIC_TAMBO_URL || "https://api.tambo.co";
   const projectId = process.env.NEXT_PUBLIC_TAMBO_PROJECT_ID || "p_OKGBSNDp.60d984";
 
+  console.log("DEBUG: Tambo Config", { apiKey, projectId, tamboUrl });
+
   if (!apiKey) {
     console.warn(
       "Tambo API key not found. Please set NEXT_PUBLIC_TAMBO_API_KEY in your .env.local file."
