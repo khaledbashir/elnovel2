@@ -45,7 +45,6 @@ const nextConfig = {
             },
         ];
     },
-    },
     productionBrowserSourceMaps: false, // Disabled to save space
     eslint: {
         ignoreDuringBuilds: true, // Save resources
