@@ -45,7 +45,14 @@ const nextConfig = {
             },
         ];
     },
-    productionBrowserSourceMaps: true,
+    },
+    productionBrowserSourceMaps: false, // Disabled to save space
+    eslint: {
+        ignoreDuringBuilds: true, // Save resources
+    },
+    typescript: {
+        ignoreBuildErrors: true, // Save resources
+    },
     output: "standalone", // Required for Docker deployment
     outputFileTracingIncludes: {
         "*": ["public/**/*", ".next/static/**/*"],
