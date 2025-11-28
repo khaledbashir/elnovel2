@@ -1,4 +1,4 @@
-import { query, queryOne } from './database';
+import { query, queryOne } from '@/lib/database';
 
 export interface Agent {
     id: string;
