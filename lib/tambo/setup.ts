@@ -216,8 +216,8 @@ export const tamboContextHelpers = {
  */
 export function getTamboConfig() {
   // HARDCODED KEY FROM SCREENSHOT TO FIX "TOKEN EXPIRED" ERROR
-  const apiKey = "tambo_DwSK2fzKchJDYwLYSMs9+1Gg3Df/JKwZtN0jA1mjrUbe26b02SV7aDAJNa7aAtGaFMUNcdH/+wAEXcKRE5/zWJC+PgJXRVB9agpA/+02mKQ=";
-  
+  const apiKey = "tambo_Y/Pr5GxMogPQw/tCMGCFJHnNoyQXEELQTalRJ7yStLUIdY4POnTRLzWp0/7O78nJdJC5u6lxr8lsBveajyxTZmc3EaJdn1pEw9e+66wwEG4=";
+
   const tamboUrl = process.env.NEXT_PUBLIC_TAMBO_URL || "https://api.tambo.co";
   const projectId = process.env.NEXT_PUBLIC_TAMBO_PROJECT_ID || "p_OKGBSNDp.60d984";
 
