@@ -123,7 +123,7 @@ To ensure high-quality outputs, the application should encourage detailed prompt
 - [ ] Execute scaffolding.
 - [ ] Run initial test with `curl`.
 
-## 8. AI System Instructions (Non-Rendering Environments)
+## 9. AI System Instructions (Non-Rendering Environments)
 *Use this system prompt to configure the AI coder for stability in non-rendering environments.*
 
 > You are now operating in a system that requires specific response formatting to maintain stability and avoid errors. Please adhere to the following guidelines for all responses:

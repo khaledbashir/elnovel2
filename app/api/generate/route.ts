@@ -4,28 +4,25 @@ import { kv } from "@vercel/kv";
 import { streamText } from "ai";
 import { match } from "ts-pattern";
 
-// IMPORTANT! Set the runtime to edge: https://vercel.com/docs/functions/edge-functions/edge-runtime
-export const runtime = "edge";
+// Configure Vercel AI Gateway
+const gatewayKey = process.env.AI_GATEWAY_API_KEY;
 
-// Configure Z.AI as OpenAI-compatible provider
-// Z.AI uses a custom endpoint: /api/coding/paas/v4
-// The SDK will append /chat/completions to the baseURL
-const zai = createOpenAI({
-  apiKey: process.env.ZAI_API_KEY || "",
-  baseURL: process.env.ZAI_API_URL || "https://api.z.ai/api/coding/paas/v4",
+if (!gatewayKey) {
+  console.error("CRITICAL: No AI Gateway Key found");
+}
+
+const openai = createOpenAI({
+  baseURL: 'https://gateway.ai.vercel.dev/v1',
+  apiKey: gatewayKey,
 });
 
 export async function POST(req: Request): Promise<Response> {
-  // Check if the ZAI_API_KEY is set, if not return 400
-  if (!process.env.ZAI_API_KEY || process.env.ZAI_API_KEY === "") {
-    return new Response("Missing ZAI_API_KEY - make sure to add it to your .env file.", {
+  // Check if the AI_GATEWAY_API_KEY is set, if not return 400
+  if (!process.env.AI_GATEWAY_API_KEY || process.env.AI_GATEWAY_API_KEY === "") {
+    return new Response("Missing AI_GATEWAY_API_KEY - make sure to add it to your .env file.", {
       status: 400,
     });
   }
-
-  // Debug: Log API configuration (remove in production)
-  console.log("Z.AI API URL:", process.env.ZAI_API_URL || "https://api.z.ai/api/coding/paas/v4");
-  console.log("Z.AI API Key:", process.env.ZAI_API_KEY ? `${process.env.ZAI_API_KEY.substring(0, 10)}...` : "NOT SET");
   if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
     const ip = req.headers.get("x-forwarded-for");
     const ratelimit = new Ratelimit({
@@ -136,15 +133,11 @@ export async function POST(req: Request): Promise<Response> {
 
   try {
     const result = await streamText({
-      // @ts-ignore - Type mismatch between @ai-sdk/provider versions, but functionally compatible
-      model: zai("glm-4.6"), // Z.AI model name uses dot: glm-4.6
-      // @ts-ignore - Type mismatch in messages array, but functionally compatible
-      messages: messages,
-      maxTokens: 128000, // Z.AI GLM-4.6 supports up to 128k tokens
+      // @ts-ignore - Type mismatch between @ai-sdk/provider versions
+      model: openai("glm-4.6"),
+      messages: messages as any,
+      maxTokens: 2000, // Adjusted for typical editing tasks
       temperature: 0.7,
-      topP: 1,
-      frequencyPenalty: 0,
-      presencePenalty: 0,
     });
 
     return result.toDataStreamResponse();

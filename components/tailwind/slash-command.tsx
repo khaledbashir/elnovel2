@@ -29,19 +29,49 @@ import { useState } from "react";
 // State management for dialogs
 let setYoutubeDialogOpen: ((open: boolean) => void) | null = null;
 let setTwitterDialogOpen: ((open: boolean) => void) | null = null;
+let setGenerateImageDialogOpen: ((open: boolean) => void) | null = null;
 let currentEditor: any = null;
 let currentRange: any = null;
 
 export function SlashCommandDialogs() {
     const [youtubeOpen, setYoutubeOpen] = useState(false);
     const [twitterOpen, setTwitterOpen] = useState(false);
+    const [generateImageOpen, setGenerateImageOpen] = useState(false);
 
     // Expose setters globally
     setYoutubeDialogOpen = setYoutubeOpen;
     setTwitterDialogOpen = setTwitterOpen;
+    setGenerateImageDialogOpen = setGenerateImageOpen;
 
     return (
         <>
+            <InputDialog
+                open={generateImageOpen}
+                onOpenChange={setGenerateImageOpen}
+                title="Generate Image (AI)"
+                description="Describe the image you want to generate."
+                placeholder="A futuristic city at sunset..."
+                onSubmit={(prompt) => {
+                    if (prompt && prompt.length > 0) {
+                        const imageUrl = `/api/generate-image?prompt=${encodeURIComponent(prompt)}`;
+                        currentEditor
+                            ?.chain()
+                            .focus()
+                            .deleteRange(currentRange)
+                            .setImage({
+                                src: imageUrl,
+                                alt: prompt,
+                                title: prompt
+                            })
+                            .run();
+                    } else {
+                        notifications.error(
+                            "Invalid prompt",
+                            "Please enter a description for the image."
+                        );
+                    }
+                }}
+            />
             <InputDialog
                 open={youtubeOpen}
                 onOpenChange={setYoutubeOpen}
@@ -348,6 +378,18 @@ export const suggestionItems = createSuggestionItems([
                     error instanceof Error ? error.message : String(error),
                 );
             }
+        },
+    },
+    {
+        title: "Generate Image (AI)",
+        description: "Generate an image using AI.",
+        searchTerms: ["image", "generate", "ai", "picture", "photo"],
+        icon: <Magic size={18} />,
+        command: ({ editor, range }) => {
+            editor.chain().focus().deleteRange(range).run();
+            currentEditor = editor;
+            currentRange = range;
+            setGenerateImageDialogOpen?.(true);
         },
     },
     {
