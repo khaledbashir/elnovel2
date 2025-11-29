@@ -9,6 +9,7 @@ import React, {
 import { ThemeProvider, useTheme } from "next-themes";
 import { Toaster } from "sonner";
 import useLocalStorage from "@/hooks/use-local-storage";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 export const AppContext = createContext<{
     font: string;
@@ -55,9 +56,11 @@ export default function Providers({ children }: { children: ReactNode }) {
                     setFont,
                 }}
             >
-                <ToasterProvider />
-                {children}
-                {/* Vercel Analytics removed - {process.env.NODE_ENV === "production" && <Analytics />} */}
+                <SidebarProvider>
+                    <ToasterProvider />
+                    {children}
+                    {/* Vercel Analytics removed - {process.env.NODE_ENV === "production" && <Analytics />} */}
+                </SidebarProvider>
             </AppContext.Provider>
         </ThemeProvider>
     );
