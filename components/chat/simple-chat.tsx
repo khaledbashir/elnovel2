@@ -46,13 +46,13 @@ function parseReasoning(content: string): { reasoning: string | null; cleanText:
   return { reasoning: null, cleanText: content };
 }
 
-async function streamFromGenerate(prompt: string, onDelta: (delta: string) => void) {
+async function streamFromGenerate(prompt: string, threadId: string, onDelta: (delta: string) => void) {
   const resp = await fetch("/api/chat", { // Changed to /api/chat to match your backend
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       messages: [{ role: "user", content: prompt }],
-      id: crypto.randomUUID() // Thread ID
+      id: threadId
     }),
   });
 
@@ -107,6 +107,7 @@ export function SimpleChat({ className, threadId }: { className?: string; thread
 
   const handleSend = async () => {
     if (!canSend) return;
+    const currentThreadId = threadId || crypto.randomUUID();
     const id = crypto.randomUUID();
     const userMsg: ChatMessage = { id, role: "user", text: input };
     const assistantMsg: ChatMessage = {
@@ -120,7 +121,7 @@ export function SimpleChat({ className, threadId }: { className?: string; thread
     assistRef.current = "";
 
     try {
-      await streamFromGenerate(userMsg.text, (delta) => {
+      await streamFromGenerate(userMsg.text, currentThreadId, (delta) => {
         assistRef.current += delta;
 
         // Parse reasoning on the fly

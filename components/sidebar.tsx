@@ -203,6 +203,7 @@ export function Sidebar({
                         id="recent-1"
                         label="Quick Notes"
                         icon={<Clock className="w-4 h-4" />}
+                        onClick={() => alert("Quick Notes feature coming soon!")}
                     />
                 </SidebarSection>
 
@@ -276,11 +277,13 @@ export function Sidebar({
                         id="tpl-1"
                         label="Project Plan"
                         icon={<FileText className="w-4 h-4" />}
+                        onClick={() => alert("Templates coming soon!")}
                     />
                     <SidebarItem
                         id="tpl-2"
                         label="Meeting Notes"
                         icon={<FileText className="w-4 h-4" />}
+                        onClick={() => alert("Templates coming soon!")}
                     />
                 </SidebarSection>
             </ScrollArea>

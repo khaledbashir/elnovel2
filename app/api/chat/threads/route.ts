@@ -1,25 +1,23 @@
-import { NextResponse } from "next/server";
-import { query } from "@/lib/database";
-
-export const dynamic = "force-dynamic";
+import { NextResponse } from 'next/server';
+import { query } from '@/lib/database';
 
 export async function GET() {
-  try {
-    // Get distinct thread_ids and their latest message time
-    const threads = await query(`
-      SELECT 
-        thread_id, 
-        MAX(created_at) as last_message_at,
-        (SELECT content FROM chat_history ch2 WHERE ch2.thread_id = ch1.thread_id ORDER BY created_at ASC LIMIT 1) as first_message
-      FROM chat_history ch1
-      GROUP BY thread_id
-      ORDER BY last_message_at DESC
-      LIMIT 50
-    `);
+    try {
+        const threads = await query('SELECT * FROM threads ORDER BY updated_at DESC');
+        return NextResponse.json({ threads });
+    } catch (error) {
+        console.error("Failed to fetch threads:", error);
+        return NextResponse.json({ error: "Failed to fetch threads" }, { status: 500 });
+    }
+}
 
-    return NextResponse.json({ threads });
-  } catch (error) {
-    console.error("Failed to fetch threads:", error);
-    return NextResponse.json({ error: "Failed to fetch threads" }, { status: 500 });
-  }
+export async function POST(req: Request) {
+    try {
+        const { id, title } = await req.json();
+        await query('INSERT INTO threads (id, title) VALUES (?, ?)', [id, title]);
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        console.error("Failed to create thread:", error);
+        return NextResponse.json({ error: "Failed to create thread" }, { status: 500 });
+    }
 }

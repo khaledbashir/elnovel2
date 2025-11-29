@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { pool } from '@/lib/db';
+import { query } from '@/lib/database';
 import { v4 as uuidv4 } from 'uuid';
 
 export async function GET() {
   try {
-    const [rows] = await pool.query('SELECT * FROM workspaces ORDER BY created_at DESC');
+    const rows = await query('SELECT * FROM workspaces ORDER BY created_at DESC');
     return NextResponse.json(rows);
   } catch (error) {
     console.error('Database Error:', error);
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     }
 
     const id = uuidv4();
-    await pool.query(
+    await query(
       'INSERT INTO workspaces (id, name, description) VALUES (?, ?, ?)',
       [id, name, description || null]
     );

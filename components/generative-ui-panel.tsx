@@ -21,7 +21,7 @@ const theme = {
             types: ["comment"],
             style: {
                 color: "#bc9458",
-                fontStyle: "italic",
+                fontStyle: "italic" as const,
             },
         },
         {
@@ -39,13 +39,79 @@ const theme = {
     ],
 };
 
-export function GenerativeUIPanel({ onClose }: { onClose: () => void }) {
-    const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
-        api: "/api/chat",
-    });
+export function GenerativeUIPanel({ onClose, onNewThread }: { onClose: () => void, onNewThread?: () => void }) {
     const [activeTab, setActiveTab] = useState<"preview" | "code">("preview");
     const [generatedCode, setGeneratedCode] = useState<string | null>(null);
     const [showArtifact, setShowArtifact] = useState(true);
+
+    // Fetch chat history on mount
+    useState(() => {
+        const fetchHistory = async () => {
+            try {
+                // Get the last active thread ID from localStorage
+                const lastThreadId = localStorage.getItem('lastThreadId');
+
+                if (lastThreadId) {
+                    console.log("Fetching history for thread:", lastThreadId);
+                    const response = await fetch(`/api/chat/history?threadId=${lastThreadId}`);
+                    if (response.ok) {
+                        const history = await response.json();
+                        if (Array.isArray(history) && history.length > 0) {
+                            // Convert DB messages to AI SDK format
+                            const formattedMessages = history.map((msg: any) => ({
+                                id: msg.id,
+                                role: msg.role,
+                                content: msg.content,
+                                // We might need to parse tool invocations if we stored them as JSON in content
+                                // But for now, simple text restoration
+                            }));
+                            setMessages(formattedMessages);
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error("Failed to fetch history:", error);
+            }
+        };
+        fetchHistory();
+    });
+
+    // Save threadId to localStorage when it changes (we need to capture it from headers or response)
+    // Since useChat doesn't expose threadId directly unless we manage it, we might need to rely on
+    // the fact that we send it in the body. 
+    // Actually, let's generate a threadId if one doesn't exist and pass it to useChat
+
+    const [threadId, setThreadId] = useState<string>("");
+
+    useEffect(() => {
+        const stored = localStorage.getItem('lastThreadId');
+        if (stored) setThreadId(stored);
+        else {
+            const newId = crypto.randomUUID();
+            setThreadId(newId);
+            localStorage.setItem('lastThreadId', newId);
+        }
+    }, []);
+
+    const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages } = useChat({
+        api: "/api/chat",
+        body: { id: threadId },
+        onFinish: () => {
+            // Re-fetch or update local state if needed
+        }
+    });
+
+    const handleNewChat = () => {
+        const newId = crypto.randomUUID();
+        setThreadId(newId);
+        localStorage.setItem('lastThreadId', newId);
+        setMessages([]);
+        setGeneratedCode(null);
+        setShowArtifact(true);
+        if (onNewThread) {
+            onNewThread();
+        }
+    };
 
     // Parse messages to find generated components
     const lastMessage = messages[messages.length - 1];
@@ -74,6 +140,14 @@ export function GenerativeUIPanel({ onClose }: { onClose: () => void }) {
             <div className="flex items-center justify-between border-b p-3">
                 <h2 className="text-sm font-semibold">AI Workbench</h2>
                 <div className="flex items-center gap-2">
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleNewChat}
+                        className="text-xs"
+                    >
+                        New Chat
+                    </Button>
                     {generatedCode && (
                         <Button
                             variant="ghost"
@@ -83,12 +157,12 @@ export function GenerativeUIPanel({ onClose }: { onClose: () => void }) {
                         >
                             {showArtifact ? (
                                 <>
-                                    <ChevronRight className="h-3 w-3 mr-1" />
+                                    <Eye className="h-3 w-3 mr-1" />
                                     Hide Preview
                                 </>
                             ) : (
                                 <>
-                                    <ChevronLeft className="h-3 w-3 mr-1" />
+                                    <Eye className="h-3 w-3 mr-1" />
                                     Show Preview
                                 </>
                             )}

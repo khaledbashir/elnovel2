@@ -6,9 +6,9 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 type Thread = {
-    thread_id: string;
-    first_message: string;
-    last_message_at: string;
+    id: string;
+    title: string;
+    updated_at: string;
 };
 
 interface ChatHistorySidebarProps {
@@ -66,11 +66,11 @@ export function ChatHistorySidebar({
                 ) : (
                     threads.map((thread) => (
                         <button
-                            key={thread.thread_id}
-                            onClick={() => onSelectThread(thread.thread_id)}
+                            key={thread.id}
+                            onClick={() => onSelectThread(thread.id)}
                             className={cn(
                                 "w-full flex items-start gap-3 p-3 rounded-lg text-left text-sm transition-colors",
-                                currentThreadId === thread.thread_id
+                                currentThreadId === thread.id
                                     ? "bg-primary/10 text-primary"
                                     : "hover:bg-muted text-muted-foreground hover:text-foreground"
                             )}
@@ -78,10 +78,10 @@ export function ChatHistorySidebar({
                             <MessageSquare className="h-4 w-4 mt-0.5 flex-shrink-0" />
                             <div className="flex-1 min-w-0">
                                 <div className="font-medium truncate">
-                                    {thread.first_message || "New Conversation"}
+                                    {thread.title || "New Conversation"}
                                 </div>
                                 <div className="text-xs opacity-70 mt-1">
-                                    {new Date(thread.last_message_at).toLocaleDateString()}
+                                    {new Date(thread.updated_at).toLocaleDateString()}
                                 </div>
                             </div>
                         </button>
