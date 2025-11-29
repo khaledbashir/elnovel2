@@ -69,17 +69,30 @@ export function SlashCommandDialogs() {
                 placeholder="A futuristic city at sunset..."
                 onSubmit={(prompt) => {
                     if (prompt && prompt.length > 0) {
-                        const imageUrl = `/api/generate-image?prompt=${encodeURIComponent(prompt)}`;
-                        currentEditor
-                            ?.chain()
-                            .focus()
-                            .deleteRange(currentRange)
-                            .setImage({
-                                src: imageUrl,
-                                alt: prompt,
-                                title: prompt
+                        const promise = fetch(`/api/generate-image?prompt=${encodeURIComponent(prompt)}`)
+                            .then(async (res) => {
+                                if (!res.ok) throw new Error("Failed to generate image");
+                                const blob = await res.blob();
+                                return URL.createObjectURL(blob);
                             })
-                            .run();
+                            .then((url) => {
+                                currentEditor
+                                    ?.chain()
+                                    .focus()
+                                    .deleteRange(currentRange)
+                                    .setImage({
+                                        src: url,
+                                        alt: prompt,
+                                        title: prompt
+                                    })
+                                    .run();
+                            });
+
+                        toast.promise(promise, {
+                            loading: "Generating image... This may take a moment 🎨",
+                            success: "Image generated successfully! 🌟",
+                            error: "Failed to generate image. Please try again.",
+                        });
                     } else {
                         notifications.error(
                             "Invalid prompt",

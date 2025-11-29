@@ -100,6 +100,26 @@ const TailwindAdvancedEditor = ({
         };
     }, [isResizing]);
 
+    // Force blur editor when clicking outside to close slash menu
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            // If click is outside the editor container and not in a portal (like dialogs/menus)
+            if (
+                editorRef.current &&
+                !editorRef.current.view.dom.contains(target) &&
+                !target.closest('[role="dialog"]') &&
+                !target.closest('[role="listbox"]') &&
+                !target.closest('[cmdk-root]')
+            ) {
+                editorRef.current.commands.blur();
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
     const containerRef = useRef<HTMLDivElement>(null);
 
     //Apply Codeblock Highlighting on the HTML from editor.getHTML()
