@@ -53,7 +53,7 @@ const nextConfig = {
         ignoreBuildErrors: true, // Save resources
     },
     output: "standalone", // Required for Docker deployment
-    serverExternalPackages: ["pdf-parse"], // Prevent bundling of server-side packages
+    serverExternalPackages: ["pdf-parse", "chromadb"], // Prevent bundling of server-side packages
     outputFileTracingIncludes: {
         "*": ["public/**/*", ".next/static/**/*"],
     },

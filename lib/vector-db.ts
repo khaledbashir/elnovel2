@@ -4,8 +4,11 @@ import { embed, embedMany } from 'ai';
 import { v4 as uuidv4 } from 'uuid';
 
 // Initialize Chroma Client
+const chromaDbUrl = new URL(process.env.CHROMA_DB_URL || "http://chroma:8000");
 const client = new ChromaClient({
-    path: process.env.CHROMA_DB_URL || "http://chroma:8000",
+    host: chromaDbUrl.hostname,
+    port: parseInt(chromaDbUrl.port),
+    ssl: chromaDbUrl.protocol === "https:",
 });
 
 import { createOpenAI } from '@ai-sdk/openai';

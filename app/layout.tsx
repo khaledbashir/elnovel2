@@ -10,23 +10,26 @@ const title = "Papyrus - AI Document Platform";
 const description =
   "Smart documents powered by AI";
 
+export const metadataBase = new URL("https://novel.sh");
+
 export const metadata: Metadata = {
-  title,
-  description,
+  title: "Papyrus",
+  description: "Your AI writing assistant",
   icons: {
     icon: "/favicon.ico",
   },
   openGraph: {
     title,
     description,
+    images: [`/opengraph-image.png`],
   },
   twitter: {
     title,
     description,
     card: "summary_large_image",
     creator: "@steventey",
+    images: [`/opengraph-image.png`],
   },
-  metadataBase: new URL("https://novel.sh"),
 };
 
 export const viewport: Viewport = {
