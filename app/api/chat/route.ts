@@ -1,4 +1,4 @@
-import { createOpenAI } from '@ai-sdk/openai';
+import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { streamText, convertToCoreMessages } from 'ai';
 import { query } from '@/lib/database';
 import { DocumentManager } from '@/lib/document-manager';
@@ -14,7 +14,8 @@ if (!apiKey) {
     console.log("[Chat API] API Key found with length:", apiKey.length);
 }
 
-const zai = createOpenAI({
+const zai = createOpenAICompatible({
+    name: 'z-ai',
     baseURL: process.env.ZAI_API_URL || 'https://api.z.ai/api/coding/paas/v4',
     apiKey: apiKey,
 });
