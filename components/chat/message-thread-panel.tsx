@@ -12,12 +12,16 @@ import {
     Settings,
     MessageSquare,
 } from "lucide-react";
+import { useChat } from "ai/react";
+import { TaskCard, TaskStep } from "@/components/chat/task-card";
+import { v4 as uuidv4 } from "uuid";
 
 interface Message {
     id: string;
     content: string;
     sender: "user" | "assistant";
     timestamp: Date;
+    toolInvocations?: any[];
 }
 
 export const MessageThreadPanel = React.forwardRef<
@@ -28,20 +32,62 @@ export const MessageThreadPanel = React.forwardRef<
         style?: React.CSSProperties;
     }
 >(({ contextKey, className, style, ...props }, ref) => {
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            id: "1",
-            content: "Hello! I'm your AI assistant. How can I help you today?",
-            sender: "assistant",
-            timestamp: new Date(),
-        },
-    ]);
-    const [inputValue, setInputValue] = useState("");
-    const [isTyping, setIsTyping] = useState(false);
     const [showHistory, setShowHistory] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
     const [threadTitle, setThreadTitle] = useState("New Conversation");
     const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    // State for agentic workflow
+    const [taskPlan, setTaskPlan] = useState<{ title: string; steps: TaskStep[] } | null>(null);
+    const [artifact, setArtifact] = useState<{ title: string; type: string; content: string } | null>(null);
+
+    const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages } = useChat({
+        api: "/api/chat",
+        id: contextKey || uuidv4(),
+        onFinish: (message) => {
+             // Handle any post-response logic if needed
+        },
+    });
+
+    // Effect to process tool invocations
+    useEffect(() => {
+        if (!messages.length) return;
+        
+        const lastMessage = messages[messages.length - 1];
+        if (lastMessage.role === 'assistant' && lastMessage.toolInvocations) {
+            lastMessage.toolInvocations.forEach(toolInvocation => {
+                const { toolName, args, state } = toolInvocation;
+                
+                if (state === 'result') return; // Already processed? (Though for streaming we might want to see updates)
+                
+                if (toolName === 'create_plan') {
+                    setTaskPlan({
+                        title: args.title,
+                        steps: args.steps.map((s: any) => ({ ...s, status: 'pending' }))
+                    });
+                } else if (toolName === 'update_step') {
+                    setTaskPlan(prev => {
+                        if (!prev) return null;
+                        return {
+                            ...prev,
+                            steps: prev.steps.map(step => 
+                                step.id === args.stepId 
+                                    ? { ...step, status: args.status, details: args.details } 
+                                    : step
+                            )
+                        };
+                    });
+                } else if (toolName === 'render_artifact') {
+                    setArtifact({
+                        title: args.title,
+                        type: args.type,
+                        content: args.content
+                    });
+                }
+            });
+        }
+    }, [messages]);
+
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -49,47 +95,12 @@ export const MessageThreadPanel = React.forwardRef<
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages]);
-
-    const handleSendMessage = () => {
-        if (!inputValue.trim()) return;
-
-        const userMessage: Message = {
-            id: Date.now().toString(),
-            content: inputValue,
-            sender: "user",
-            timestamp: new Date(),
-        };
-
-        setMessages((prev) => [...prev, userMessage]);
-        setInputValue("");
-        setIsTyping(true);
-
-        // Simulate AI response
-        setTimeout(() => {
-            const assistantMessage: Message = {
-                id: (Date.now() + 1).toString(),
-                content:
-                    "This is a placeholder response. In a real implementation, this would connect to an AI service.",
-                sender: "assistant",
-                timestamp: new Date(),
-            };
-
-            setMessages((prev) => [...prev, assistantMessage]);
-            setIsTyping(false);
-        }, 1000);
-    };
+    }, [messages, taskPlan, artifact]);
 
     const handleNewConversation = () => {
-        setMessages([
-            {
-                id: "1",
-                content:
-                    "Hello! I'm your AI assistant. How can I help you today?",
-                sender: "assistant",
-                timestamp: new Date(),
-            },
-        ]);
+        setMessages([]);
+        setTaskPlan(null);
+        setArtifact(null);
         setShowHistory(false);
     };
 
@@ -132,43 +143,65 @@ export const MessageThreadPanel = React.forwardRef<
                         <div
                             key={message.id}
                             className={`flex ${
-                                message.sender === "user"
+                                message.role === "user"
                                     ? "justify-end"
                                     : "justify-start"
                             }`}
                         >
-                            <Card
-                                className={`max-w-[80%] ${
-                                    message.sender === "user"
-                                        ? "bg-primary text-primary-foreground"
-                                        : ""
-                                }`}
-                            >
-                                <CardHeader className="pb-2 pt-3 px-3">
-                                    <div className="flex items-center gap-2">
-                                        {message.sender === "assistant" ? (
-                                            <Bot className="h-4 w-4" />
-                                        ) : (
-                                            <User className="h-4 w-4" />
+                            <div className={`max-w-[90%] w-full ${message.role === 'user' ? 'ml-auto max-w-[80%]' : ''}`}>
+                                <Card
+                                    className={`${
+                                        message.role === "user"
+                                            ? "bg-primary text-primary-foreground"
+                                            : ""
+                                    }`}
+                                >
+                                    <CardHeader className="pb-2 pt-3 px-3">
+                                        <div className="flex items-center gap-2">
+                                            {message.role === "assistant" ? (
+                                                <Bot className="h-4 w-4" />
+                                            ) : (
+                                                <User className="h-4 w-4" />
+                                            )}
+                                            <CardTitle className="text-sm">
+                                                {message.role === "assistant"
+                                                    ? "Assistant"
+                                                    : "You"}
+                                            </CardTitle>
+                                        </div>
+                                    </CardHeader>
+                                    <CardContent className="px-3 pb-3 pt-0">
+                                        <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                                        {/* Render Task Card if this is the assistant message and we have a plan */}
+                                        {message.role === 'assistant' && taskPlan && messages[messages.length - 1].id === message.id && (
+                                            <div className="mt-4">
+                                                <TaskCard title={taskPlan.title} steps={taskPlan.steps} />
+                                            </div>
                                         )}
-                                        <CardTitle className="text-sm">
-                                            {message.sender === "assistant"
-                                                ? "Assistant"
-                                                : "You"}
-                                        </CardTitle>
-                                    </div>
-                                </CardHeader>
-                                <CardContent className="px-3 pb-3 pt-0">
-                                    <p className="text-sm">{message.content}</p>
-                                    <p className="text-xs opacity-70 mt-1">
-                                        {message.timestamp.toLocaleTimeString()}
-                                    </p>
-                                </CardContent>
-                            </Card>
+                                         {/* Render Artifact if this is the assistant message and we have one */}
+                                         {message.role === 'assistant' && artifact && messages[messages.length - 1].id === message.id && (
+                                            <div className="mt-4 border rounded-md p-4 bg-card">
+                                                <h4 className="font-medium mb-2">{artifact.title}</h4>
+                                                {artifact.type === 'html' && (
+                                                    <div dangerouslySetInnerHTML={{ __html: artifact.content }} className="p-2 bg-white rounded text-black" />
+                                                )}
+                                                {artifact.type === 'markdown' && (
+                                                     <pre className="whitespace-pre-wrap text-xs">{artifact.content}</pre>
+                                                )}
+                                                {/* React rendering would need a dynamic component loader or predefined components */}
+                                            </div>
+                                        )}
+                                        
+                                        <p className="text-xs opacity-70 mt-1">
+                                            {message.createdAt?.toLocaleTimeString()}
+                                        </p>
+                                    </CardContent>
+                                </Card>
+                            </div>
                         </div>
                     ))}
 
-                    {isTyping && (
+                    {isLoading && (
                         <div className="flex justify-start">
                             <Card className="max-w-[80%]">
                                 <CardContent className="px-3 py-3">
@@ -200,28 +233,13 @@ export const MessageThreadPanel = React.forwardRef<
                             </Button>
                         </div>
                         <div className="space-y-2">
+                            {/* Placeholder history items */}
                             <div className="p-2 rounded-md border cursor-pointer hover:bg-accent text-sm">
                                 <div className="font-medium">
                                     Current Conversation
                                 </div>
                                 <div className="text-xs text-muted-foreground truncate">
                                     {messages[0]?.content.substring(0, 30)}...
-                                </div>
-                            </div>
-                            <div className="p-2 rounded-md border cursor-pointer hover:bg-accent text-sm">
-                                <div className="font-medium">
-                                    Previous Conversation
-                                </div>
-                                <div className="text-xs text-muted-foreground truncate">
-                                    How to optimize Next.js performance...
-                                </div>
-                            </div>
-                            <div className="p-2 rounded-md border cursor-pointer hover:bg-accent text-sm">
-                                <div className="font-medium">
-                                    UI Design Tips
-                                </div>
-                                <div className="text-xs text-muted-foreground truncate">
-                                    What are the best practices for...
                                 </div>
                             </div>
                         </div>
@@ -233,50 +251,8 @@ export const MessageThreadPanel = React.forwardRef<
                     <div className="w-60 border-l bg-card p-3 overflow-y-auto">
                         <h4 className="text-sm font-medium mb-3">Settings</h4>
                         <div className="space-y-4">
-                            <div>
-                                <label className="text-xs font-medium">
-                                    Model
-                                </label>
-                                <select className="w-full mt-1 px-2 py-1 text-sm border rounded bg-background">
-                                    <option>GPT-4</option>
-                                    <option>Claude</option>
-                                    <option>Local Model</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label className="text-xs font-medium">
-                                    Temperature
-                                </label>
-                                <input
-                                    type="range"
-                                    min="0"
-                                    max="1"
-                                    step="0.1"
-                                    defaultValue="0.7"
-                                    className="w-full mt-1 accent-primary"
-                                />
-                            </div>
-                            <div>
-                                <label className="text-xs font-medium">
-                                    Max Length
-                                </label>
-                                <input
-                                    type="number"
-                                    defaultValue="2048"
-                                    className="w-full mt-1 px-2 py-1 text-sm border rounded bg-background"
-                                />
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <input
-                                    type="checkbox"
-                                    id="streaming"
-                                    defaultChecked
-                                    className="accent-primary"
-                                />
-                                <label htmlFor="streaming" className="text-sm">
-                                    Enable streaming
-                                </label>
-                            </div>
+                           {/* Settings content */}
+                           <p className="text-xs text-muted-foreground">Settings not implemented yet.</p>
                         </div>
                     </div>
                 )}
@@ -284,26 +260,21 @@ export const MessageThreadPanel = React.forwardRef<
 
             {/* Input Area */}
             <div className="p-4 border-t">
-                <div className="flex gap-2">
+                <form onSubmit={handleSubmit} className="flex gap-2">
                     <Input
-                        value={inputValue}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setInputValue(e.target.value)
-                        }
+                        value={input}
+                        onChange={handleInputChange}
                         placeholder="Type your message..."
                         className="flex-1"
-                        onKeyPress={(
-                            e: React.KeyboardEvent<HTMLInputElement>,
-                        ) => e.key === "Enter" && handleSendMessage()}
                     />
                     <Button
-                        onClick={handleSendMessage}
+                        type="submit"
                         className="h-10 w-10 p-0"
-                        disabled={!inputValue.trim() || isTyping}
+                        disabled={!input.trim() || isLoading}
                     >
                         <Send className="h-4 w-4" />
                     </Button>
-                </div>
+                </form>
             </div>
         </div>
     );

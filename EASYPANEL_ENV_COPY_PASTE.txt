@@ -1,15 +1,24 @@
-ZAI_API_KEY=08479f01709a43f0af5d7a7490e3bb55.QUKmWD8Zv2iq9OvB
-ZAI_API_URL=https://api.z.ai/api/coding/paas/v4
-NEXT_PUBLIC_TAMBO_API_KEY=tambo_Y/Pr5GxMogPQw/tCMGCFJHnNoyQXEELQTalRJ7yStLUIdY4POnTRLzWp0/7O78nJdJC5u6lxr8lsBveajyxTZmc3EaJdn1pEw9e+66wwEG4=
-NEXT_PUBLIC_TAMBO_URL=https://api.tambo.co
-NEXT_PUBLIC_TAMBO_PROJECT_ID=p_OKGBSNDp.60d984
-NEXT_PUBLIC_DOCS_URL=https://docs.tambo.co
-DATABASE_URL=mysql://elnovel22:elonvel22@ahmad_elnovel22:3306/elnovel22
+# ------------------------------------------------------------------
+# COPY AND PASTE THE CONTENT BELOW INTO YOUR EASYPANEL ENVIRONMENT VARIABLES
+# ------------------------------------------------------------------
+
+# --- Database Configuration ---
 DB_HOST=ahmad_elnovel22
-DB_PORT=3306
-DB_USER=elnovel22
-DB_PASSWORD=elonvel22
-DB_NAME=elnovel22
-ANYTHING_LLM_URL=https://ahmad-anything-llm.840tjq.easypanel.host/api
-ANYTHING_LLM_API_KEY=0G0WTZ3-6ZX4D20-H35VBRG-9059WPA
-ANYTHING_LLM_WORKSPACE_SLUG=novel
+DB_USER=root
+DB_PASSWORD=password
+DB_NAME=elnovel2
+DATABASE_URL=mysql://root:password@ahmad_elnovel22:3306/elnovel2
+
+# --- App Configuration ---
+NEXT_PUBLIC_APP_URL=https://ahmad-elnovel2.840tjq.easypanel.host
+
+# --- AI Configuration (Vercel SDK) ---
+# IMPORTANT: Replace this with your actual Z.AI or OpenAI Key
+ZAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxx
+# Optional: If using OpenAI directly
+# OPENAI_API_KEY=sk-proj-...
+
+# --- Legacy Tambo (Can be removed later) ---
+NEXT_PUBLIC_TAMBO_API_KEY=tambo_Y/Pr5GxMogPQw/tCMGCFJHnNoyQXEELQTalRJ7yStLUIdY4POnTRLzWp0/7O78nJdJC5u6lxr8lsBveajyxTZmc3EaJdn1pEw9e+66wwEG4=
+NEXT_PUBLIC_TAMBO_PROJECT_ID=p_OKGBSNDp.60d984
+NEXT_PUBLIC_TAMBO_URL=https://api.tambo.co

@@ -8,6 +8,10 @@
  * Read more about Tambo at https://tambo.co/docs
  */
 
+import {
+  InteractableNovelEditor,
+  novelEditorSchema,
+} from "@/components/tambo/novel-editor";
 import { Graph, graphSchema } from "@/components/tambo/graph";
 import { DataCard, dataCardSchema } from "@/components/ui/card-data";
 import {
@@ -113,6 +117,13 @@ export const components: TamboComponent[] = [
       "A component that displays options as clickable cards with links and summaries with the ability to select multiple items.",
     component: DataCard,
     propsSchema: dataCardSchema,
+  },
+  {
+    name: "NovelEditor",
+    description:
+      "A rich text editor for writing novels, stories, or documents. Supports title and content updates.",
+    component: InteractableNovelEditor,
+    propsSchema: novelEditorSchema,
   },
   // Add more components here
 ];

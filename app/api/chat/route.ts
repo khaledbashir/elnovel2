@@ -1,7 +1,7 @@
-
-import { openai } from '@ai-sdk/openai';
+import { createOpenAI } from '@ai-sdk/openai';
 import { streamText, convertToCoreMessages } from 'ai';
 import { query } from '@/lib/database';
+import { DocumentManager } from '@/lib/document-manager';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 
@@ -9,12 +9,12 @@ import { z } from 'zod';
 const apiKey = "18f65090a96a425898a8398a5c4518ce.DDtUvTTnUmK020Wx";
 
 if (!apiKey) {
-    console.error("CRITICAL: No API Key found");
+  console.error("CRITICAL: No API Key found");
 } else {
-    console.log("Chat API: Key found, length:", apiKey.length);
+  console.log("[Chat API] API Key found with length:", apiKey.length);
 }
 
-const zai = openai('gpt-4o', {
+const zai = createOpenAI({
     baseURL: process.env.ZAI_API_URL || 'https://api.z.ai/api/coding/paas/v4',
     apiKey: apiKey,
 });
@@ -22,13 +22,13 @@ const zai = openai('gpt-4o', {
 export async function POST(req: Request) {
     try {
         const { messages, id: threadId, system } = await req.json();
-        console.log(`[Chat API] Received request for thread ${threadId}`);
+        console.log("[Chat API] Received request for thread", threadId);
 
         // 1. Ensure thread exists or create it
         try {
             const existingThread = await query('SELECT id FROM threads WHERE id = ?', [threadId]);
             if (!Array.isArray(existingThread) || existingThread.length === 0) {
-                console.log(`[Chat API] Creating new thread ${threadId} `);
+                console.log("[Chat API] Creating new thread", threadId);
                 await query('INSERT INTO threads (id, title) VALUES (?, ?)', [threadId, messages[0].content.substring(0, 50)]);
             }
         } catch (dbError) {
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
         // 3. Stream Response
         console.log('[Chat API] Calling LLM...');
         const result = await streamText({
-            model: zai,
+            model: zai('gpt-4o'),
             messages: convertToCoreMessages(messages),
             system: system || `You are an advanced AI Agent.
 
@@ -73,6 +73,10 @@ export async function POST(req: Request) {
                             label: z.string(),
                         }))
                     }),
+                    execute: async ({ title, steps }) => {
+                        // Server-side acknowledgment
+                        return JSON.stringify({ status: 'Plan created', title, stepCount: steps.length });
+                    },
                 },
                 update_step: {
                     description: 'Update the status of a step',
@@ -81,6 +85,9 @@ export async function POST(req: Request) {
                         status: z.enum(['pending', 'running', 'completed', 'failed']),
                         details: z.string().optional(),
                     }),
+                    execute: async ({ stepId, status }) => {
+                        return JSON.stringify({ status: 'Step updated', stepId, newStatus: status });
+                    },
                 },
                 render_artifact: {
                     description: 'Render the final interactive artifact (HTML/React)',
@@ -89,7 +96,41 @@ export async function POST(req: Request) {
                         type: z.enum(['html', 'react', 'markdown']),
                         content: z.string(),
                     }),
+                    execute: async ({ title }) => {
+                         return JSON.stringify({ status: 'Artifact rendered', title });
+                    },
                 },
+                search_documents: {
+                    description: 'Search for relevant documents in the knowledge base',
+                    parameters: z.object({
+                        query: z.string().describe('The search query string'),
+                    }),
+                    execute: async ({ query }) => {
+                        console.log(`[Chat API] Searching documents for: "${query}"`);
+                        const docs = await DocumentManager.searchDocuments(query);
+                        if (docs.length === 0) {
+                            return 'No documents found.';
+                        }
+                        // For RAG, we might want to fetch content immediately or just return metadata
+                        // Returning metadata + snippet for now
+                        return JSON.stringify(docs.map(d => ({
+                            id: d.id,
+                            name: d.name,
+                            workspace: (d as any).workspace_name
+                        })));
+                    },
+                },
+                get_document_content: {
+                    description: 'Get the full content of a specific document',
+                    parameters: z.object({
+                        documentId: z.string(),
+                    }),
+                    execute: async ({ documentId }) => {
+                         console.log(`[Chat API] Fetching content for document: ${documentId}`);
+                         const content = await DocumentManager.getDocumentContext(documentId);
+                         return content || 'Document content not found.';
+                    }
+                }
             },
             onFinish: async ({ text, toolCalls }) => {
                 console.log('[Chat API] LLM Finished.');

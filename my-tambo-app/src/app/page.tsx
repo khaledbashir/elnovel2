@@ -125,6 +125,12 @@ export default function Home() {
                 >
                   Interactables Demo →
                 </a>
+                <a
+                  href="/novel-demo"
+                  className="px-6 py-3 rounded-md font-medium shadow-sm transition-colors text-lg mt-4 bg-[#93C5FD] hover:bg-[#60A5FA] text-gray-800"
+                >
+                  Novel Editor Demo →
+                </a>
               </div>
             </ApiKeyCheck>
           </div>
