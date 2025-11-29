@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { saveDocument } from '@/lib/vector-db';
 import pdf from 'pdf-parse';
 
+// Force dynamic rendering to avoid build-time execution
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 export async function POST(req: NextRequest) {
     try {
         const formData = await req.formData();
