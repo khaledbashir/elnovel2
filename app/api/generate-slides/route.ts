@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${process.env.Z_AI_API_KEY}`,
+                "Authorization": `Bearer ${process.env.ZAI_API_KEY}`,
             },
             body: JSON.stringify({
                 agent_id: "slides_glm_agent",
