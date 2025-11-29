@@ -1,56 +1,37 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { useTambo } from "@tambo-ai/react";
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
 
 /**
  * Props for the ScrollableMessageContainer component
  */
-export type ScrollableMessageContainerProps =
-  React.HTMLAttributes<HTMLDivElement>;
+export interface ScrollableMessageContainerProps extends React.HTMLAttributes<HTMLDivElement> {
+  autoScrollTrigger?: any;
+}
 
 /**
  * A scrollable container for message content with auto-scroll functionality.
  * Used across message thread components for consistent scrolling behavior.
- *
- * @example
- * ```tsx
- * <ScrollableMessageContainer>
- *   <ThreadContent variant="default">
- *     <ThreadContentMessages />
- *   </ThreadContent>
- * </ScrollableMessageContainer>
- * ```
  */
 export const ScrollableMessageContainer = React.forwardRef<
   HTMLDivElement,
   ScrollableMessageContainerProps
->(({ className, children, ...props }, ref) => {
+>(({ className, children, autoScrollTrigger, ...props }, ref) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const { thread } = useTambo();
   const [shouldAutoscroll, setShouldAutoscroll] = useState(true);
   const lastScrollTopRef = useRef(0);
 
   // Handle forwarded ref
   React.useImperativeHandle(ref, () => scrollContainerRef.current!, []);
 
-  // Create a dependency that represents all content that should trigger autoscroll
-  const messagesContent = React.useMemo(() => {
-    if (!thread.messages) return null;
+  // Use the trigger prop to detect changes
+  const messagesContent = autoScrollTrigger;
 
-    return thread.messages.map((message) => ({
-      id: message.id,
-      content: message.content,
-      tool_calls: message.tool_calls,
-      component: message.component,
-      reasoning: message.reasoning,
-      componentState: message.componentState,
-    }));
-  }, [thread.messages]);
+  // Simplified generation stage detection (optional, can be passed as prop if needed)
+  const generationStage = "IDLE";
 
-  const generationStage = thread?.generationStage ?? "IDLE";
 
   // Handle scroll events to detect user scrolling
   const handleScroll = () => {

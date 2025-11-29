@@ -19,12 +19,12 @@ function useChatHistory(key = "chat-history") {
     try {
       const raw = window.localStorage.getItem(key);
       if (raw) setMessages(JSON.parse(raw));
-    } catch {}
+    } catch { }
   }, [key]);
   useEffect(() => {
     try {
       window.localStorage.setItem(key, JSON.stringify(messages));
-    } catch {}
+    } catch { }
   }, [key, messages]);
   return { messages, setMessages } as const;
 }
@@ -130,7 +130,7 @@ export function SimpleChat({ className }: { className?: string }) {
   return (
     <div className={cn("flex h-full w-full flex-col", className)}>
       <div className="flex-1 min-h-0">
-        <ScrollableMessageContainer className="p-4 bg-background/50">
+        <ScrollableMessageContainer className="p-4 bg-background/50" autoScrollTrigger={messages}>
           <div className="flex flex-col gap-2">{rendered}</div>
         </ScrollableMessageContainer>
       </div>

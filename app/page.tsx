@@ -1,11 +1,12 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Sidebar } from "@/components/sidebar";
 import { TopActionBar } from "@/components/top-action-bar";
 import TailwindAdvancedEditor from "@/components/tailwind/advanced-editor";
-import { MessageThreadPanel } from "@/components/tambo/message-thread-panel";
-import { ThreadHistory, ThreadHistoryHeader, ThreadHistoryNewButton, ThreadHistorySearch, ThreadHistoryList } from "@/components/tambo/thread-history";
+import { SimpleChat } from "@/components/chat/simple-chat";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight, PanelRightClose, PanelRightOpen } from "lucide-react";
 
@@ -165,14 +166,8 @@ export default function Page() {
             style={{ transition: isResizing ? 'none' : 'background-color 0.2s ease' }}
           />
           <div className="flex-1 flex flex-col bg-card border-l-2 border-border shadow-lg min-w-0">
-            <MessageThreadPanel contextKey="editor-assistant" className="flex-1 min-h-0" />
+            <SimpleChat className="flex-1 min-h-0" />
           </div>
-          <ThreadHistory contextKey="editor-assistant" position="right" defaultCollapsed={false}>
-            <ThreadHistoryHeader />
-            <ThreadHistoryNewButton />
-            <ThreadHistorySearch />
-            <ThreadHistoryList />
-          </ThreadHistory>
         </div>
       )}
 

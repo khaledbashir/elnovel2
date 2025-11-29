@@ -8,17 +8,14 @@ import React, {
 } from "react";
 import { ThemeProvider, useTheme } from "next-themes";
 import { Toaster } from "sonner";
-// Removed Vercel Analytics to fix 404 error
-import { TamboProvider } from "@tambo-ai/react";
 import useLocalStorage from "@/hooks/use-local-storage";
-import { getTamboConfig } from "@/lib/tambo/setup";
 
 export const AppContext = createContext<{
     font: string;
     setFont: Dispatch<SetStateAction<string>>;
 }>({
     font: "Default",
-    setFont: () => {},
+    setFont: () => { },
 });
 
 const ToasterProvider = () => {
@@ -28,31 +25,6 @@ const ToasterProvider = () => {
     return <Toaster theme={theme} />;
 };
 
-const TamboProviderWrapper = ({ children }: { children: ReactNode }) => {
-    const config = React.useMemo(() => getTamboConfig(), []);
-
-    // Only render TamboProvider if API key is configured
-    // Note: projectId is handled internally by the SDK, not passed as a prop
-    if (!config.apiKey) {
-        console.warn("Tambo provider not initialized - missing API key");
-        return <>{children}</>;
-    }
-
-    return (
-        <TamboProvider
-            apiKey={config.apiKey}
-            tamboUrl={config.tamboUrl}
-            components={config.components}
-            tools={config.tools}
-            contextHelpers={config.contextHelpers}
-            streaming={true}
-            autoGenerateThreadName={true}
-            autoGenerateNameThreshold={3}
-        >
-            {children}
-        </TamboProvider>
-    );
-};
 
 export default function Providers({ children }: { children: ReactNode }) {
     const [font, setFontValue] = useLocalStorage<string>(
@@ -83,11 +55,9 @@ export default function Providers({ children }: { children: ReactNode }) {
                     setFont,
                 }}
             >
-                <TamboProviderWrapper>
-                    <ToasterProvider />
-                    {children}
-                    {/* Vercel Analytics removed - {process.env.NODE_ENV === "production" && <Analytics />} */}
-                </TamboProviderWrapper>
+                <ToasterProvider />
+                {children}
+                {/* Vercel Analytics removed - {process.env.NODE_ENV === "production" && <Analytics />} */}
             </AppContext.Provider>
         </ThemeProvider>
     );
