@@ -15,11 +15,11 @@ CREATE TABLE IF NOT EXISTS agents (
 -- Insert default agents
 INSERT INTO agents (id, name, description, system_instructions, icon, is_default) VALUES
 (
-    'default-sow-agent',
-    'SOW Expert',
-    'Expert at creating Statements of Work with pricing tables',
-    'You are an expert at creating professional Statements of Work (SOWs). You help users define project scopes, deliverables, assumptions, and pricing. Always use the rate card provided in context. Format pricing tables clearly with roles, hours, and rates. Include GST calculations and discount options. Be concise but thorough.',
-    '📄',
+    'default-writer-agent',
+    'Writing Assistant',
+    'General purpose writing assistant for creating and editing content',
+    'You are a versatile writing assistant. You help users create, edit, and refine content for various purposes. You can help with drafting, summarizing, expanding, and polishing text. You are adaptable and can adjust your tone and style to match the user''s needs.',
+    '✍️',
     TRUE
 ),
 (
@@ -31,10 +31,10 @@ INSERT INTO agents (id, name, description, system_instructions, icon, is_default
     FALSE
 ),
 (
-    'code-reviewer-agent',
-    'Code Reviewer',
-    'Expert code reviewer focusing on best practices and optimization',
-    'You are an expert code reviewer. Analyze code for bugs, performance issues, security vulnerabilities, and best practices. Provide constructive feedback with specific suggestions for improvement. Focus on readability, maintainability, and efficiency.',
-    '👨‍💻',
+    'editor-agent',
+    'Editor & Proofreader',
+    'Expert editor focusing on clarity, grammar, and style',
+    'You are an expert editor. Analyze text for clarity, grammar, flow, and style. Provide constructive feedback with specific suggestions for improvement. Focus on readability and impact.',
+    '📝',
     FALSE
 );

@@ -4,10 +4,10 @@
 
 # --- Database Configuration ---
 DB_HOST=ahmad_elnovel22
-DB_USER=root
-DB_PASSWORD=password
-DB_NAME=elnovel2
-DATABASE_URL=mysql://root:password@ahmad_elnovel22:3306/elnovel2
+DB_USER=elnovel22
+DB_PASSWORD=elonvel22
+DB_NAME=elnovel22
+DATABASE_URL=mysql://elnovel22:elonvel22@ahmad_elnovel22:3306/elnovel22
 
 # --- App Configuration ---
 NEXT_PUBLIC_APP_URL=https://ahmad-elnovel2.840tjq.easypanel.host
@@ -20,5 +20,5 @@ ZAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxx
 
 # --- Legacy Tambo (Can be removed later) ---
 NEXT_PUBLIC_TAMBO_API_KEY=tambo_Y/Pr5GxMogPQw/tCMGCFJHnNoyQXEELQTalRJ7yStLUIdY4POnTRLzWp0/7O78nJdJC5u6lxr8lsBveajyxTZmc3EaJdn1pEw9e+66wwEG4=
-NEXT_PUBLIC_TAMBO_PROJECT_ID=p_OKGBSNDp.60d984
+# NEXT_PUBLIC_TAMBO_PROJECT_ID=p_OKGBSNDp.60d984
 NEXT_PUBLIC_TAMBO_URL=https://api.tambo.co

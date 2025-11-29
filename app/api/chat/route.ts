@@ -6,12 +6,12 @@ import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 
 // Configure OpenAI provider to use Z.AI
-const apiKey = "18f65090a96a425898a8398a5c4518ce.DDtUvTTnUmK020Wx";
+const apiKey = process.env.ZAI_API_KEY || "";
 
 if (!apiKey) {
-  console.error("CRITICAL: No API Key found");
+    console.error("CRITICAL: No API Key found");
 } else {
-  console.log("[Chat API] API Key found with length:", apiKey.length);
+    console.log("[Chat API] API Key found with length:", apiKey.length);
 }
 
 const zai = createOpenAI({
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
         // 3. Stream Response
         console.log('[Chat API] Calling LLM...');
         const result = await streamText({
-            model: zai('gpt-4o'),
+            model: zai('GLM-4.6'),
             messages: convertToCoreMessages(messages),
             system: system || `You are an advanced AI Agent.
 
@@ -97,7 +97,7 @@ export async function POST(req: Request) {
                         content: z.string(),
                     }),
                     execute: async ({ title }) => {
-                         return JSON.stringify({ status: 'Artifact rendered', title });
+                        return JSON.stringify({ status: 'Artifact rendered', title });
                     },
                 },
                 search_documents: {
@@ -126,9 +126,9 @@ export async function POST(req: Request) {
                         documentId: z.string(),
                     }),
                     execute: async ({ documentId }) => {
-                         console.log(`[Chat API] Fetching content for document: ${documentId}`);
-                         const content = await DocumentManager.getDocumentContext(documentId);
-                         return content || 'Document content not found.';
+                        console.log(`[Chat API] Fetching content for document: ${documentId}`);
+                        const content = await DocumentManager.getDocumentContext(documentId);
+                        return content || 'Document content not found.';
                     }
                 }
             },
