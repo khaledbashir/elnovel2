@@ -2,11 +2,11 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { 
-    Folder, 
-    FileText, 
-    Star, 
-    Clock, 
+import {
+    Folder,
+    FileText,
+    Star,
+    Clock,
     ChevronDown,
     Plus,
     MoreHorizontal,
@@ -139,7 +139,16 @@ export function Sidebar({
     };
 
     const toggleWorkspace = (workspaceId: string) => {
-
+        setExpandedWorkspaces(prev => {
+            const next = new Set(prev);
+            if (next.has(workspaceId)) {
+                next.delete(workspaceId);
+            } else {
+                next.add(workspaceId);
+            }
+            return next;
+        });
+    };
 
     const deleteWorkspace = async (id: string) => {
         if (!confirm("Delete this workspace and all its documents?")) return;
@@ -190,19 +199,19 @@ export function Sidebar({
 
                 {/* Recent Section (Placeholder) */}
                 <SidebarSection title="Recent" isCollapsible>
-                    <SidebarItem 
-                        id="recent-1" 
-                        label="Quick Notes" 
-                        icon={<Clock className="w-4 h-4" />} 
+                    <SidebarItem
+                        id="recent-1"
+                        label="Quick Notes"
+                        icon={<Clock className="w-4 h-4" />}
                     />
                 </SidebarSection>
 
                 {/* Workspaces Section */}
-                <SidebarSection 
-                    title="Workspaces" 
+                <SidebarSection
+                    title="Workspaces"
                     action={
-                        <Plus 
-                            className="w-4 h-4 cursor-pointer hover:text-foreground transition-colors" 
+                        <Plus
+                            className="w-4 h-4 cursor-pointer hover:text-foreground transition-colors"
                             onClick={(e) => {
                                 e.stopPropagation();
                                 handleCreateWorkspace();
@@ -229,13 +238,13 @@ export function Sidebar({
                                 onAddChild={() => handleCreateDocument(workspace.id)}
                                 onDelete={() => deleteWorkspace(workspace.id)}
                             />
-                            
+
                             {/* Nested Documents */}
                             {expandedWorkspaces.has(workspace.id) && (
                                 <div className="relative">
                                     {/* Vertical Guide Line */}
                                     <div className="absolute left-[23px] top-0 bottom-0 w-px bg-border/50" />
-                                    
+
                                     {documents
                                         .filter(d => d.workspace_id === workspace.id)
                                         .map(doc => (
@@ -263,30 +272,30 @@ export function Sidebar({
 
                 {/* Templates Section */}
                 <SidebarSection title="Templates" isCollapsible={false}>
-                    <SidebarItem 
-                        id="tpl-1" 
-                        label="Project Plan" 
-                        icon={<FileText className="w-4 h-4" />} 
+                    <SidebarItem
+                        id="tpl-1"
+                        label="Project Plan"
+                        icon={<FileText className="w-4 h-4" />}
                     />
-                    <SidebarItem 
-                        id="tpl-2" 
-                        label="Meeting Notes" 
-                        icon={<FileText className="w-4 h-4" />} 
+                    <SidebarItem
+                        id="tpl-2"
+                        label="Meeting Notes"
+                        icon={<FileText className="w-4 h-4" />}
                     />
                 </SidebarSection>
             </ScrollArea>
 
             {/* Footer Actions */}
             <div className="p-2 border-t border-border/50">
-                <SidebarItem 
-                    id="trash" 
-                    label="Trash" 
-                    icon={<MoreHorizontal className="w-4 h-4" />} 
+                <SidebarItem
+                    id="trash"
+                    label="Trash"
+                    icon={<MoreHorizontal className="w-4 h-4" />}
                 />
-                <SidebarItem 
-                    id="settings" 
-                    label="Settings" 
-                    icon={<Settings className="w-4 h-4" />} 
+                <SidebarItem
+                    id="settings"
+                    label="Settings"
+                    icon={<Settings className="w-4 h-4" />}
                 />
             </div>
         </div>
