@@ -46,6 +46,19 @@ export function SlashCommandDialogs() {
     setGenerateImageDialogOpen = setGenerateImageOpen;
     setPresentationDialogOpen = setPresentationOpen;
 
+    // Toggle body class when any dialog is open to hide slash menu
+    useEffect(() => {
+        const isAnyDialogOpen = youtubeOpen || twitterOpen || generateImageOpen || presentationOpen;
+        if (isAnyDialogOpen) {
+            document.body.classList.add("slash-command-dialog-open");
+        } else {
+            document.body.classList.remove("slash-command-dialog-open");
+        }
+        return () => {
+            document.body.classList.remove("slash-command-dialog-open");
+        };
+    }, [youtubeOpen, twitterOpen, generateImageOpen, presentationOpen]);
+
     return (
         <>
             <InputDialog
