@@ -3,7 +3,7 @@
 export const dynamic = "force-dynamic";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { SimpleChat } from "@/components/chat/simple-chat";
+import { MessageThreadPanel } from "@/components/ui/message-thread-panel";
 import { DmsLeftNav } from "@/components/dms/left-nav";
 import TailwindAdvancedEditor from "@/components/tailwind/advanced-editor";
 import { cn } from "@/lib/utils";
@@ -118,8 +118,8 @@ export default function SimpleChatPage() {
               />
               <div className="flex flex-col h-full w-full">
                 {/* Message list grows and scrolls */}
-                <div className="flex-1 min-h-0 overflow-y-auto">
-                  <SimpleChat className="h-full" />
+                <div className="flex-1 min-h-0 overflow-y-auto h-full">
+                  <MessageThreadPanel contextKey="simple-chat" className="h-full w-full border-0" />
                 </div>
               </div>
             </div>
