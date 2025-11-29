@@ -10,9 +10,8 @@ const title = "Papyrus - AI Document Platform";
 const description =
   "Smart documents powered by AI";
 
-export const metadataBase = new URL("https://novel.sh");
-
 export const metadata: Metadata = {
+  metadataBase: new URL("https://novel.sh"),
   title: "Papyrus",
   description: "Your AI writing assistant",
   icons: {

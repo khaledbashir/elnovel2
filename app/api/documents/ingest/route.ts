@@ -1,4 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
+
+// Polyfill for pdf-parse/pdf.js in server environment to prevent build errors
+if (typeof global.DOMMatrix === 'undefined') {
+    // @ts-ignore
+    global.DOMMatrix = class DOMMatrix {};
+}
+if (typeof global.ImageData === 'undefined') {
+    // @ts-ignore
+    global.ImageData = class ImageData {};
+}
+if (typeof global.Path2D === 'undefined') {
+    // @ts-ignore
+    global.Path2D = class Path2D {};
+}
+
 import { saveDocument } from '@/lib/vector-db';
 import pdf from 'pdf-parse';
 
