@@ -1,13 +1,13 @@
-import mysql from 'mysql2/promise';
+import { drizzle } from "drizzle-orm/mysql2";
+import mysql from "mysql2/promise";
+import * as schema from "./db/schema";
 
-const pool = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'elnovel2',
+export const pool = mysql.createPool({
+  uri: process.env.DATABASE_URL,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
 });
 
-export default pool;
+export const db = drizzle(pool, { schema, mode: "default" });
+

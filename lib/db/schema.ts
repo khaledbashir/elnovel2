@@ -1,61 +1,45 @@
-import type { InferSelectModel } from "drizzle-orm";
 import {
   boolean,
-  foreignKey,
+  int,
   json,
-  jsonb,
-  pgTable,
+  mysqlEnum,
+  mysqlTable,
   primaryKey,
   text,
   timestamp,
-  uuid,
   varchar,
-} from "drizzle-orm/pg-core";
-import type { AppUsage } from "../usage";
+} from "drizzle-orm/mysql-core";
+import type { InferSelectModel } from "drizzle-orm";
 
-export const user = pgTable("User", {
-  id: uuid("id").primaryKey().notNull().defaultRandom(),
+export const user = mysqlTable("User", {
+  id: varchar("id", { length: 36 }).primaryKey().notNull(),
   email: varchar("email", { length: 64 }).notNull(),
   password: varchar("password", { length: 64 }),
 });
 
 export type User = InferSelectModel<typeof user>;
 
-export const chat = pgTable("Chat", {
-  id: uuid("id").primaryKey().notNull().defaultRandom(),
+export const chat = mysqlTable("Chat", {
+  id: varchar("id", { length: 36 }).primaryKey().notNull(),
   createdAt: timestamp("createdAt").notNull(),
   title: text("title").notNull(),
-  userId: uuid("userId")
+  userId: varchar("userId", { length: 36 })
     .notNull()
     .references(() => user.id),
-  visibility: varchar("visibility", { enum: ["public", "private"] })
+  visibility: mysqlEnum("visibility", ["public", "private"])
     .notNull()
     .default("private"),
-  lastContext: jsonb("lastContext").$type<AppUsage | null>(),
+  lastContext: json("lastContext"),
 });
 
 export type Chat = InferSelectModel<typeof chat>;
 
-// DEPRECATED: The following schema is deprecated and will be removed in the future.
-// Read the migration guide at https://chat-sdk.dev/docs/migration-guides/message-parts
-export const messageDeprecated = pgTable("Message", {
-  id: uuid("id").primaryKey().notNull().defaultRandom(),
-  chatId: uuid("chatId")
+export const message = mysqlTable("Message", {
+  id: varchar("id", { length: 36 }).primaryKey().notNull(),
+  chatId: varchar("chatId", { length: 36 })
     .notNull()
     .references(() => chat.id),
-  role: varchar("role").notNull(),
-  content: json("content").notNull(),
-  createdAt: timestamp("createdAt").notNull(),
-});
-
-export type MessageDeprecated = InferSelectModel<typeof messageDeprecated>;
-
-export const message = pgTable("Message_v2", {
-  id: uuid("id").primaryKey().notNull().defaultRandom(),
-  chatId: uuid("chatId")
-    .notNull()
-    .references(() => chat.id),
-  role: varchar("role").notNull(),
+  role: varchar("role", { length: 20 }).notNull(),
   parts: json("parts").notNull(),
   attachments: json("attachments").notNull(),
   createdAt: timestamp("createdAt").notNull(),
@@ -63,35 +47,13 @@ export const message = pgTable("Message_v2", {
 
 export type DBMessage = InferSelectModel<typeof message>;
 
-// DEPRECATED: The following schema is deprecated and will be removed in the future.
-// Read the migration guide at https://chat-sdk.dev/docs/migration-guides/message-parts
-export const voteDeprecated = pgTable(
+export const vote = mysqlTable(
   "Vote",
   {
-    chatId: uuid("chatId")
+    chatId: varchar("chatId", { length: 36 })
       .notNull()
       .references(() => chat.id),
-    messageId: uuid("messageId")
-      .notNull()
-      .references(() => messageDeprecated.id),
-    isUpvoted: boolean("isUpvoted").notNull(),
-  },
-  (table) => {
-    return {
-      pk: primaryKey({ columns: [table.chatId, table.messageId] }),
-    };
-  }
-);
-
-export type VoteDeprecated = InferSelectModel<typeof voteDeprecated>;
-
-export const vote = pgTable(
-  "Vote_v2",
-  {
-    chatId: uuid("chatId")
-      .notNull()
-      .references(() => chat.id),
-    messageId: uuid("messageId")
+    messageId: varchar("messageId", { length: 36 })
       .notNull()
       .references(() => message.id),
     isUpvoted: boolean("isUpvoted").notNull(),
@@ -105,17 +67,17 @@ export const vote = pgTable(
 
 export type Vote = InferSelectModel<typeof vote>;
 
-export const document = pgTable(
+export const document = mysqlTable(
   "Document",
   {
-    id: uuid("id").notNull().defaultRandom(),
+    id: varchar("id", { length: 36 }).notNull(),
     createdAt: timestamp("createdAt").notNull(),
     title: text("title").notNull(),
     content: text("content"),
-    kind: varchar("text", { enum: ["text", "code", "image", "sheet"] })
+    kind: mysqlEnum("kind", ["text", "code", "image", "sheet"])
       .notNull()
       .default("text"),
-    userId: uuid("userId")
+    userId: varchar("userId", { length: 36 })
       .notNull()
       .references(() => user.id),
   },
@@ -128,45 +90,37 @@ export const document = pgTable(
 
 export type Document = InferSelectModel<typeof document>;
 
-export const suggestion = pgTable(
+export const suggestion = mysqlTable(
   "Suggestion",
   {
-    id: uuid("id").notNull().defaultRandom(),
-    documentId: uuid("documentId").notNull(),
+    id: varchar("id", { length: 36 }).notNull(),
+    documentId: varchar("documentId", { length: 36 }).notNull(),
     documentCreatedAt: timestamp("documentCreatedAt").notNull(),
     originalText: text("originalText").notNull(),
     suggestedText: text("suggestedText").notNull(),
     description: text("description"),
     isResolved: boolean("isResolved").notNull().default(false),
-    userId: uuid("userId")
+    userId: varchar("userId", { length: 36 })
       .notNull()
       .references(() => user.id),
     createdAt: timestamp("createdAt").notNull(),
   },
   (table) => ({
     pk: primaryKey({ columns: [table.id] }),
-    documentRef: foreignKey({
-      columns: [table.documentId, table.documentCreatedAt],
-      foreignColumns: [document.id, document.createdAt],
-    }),
   })
 );
 
 export type Suggestion = InferSelectModel<typeof suggestion>;
 
-export const stream = pgTable(
+export const stream = mysqlTable(
   "Stream",
   {
-    id: uuid("id").notNull().defaultRandom(),
-    chatId: uuid("chatId").notNull(),
+    id: varchar("id", { length: 36 }).notNull(),
+    chatId: varchar("chatId", { length: 36 }).notNull(),
     createdAt: timestamp("createdAt").notNull(),
   },
   (table) => ({
     pk: primaryKey({ columns: [table.id] }),
-    chatRef: foreignKey({
-      columns: [table.chatId],
-      foreignColumns: [chat.id],
-    }),
   })
 );
 

@@ -31,7 +31,6 @@ export default function Page() {
 
 
 
-
   return (
     <div className="fixed inset-0 flex" ref={containerRef}>
       {/* Navigation Sidebar with Toggle */}
@@ -70,7 +69,7 @@ export default function Page() {
         )}
       </button>
 
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden relative">
         <TopActionBar
           workspaceId={selectedWorkspace}
           documentId={selectedDocument}
@@ -82,8 +81,6 @@ export default function Page() {
           />
         </div>
       </div>
-
-      {/* Chat Panel with Thread History on the right */}
 
     </div>
   );

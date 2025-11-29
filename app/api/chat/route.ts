@@ -2,6 +2,8 @@ import { createOpenAI } from '@ai-sdk/openai';
 import { streamText, convertToCoreMessages } from 'ai';
 import { query } from '@/lib/database';
 import { DocumentManager } from '@/lib/document-manager';
+import { searchSimilar } from '@/lib/vector-db';
+import { componentGeneratorTool } from '@/lib/ai/component-generator';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 
@@ -98,37 +100,22 @@ export async function POST(req: Request) {
                         return JSON.stringify({ status: 'Artifact rendered', title });
                     },
                 },
-                search_documents: {
-                    description: 'Search for relevant documents in the knowledge base',
+                generate_component: componentGeneratorTool,
+                getInformation: {
+                    description: 'Get information from your knowledge base to answer questions.',
                     parameters: z.object({
-                        query: z.string().describe('The search query string'),
+                        question: z.string().describe('The user\'s question'),
                     }),
-                    execute: async ({ query }) => {
-                        console.log(`[Chat API] Searching documents for: "${query}"`);
-                        const docs = await DocumentManager.searchDocuments(query);
-                        if (docs.length === 0) {
-                            return 'No documents found.';
+                    execute: async ({ question }) => {
+                        try {
+                            const results = await searchSimilar(question);
+                            return JSON.stringify(results);
+                        } catch (error) {
+                            console.error("Search failed:", error);
+                            return "Failed to retrieve information.";
                         }
-                        // For RAG, we might want to fetch content immediately or just return metadata
-                        // Returning metadata + snippet for now
-                        return JSON.stringify(docs.map(d => ({
-                            id: d.id,
-                            name: d.name,
-                            workspace: (d as any).workspace_name
-                        })));
                     },
                 },
-                get_document_content: {
-                    description: 'Get the full content of a specific document',
-                    parameters: z.object({
-                        documentId: z.string(),
-                    }),
-                    execute: async ({ documentId }) => {
-                        console.log(`[Chat API] Fetching content for document: ${documentId}`);
-                        const content = await DocumentManager.getDocumentContext(documentId);
-                        return content || 'Document content not found.';
-                    }
-                }
             },
             onFinish: async ({ text, toolCalls }) => {
                 console.log('[Chat API] LLM Finished.');

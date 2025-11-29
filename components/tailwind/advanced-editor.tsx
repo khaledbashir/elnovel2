@@ -34,6 +34,8 @@ import Magic from "./ui/icons/magic";
 import { AISelector } from "./generative/ai-selector";
 import { removeAIHighlight } from "novel";
 import { insertSOWToEditor } from "@/lib/editor/insert-sow";
+import { GenerativeUIPanel } from "@/components/generative-ui-panel";
+import { cn } from "@/lib/utils";
 
 const hljs = require("highlight.js");
 
@@ -58,6 +60,43 @@ const TailwindAdvancedEditor = ({
     const [openColor, setOpenColor] = useState(false);
     const [openLink, setOpenLink] = useState(false);
     const [openAI, setOpenAI] = useState(false);
+    const [isAIPanelOpen, setIsAIPanelOpen] = useState(false);
+    const [aiPanelWidth, setAIPanelWidth] = useState(500);
+    const [isResizing, setIsResizing] = useState(false);
+
+    // Handle panel resizing
+    const handleMouseDown = () => {
+        setIsResizing(true);
+    };
+
+    const handleMouseUp = () => {
+        setIsResizing(false);
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+        if (!isResizing) return;
+        const containerWidth = containerRef.current?.getBoundingClientRect().width || 0;
+        const newWidth = containerWidth - e.clientX;
+        if (newWidth >= 300 && newWidth <= 800) {
+            setAIPanelWidth(newWidth);
+        }
+    };
+
+    useEffect(() => {
+        if (isResizing) {
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', handleMouseUp);
+        } else {
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+        }
+        return () => {
+            document.removeEventListener('mousemove', handleMouseMove);
+            document.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, [isResizing]);
+
+    const containerRef = useRef<HTMLDivElement>(null);
 
     //Apply Codeblock Highlighting on the HTML from editor.getHTML()
     const highlightCodeblocks = (content: string) => {
@@ -447,164 +486,199 @@ const TailwindAdvancedEditor = ({
     // It will be set when the EditorContent component calls onCreate
 
     return (
-        <div className="relative w-full h-full flex flex-col overflow-hidden">
+        <div className="relative w-full h-full flex overflow-hidden">
             <SlashCommandDialogs />
-            <EditorRoot>
-                <div className="sticky top-0 z-50 w-full bg-background border-b border-border px-3 py-2 flex items-center gap-2 flex-shrink-0 shadow-sm">
-                    <NodeSelector open={openNode} onOpenChange={setOpenNode} />
-                    <Separator orientation="vertical" />
-                    <LinkSelector open={openLink} onOpenChange={setOpenLink} />
-                    <Separator orientation="vertical" />
-                    <MathSelector />
-                    <Separator orientation="vertical" />
-                    <TextButtons />
-                    <Separator orientation="vertical" />
-                    <TableSelector />
-                    <Separator orientation="vertical" />
-                    <ColorSelector
-                        open={openColor}
-                        onOpenChange={setOpenColor}
-                    />
-                </div>
-                <div className="flex-1 min-h-0 overflow-y-auto overflow-x-auto [scrollbar-gutter:stable] p-4">
-                    <div className="w-full min-w-0 max-w-[900px] xl:max-w-[1200px] mx-auto bg-card p-6 md:p-12 rounded-lg border border-border shadow-sm">
-                        <EditorContent
-                            immediatelyRender={false}
-                            initialContent={initialContent ?? undefined}
-                            extensions={extensions}
-                            className="w-full min-h-[500px] break-words"
-                            onCreate={({ editor }) => {
-                                editorRef.current = editor;
-                                console.log("Editor initialized successfully");
-                            }}
-                            onDestroy={() => {
-                                editorRef.current = null;
-                            }}
-                            editorProps={{
-                                handleDOMEvents: {
-                                    keydown: (_view, event) =>
-                                        handleCommandNavigation(event),
-                                },
-                                handlePaste: (view, event) =>
-                                    handleImagePaste(view, event, uploadFn),
-                                handleDrop: (view, event, _slice, moved) =>
-                                    handleImageDrop(
-                                        view,
-                                        event,
-                                        moved,
-                                        uploadFn,
-                                    ),
-                                attributes: {
-                                    class: `prose prose-sm dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full break-words prose-a:text-sg-green hover:prose-a:text-sg-green-hover prose-blockquote:border-sg-green prose-strong:text-foreground prose-headings:text-foreground prose-p:text-foreground dark:prose-p:text-foreground prose-headings:mt-3 prose-headings:mb-2 prose-p:my-1 prose-ul:my-2 prose-ol:my-2 prose-li:my-0`,
-                                    style: 'min-height: 500px; overflow-anchor: auto;',
-                                },
-                                transformPastedHTML: (html) => html,
-                            }}
-                            onUpdate={({ editor }) => {
-                                debouncedUpdates(editor);
-                                setSaveStatus("Unsaved");
-                            }}
-                            slotAfter={<ImageResizer />}
+
+            {/* Main Editor Area */}
+            <div className="flex-1 flex flex-col overflow-hidden">
+                <EditorRoot>
+                    <div className="sticky top-0 z-50 w-full bg-background border-b border-border px-3 py-2 flex items-center gap-2 flex-shrink-0 shadow-sm">
+                        <NodeSelector open={openNode} onOpenChange={setOpenNode} />
+                        <Separator orientation="vertical" />
+                        <LinkSelector open={openLink} onOpenChange={setOpenLink} />
+                        <Separator orientation="vertical" />
+                        <MathSelector />
+                        <Separator orientation="vertical" />
+                        <TextButtons />
+                        <Separator orientation="vertical" />
+                        <TableSelector />
+                        <Separator orientation="vertical" />
+                        <ColorSelector
+                            open={openColor}
+                            onOpenChange={setOpenColor}
+                        />
+                        <div className="flex-1" />
+                        <button
+                            onClick={() => setIsAIPanelOpen(!isAIPanelOpen)}
+                            className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition-colors"
                         >
-                            <EditorCommand className="z-50 h-auto max-h-[330px] overflow-y-auto rounded-md border border-muted bg-background px-1 py-2 shadow-md transition-all">
-                                <EditorCommandEmpty className="px-2 text-muted-foreground">
-                                    No results
-                                </EditorCommandEmpty>
-                                <EditorCommandList>
-                                    {suggestionItems.map((item) => (
-                                        <EditorCommandItem
-                                            value={item.title}
-                                            onCommand={() => {
-                                                if (
-                                                    item.command &&
-                                                    editorRef.current
-                                                ) {
-                                                    item.command({
-                                                        editor: editorRef.current,
-                                                        range: {
-                                                            from: editorRef
-                                                                .current.state
-                                                                .selection.from,
-                                                            to: editorRef
-                                                                .current.state
-                                                                .selection.to,
-                                                        },
-                                                    });
-                                                }
-                                            }}
-                                            className={`flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-accent aria-selected:bg-accent `}
-                                            key={item.title}
-                                        >
-                                            <div className="flex h-10 w-10 items-center justify-center rounded-md border border-muted bg-background">
-                                                {item.icon}
-                                            </div>
-                                            <div>
-                                                <p className="font-medium">
-                                                    {item.title}
-                                                </p>
-                                                <p className="text-xs text-muted-foreground">
-                                                    {item.description}
-                                                </p>
-                                            </div>
-                                        </EditorCommandItem>
-                                    ))}
-                                </EditorCommandList>
-                            </EditorCommand>
-                            <EditorBubble
-                                tippyOptions={{
-                                    placement: "top",
-                                    onHidden: () => {
-                                        setOpenAI(false);
-                                        editorRef.current
-                                            ?.chain()
-                                            .unsetHighlight()
-                                            .run();
-                                    },
-                                }}
-                                className="flex w-fit max-w-[90vw] overflow-hidden rounded-md border border-muted bg-background shadow-xl"
-                            >
-                                {openAI ? (
-                                    <AISelector
-                                        open={openAI}
-                                        onOpenChange={setOpenAI}
-                                    />
-                                ) : (
-                                    <>
-                                        <Separator orientation="vertical" />
-                                        <NodeSelector
-                                            open={openNode}
-                                            onOpenChange={setOpenNode}
-                                        />
-                                        <Separator orientation="vertical" />
-                                        <LinkSelector
-                                            open={openLink}
-                                            onOpenChange={setOpenLink}
-                                        />
-                                        <Separator orientation="vertical" />
-                                        <TextButtons />
-                                        <Separator orientation="vertical" />
-                                        <TableSelector />
-                                        <Separator orientation="vertical" />
-                                        <ColorSelector
-                                            open={openColor}
-                                            onOpenChange={setOpenColor}
-                                        />
-                                        <Separator orientation="vertical" />
-                                        <button
-                                            onClick={() => setOpenAI(true)}
-                                            className="flex items-center gap-1 px-2 py-1 text-sm font-medium text-emerald-600 hover:bg-accent hover:text-emerald-700 transition-colors"
-                                        >
-                                            <Magic className="h-4 w-4" />
-                                            Ask AI
-                                        </button>
-                                    </>
-                                )}
-                            </EditorBubble>
-                            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-background to-transparent" />
-                        </EditorContent>
+                            <Magic className="h-4 w-4" />
+                            AI Chat
+                        </button>
                     </div>
-                </div>
-            </EditorRoot>
+                    <div className="flex-1 min-h-0 overflow-y-auto overflow-x-auto [scrollbar-gutter:stable] p-4">
+                        <div className="w-full min-w-0 max-w-[900px] xl:max-w-[1200px] mx-auto bg-card p-6 md:p-12 rounded-lg border border-border shadow-sm">
+                            <EditorContent
+                                immediatelyRender={false}
+                                initialContent={initialContent ?? undefined}
+                                extensions={extensions}
+                                className="w-full min-h-[500px] break-words"
+                                onCreate={({ editor }) => {
+                                    editorRef.current = editor;
+                                    console.log("Editor initialized successfully");
+                                }}
+                                onDestroy={() => {
+                                    editorRef.current = null;
+                                }}
+                                editorProps={{
+                                    handleDOMEvents: {
+                                        keydown: (_view, event) =>
+                                            handleCommandNavigation(event),
+                                    },
+                                    handlePaste: (view, event) =>
+                                        handleImagePaste(view, event, uploadFn),
+                                    handleDrop: (view, event, _slice, moved) =>
+                                        handleImageDrop(
+                                            view,
+                                            event,
+                                            moved,
+                                            uploadFn,
+                                        ),
+                                    attributes: {
+                                        class: `prose prose-sm dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full break-words prose-a:text-sg-green hover:prose-a:text-sg-green-hover prose-blockquote:border-sg-green prose-strong:text-foreground prose-headings:text-foreground prose-p:text-foreground dark:prose-p:text-foreground prose-headings:mt-3 prose-headings:mb-2 prose-p:my-1 prose-ul:my-2 prose-ol:my-2 prose-li:my-0`,
+                                        style: 'min-height: 500px; overflow-anchor: auto;',
+                                    },
+                                    transformPastedHTML: (html) => html,
+                                }}
+                                onUpdate={({ editor }) => {
+                                    debouncedUpdates(editor);
+                                    setSaveStatus("Unsaved");
+                                }}
+                                slotAfter={<ImageResizer />}
+                            >
+                                <EditorCommand className="z-50 h-auto max-h-[330px] overflow-y-auto rounded-md border border-muted bg-background px-1 py-2 shadow-md transition-all">
+                                    <EditorCommandEmpty className="px-2 text-muted-foreground">
+                                        No results
+                                    </EditorCommandEmpty>
+                                    <EditorCommandList>
+                                        {suggestionItems.map((item) => (
+                                            <EditorCommandItem
+                                                value={item.title}
+                                                onCommand={() => {
+                                                    if (
+                                                        item.command &&
+                                                        editorRef.current
+                                                    ) {
+                                                        item.command({
+                                                            editor: editorRef.current,
+                                                            range: {
+                                                                from: editorRef
+                                                                    .current.state
+                                                                    .selection.from,
+                                                                to: editorRef
+                                                                    .current.state
+                                                                    .selection.to,
+                                                            },
+                                                        });
+                                                    }
+                                                }}
+                                                className={`flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm hover:bg-accent aria-selected:bg-accent `}
+                                                key={item.title}
+                                            >
+                                                <div className="flex h-10 w-10 items-center justify-center rounded-md border border-muted bg-background">
+                                                    {item.icon}
+                                                </div>
+                                                <div>
+                                                    <p className="font-medium">
+                                                        {item.title}
+                                                    </p>
+                                                    <p className="text-xs text-muted-foreground">
+                                                        {item.description}
+                                                    </p>
+                                                </div>
+                                            </EditorCommandItem>
+                                        ))}
+                                    </EditorCommandList>
+                                </EditorCommand>
+                                <EditorBubble
+                                    tippyOptions={{
+                                        placement: "top",
+                                        onHidden: () => {
+                                            setOpenAI(false);
+                                            editorRef.current
+                                                ?.chain()
+                                                .unsetHighlight()
+                                                .run();
+                                        },
+                                    }}
+                                    className="flex w-fit max-w-[90vw] overflow-hidden rounded-md border border-muted bg-background shadow-xl"
+                                >
+                                    {openAI ? (
+                                        <AISelector
+                                            open={openAI}
+                                            onOpenChange={setOpenAI}
+                                        />
+                                    ) : (
+                                        <>
+                                            <Separator orientation="vertical" />
+                                            <NodeSelector
+                                                open={openNode}
+                                                onOpenChange={setOpenNode}
+                                            />
+                                            <Separator orientation="vertical" />
+                                            <LinkSelector
+                                                open={openLink}
+                                                onOpenChange={setOpenLink}
+                                            />
+                                            <Separator orientation="vertical" />
+                                            <TextButtons />
+                                            <Separator orientation="vertical" />
+                                            <TableSelector />
+                                            <Separator orientation="vertical" />
+                                            <ColorSelector
+                                                open={openColor}
+                                                onOpenChange={setOpenColor}
+                                            />
+                                            <Separator orientation="vertical" />
+                                            <button
+                                                onClick={() => setOpenAI(true)}
+                                                className="flex items-center gap-1 px-2 py-1 text-sm font-medium text-emerald-600 hover:bg-accent hover:text-emerald-700 transition-colors"
+                                            >
+                                                <Magic className="h-4 w-4" />
+                                                Ask AI
+                                            </button>
+                                        </>
+                                    )}
+                                </EditorBubble>
+                                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-background to-transparent" />
+                            </EditorContent>
+                        </div>
+                    </div>
+                </EditorRoot>
+            </div>
+
+            {/* AI Panel Sidebar with Resize Handle */}
+            {isAIPanelOpen && (
+                <>
+                    {/* Resize Handle */}
+                    <div
+                        onMouseDown={handleMouseDown}
+                        className={cn(
+                            "w-1.5 bg-border hover:bg-primary/50 active:bg-primary cursor-col-resize flex-shrink-0 transition-colors relative group",
+                            isResizing && "bg-primary"
+                        )}
+                        title="Drag to resize"
+                    >
+                        <div className="absolute inset-y-0 -left-1 -right-1" />
+                    </div>
+                    <div
+                        className="border-l border-border bg-background flex-shrink-0"
+                        style={{ width: `${aiPanelWidth}px` }}
+                    >
+                        <GenerativeUIPanel onClose={() => setIsAIPanelOpen(false)} />
+                    </div>
+                </>
+            )}
         </div>
     );
 };

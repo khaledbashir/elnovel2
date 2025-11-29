@@ -1,17 +1,22 @@
 import { ChromaClient, Collection } from 'chromadb';
 import { openai } from '@ai-sdk/openai';
-import { embed } from 'ai';
+import { embed, embedMany } from 'ai';
+import { v4 as uuidv4 } from 'uuid';
 
 // Initialize Chroma Client
 const client = new ChromaClient({
     path: process.env.CHROMA_DB_URL || "http://chroma:8000",
 });
 
-// Z.AI Provider for Embeddings
-const zai = openai.embedding('text-embedding-3-small', {
+import { createOpenAI } from '@ai-sdk/openai';
+
+// Z.AI Provider Configuration
+const zaiProvider = createOpenAI({
     baseURL: process.env.ZAI_API_URL || 'https://api.z.ai/api/coding/paas/v4',
     apiKey: "18f65090a96a425898a8398a5c4518ce.DDtUvTTnUmK020Wx",
 });
+
+const zai = zaiProvider.embedding('text-embedding-3-small');
 
 const COLLECTION_NAME = "knowledge_base";
 
@@ -21,25 +26,48 @@ export async function getCollection(): Promise<Collection> {
     });
 }
 
+function chunkText(text: string, maxLength: number = 1000): string[] {
+    const chunks: string[] = [];
+    let currentChunk = "";
+    const sentences = text.split(/(?<=[.?!])\s+/);
+
+    for (const sentence of sentences) {
+        if ((currentChunk + sentence).length > maxLength) {
+            if (currentChunk) chunks.push(currentChunk);
+            currentChunk = sentence;
+        } else {
+            currentChunk += (currentChunk ? " " : "") + sentence;
+        }
+    }
+    if (currentChunk) chunks.push(currentChunk);
+    return chunks;
+}
+
 export async function saveDocument(
     id: string,
     content: string,
     metadata: Record<string, any>
 ) {
     const collection = await getCollection();
+    const chunks = chunkText(content);
 
-    // Generate Embedding
-    const { embedding } = await embed({
+    // Generate Embeddings for all chunks
+    const { embeddings } = await embedMany({
         model: zai,
-        value: content,
+        values: chunks,
     });
+
+    // Prepare data for Chroma
+    const ids = chunks.map((_, i) => `${id}-${i}`);
+    const metadatas = chunks.map(() => metadata);
+    const documents = chunks;
 
     // Save to Chroma
     await collection.add({
-        ids: [id],
-        embeddings: [embedding],
-        metadatas: [metadata],
-        documents: [content],
+        ids,
+        embeddings,
+        metadatas,
+        documents,
     });
 }
 
@@ -73,3 +101,4 @@ export async function searchSimilar(query: string, limit: number = 5) {
 
     return formatted;
 }
+
