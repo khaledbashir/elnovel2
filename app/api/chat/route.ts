@@ -1,23 +1,20 @@
-import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
+import { createOpenAI } from '@ai-sdk/openai';
 import { streamText, convertToCoreMessages } from 'ai';
 import { query } from '@/lib/database';
 import { DocumentManager } from '@/lib/document-manager';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 
-// Configure OpenAI provider to use Z.AI
-const apiKey = process.env.ZAI_API_KEY || "";
+// Configure Vercel AI Gateway
+const gatewayKey = process.env.AI_GATEWAY_API_KEY;
 
-if (!apiKey) {
-    console.error("CRITICAL: No API Key found");
-} else {
-    console.log("[Chat API] API Key found with length:", apiKey.length);
+if (!gatewayKey) {
+    console.error("CRITICAL: No AI Gateway Key found");
 }
 
-const zai = createOpenAICompatible({
-    name: 'z-ai',
-    baseURL: process.env.ZAI_API_URL || 'https://api.z.ai/api/coding/paas/v4',
-    apiKey: apiKey,
+const openai = createOpenAI({
+    baseURL: 'https://gateway.ai.vercel.dev/v1',
+    apiKey: gatewayKey,
 });
 
 export async function POST(req: Request) {
@@ -52,9 +49,9 @@ export async function POST(req: Request) {
         }
 
         // 3. Stream Response
-        console.log('[Chat API] Calling LLM...');
+        console.log('[Chat API] Calling LLM via Vercel Gateway...');
         const result = await streamText({
-            model: zai('glm-4.6'),
+            model: openai('glm-4.6'),
             messages: convertToCoreMessages(messages),
             system: system || `You are an advanced AI Agent.
 
