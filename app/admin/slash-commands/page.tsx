@@ -19,7 +19,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@/components/tailwind/ui/dialog";
 import {
     Select,
     SelectContent,

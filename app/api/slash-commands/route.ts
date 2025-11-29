@@ -1,27 +1,15 @@
 import { db } from "@/lib/db";
 import { slashCommand } from "@/lib/db/schema";
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { eq, and, or } from "drizzle-orm";
 
 export async function GET(req: NextRequest) {
     try {
-        const session = await getServerSession(authOptions);
-
-        // Fetch all active commands (system commands + user's custom commands)
+        // Fetch all active commands (system commands + all custom commands)
         const commands = await db
             .select()
             .from(slashCommand)
-            .where(
-                and(
-                    eq(slashCommand.isActive, true),
-                    or(
-                        eq(slashCommand.isSystem, true),
-                        eq(slashCommand.userId, session?.user?.id || "")
-                    )
-                )
-            );
+            .where(eq(slashCommand.isActive, true));
 
         return NextResponse.json(commands);
     } catch (error) {
@@ -35,12 +23,6 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
     try {
-        const session = await getServerSession(authOptions);
-
-        if (!session?.user?.id) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
-
         const body = await req.json();
         const { title, description, icon, searchTerms, prompt, model, provider } = body;
 
@@ -62,7 +44,7 @@ export async function POST(req: NextRequest) {
             provider: provider || "openai",
             isActive: true,
             isSystem: false,
-            userId: session.user.id,
+            userId: null, // No auth for now
             createdAt: new Date(),
             updatedAt: new Date(),
         };
