@@ -24,7 +24,7 @@ import { uploadFn } from "./image-upload";
 import Magic from "./ui/icons/magic";
 import { notifications } from "@/lib/utils";
 import { InputDialog } from "./ui/input-dialog";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // State management for dialogs
 let setYoutubeDialogOpen: ((open: boolean) => void) | null = null;
