@@ -1,8 +1,8 @@
 "use client";
 
-import type { UseChatHelpers } from "@ai-sdk/react";
+import type { UseChatHelpers } from "ai/react";
 import { Trigger } from "@radix-ui/react-select";
-import type { UIMessage } from "ai";
+import type { Message } from "ai";
 import equal from "fast-deep-equal";
 import {
   type ChangeEvent,
@@ -18,7 +18,7 @@ import {
 } from "react";
 import { toast } from "sonner";
 import { useLocalStorage, useWindowSize } from "usehooks-ts";
-import { saveChatModelAsCookie } from "@/app/(chat)/actions";
+// import { saveChatModelAsCookie } from "@/app/(chat)/actions";
 import { SelectItem } from "@/components/ui/select";
 import { chatModels } from "@/lib/ai/models";
 import { myProvider } from "@/lib/ai/providers";
@@ -71,7 +71,7 @@ function PureMultimodalInput({
   stop: () => void;
   attachments: Attachment[];
   setAttachments: Dispatch<SetStateAction<Attachment[]>>;
-  messages: UIMessage[];
+  messages: Message[];
   setMessages: UseChatHelpers["setMessages"];
   sendMessage: UseChatHelpers["sendMessage"];
   className?: string;
@@ -475,7 +475,7 @@ function PureModelSelectorCompact({
           setOptimisticModelId(model.id);
           onModelChange?.(model.id);
           startTransition(() => {
-            saveChatModelAsCookie(model.id);
+            // saveChatModelAsCookie(model.id);
           });
         }
       }}

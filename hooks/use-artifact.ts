@@ -11,3 +11,5 @@ export const useArtifactSelector = create<ArtifactState>((set) => ({
     toggleVisibility: () => set((state: ArtifactState) => ({ isVisible: !state.isVisible })),
     setVisibility: (isVisible: boolean) => set({ isVisible }),
 }));
+
+export const useArtifact = useArtifactSelector;

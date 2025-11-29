@@ -161,4 +161,8 @@ export async function POST(req: Request) {
             console.error('[Chat API] Fatal Error:', error);
             return new Response(JSON.stringify({ error: error.message }), { status: 500 });
         }
+    } catch (error: any) {
+        console.error('[Chat API] Fatal Error:', error);
+        return new Response(JSON.stringify({ error: error.message }), { status: 500 });
     }
+}
