@@ -2,102 +2,35 @@
 
 export const dynamic = "force-dynamic";
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Sidebar } from "@/components/sidebar";
 import { TopActionBar } from "@/components/top-action-bar";
 import TailwindAdvancedEditor from "@/components/tailwind/advanced-editor";
-import { SimpleChat } from "@/components/chat/simple-chat";
-import { ChatHistorySidebar } from "@/components/chat/chat-history-sidebar";
 import { cn } from "@/lib/utils";
-import { ChevronLeft, ChevronRight, PanelRightClose, PanelRightOpen } from "lucide-react";
-
-const MIN_PANEL_WIDTH = 300;
-const MAX_PANEL_WIDTH = 800;
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function Page() {
   const [selectedDocument, setSelectedDocument] = useState<string | null>(null);
   const [selectedWorkspace, setSelectedWorkspace] = useState<string | null>(null);
-  const [isResizing, setIsResizing] = useState(false);
-  const [chatPanelWidth, setChatPanelWidth] = useState(440);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [isChatPanelCollapsed, setIsChatPanelCollapsed] = useState(false);
-  const [currentThreadId, setCurrentThreadId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleNewThread = useCallback(() => {
-    setCurrentThreadId(null);
-  }, []);
-
-  // Load saved panel width and sidebar states from localStorage
+  // Load saved sidebar state from localStorage
   useEffect(() => {
-    const savedWidth = localStorage.getItem('chatPanelWidth');
-    if (savedWidth) {
-      const width = parseInt(savedWidth, 10);
-      if (width >= MIN_PANEL_WIDTH && width <= MAX_PANEL_WIDTH) {
-        setChatPanelWidth(width);
-      }
-    }
-
     const savedSidebarState = localStorage.getItem('sidebarCollapsed');
     if (savedSidebarState !== null) {
       setIsSidebarCollapsed(savedSidebarState === 'true');
     }
-
-    const savedChatPanelState = localStorage.getItem('chatPanelCollapsed');
-    if (savedChatPanelState !== null) {
-      setIsChatPanelCollapsed(savedChatPanelState === 'true');
-    }
   }, []);
 
-  // Save panel width and sidebar states to localStorage
-  useEffect(() => {
-    localStorage.setItem('chatPanelWidth', chatPanelWidth.toString());
-  }, [chatPanelWidth]);
-
+  // Save sidebar state to localStorage
   useEffect(() => {
     localStorage.setItem('sidebarCollapsed', isSidebarCollapsed.toString());
   }, [isSidebarCollapsed]);
 
-  useEffect(() => {
-    localStorage.setItem('chatPanelCollapsed', isChatPanelCollapsed.toString());
-  }, [isChatPanelCollapsed]);
 
-  const handleMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsResizing(true);
-    document.body.style.cursor = "col-resize";
-    document.body.style.userSelect = "none";
-  }, []);
 
-  const handleMouseUp = useCallback(() => {
-    setIsResizing(false);
-    document.body.style.cursor = "";
-    document.body.style.userSelect = "";
-  }, []);
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!isResizing || !containerRef.current) return;
-
-    const containerRect = containerRef.current.getBoundingClientRect();
-    const newWidth = containerRect.right - e.clientX;
-
-    // Clamp width between min and max, ensuring we don't exceed container bounds
-    const maxAllowedWidth = containerRect.width - 64; // Account for sidebar
-    const clampedWidth = Math.max(MIN_PANEL_WIDTH, Math.min(Math.min(MAX_PANEL_WIDTH, maxAllowedWidth), newWidth));
-    setChatPanelWidth(clampedWidth);
-  }, [isResizing]);
-
-  useEffect(() => {
-    if (isResizing) {
-      window.addEventListener("mousemove", handleMouseMove);
-      window.addEventListener("mouseup", handleMouseUp);
-      return () => {
-        window.removeEventListener("mousemove", handleMouseMove);
-        window.removeEventListener("mouseup", handleMouseUp);
-      };
-    }
-  }, [isResizing, handleMouseMove, handleMouseUp]);
 
   return (
     <div className="fixed inset-0 flex" ref={containerRef}>
@@ -151,71 +84,7 @@ export default function Page() {
       </div>
 
       {/* Chat Panel with Thread History on the right */}
-      {!isChatPanelCollapsed && (
-        <div
-          className={cn(
-            "relative flex flex-shrink-0 transition-all duration-300 ease-in-out",
-            isResizing && "transition-none"
-          )}
-          style={{ width: `${chatPanelWidth}px` }}
-        >
-          <div
-            className={cn(
-              "w-1.5 cursor-col-resize absolute top-0 left-0 h-full z-10",
-              "bg-[var(--resizable-handle-hex)] hover:bg-[var(--resizable-handle-hover-hex)]",
-              isResizing && "bg-[var(--resizable-handle-active-hex)] transition-none"
-            )}
-            onMouseDown={handleMouseDown}
-            role="separator"
-            aria-orientation="vertical"
-            aria-label="Resize chat panel"
-            style={{ transition: isResizing ? 'none' : 'background-color 0.2s ease' }}
-          />
 
-          <div className="flex-1 flex bg-card border-l-2 border-border shadow-lg min-w-0 overflow-hidden">
-            {/* History Sidebar (Left side of chat panel) */}
-            <div className="w-64 flex-shrink-0 border-r border-border hidden md:flex">
-              <ChatHistorySidebar
-                currentThreadId={currentThreadId}
-                onSelectThread={setCurrentThreadId}
-                onNewThread={handleNewThread}
-                className="w-full"
-              />
-            </div>
-
-            {/* Chat Area */}
-            <div className="flex-1 flex flex-col min-w-0">
-              <SimpleChat
-                className="flex-1 min-h-0"
-                threadId={currentThreadId}
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Chat Panel Toggle Button */}
-      <button
-        onClick={() => {
-          setIsChatPanelCollapsed(!isChatPanelCollapsed);
-          localStorage.setItem('chatPanelCollapsed', (!isChatPanelCollapsed).toString());
-        }}
-        className={cn(
-          "absolute top-4 z-50 p-2 rounded-md bg-card border border-border shadow-md",
-          "hover:bg-accent transition-all duration-300 ease-in-out",
-          "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
-          "transform transition-transform duration-300"
-        )}
-        style={isChatPanelCollapsed ? { right: '8px' } : { right: `${chatPanelWidth + 8}px` }}
-        aria-label={isChatPanelCollapsed ? "Expand chat panel" : "Collapse chat panel"}
-        aria-expanded={!isChatPanelCollapsed}
-      >
-        {isChatPanelCollapsed ? (
-          <PanelRightOpen className="h-4 w-4 transition-transform duration-300" />
-        ) : (
-          <PanelRightClose className="h-4 w-4 transition-transform duration-300" />
-        )}
-      </button>
     </div>
   );
 }
