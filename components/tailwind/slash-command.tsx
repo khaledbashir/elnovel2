@@ -344,7 +344,11 @@ const staticFormattingCommands = [
         icon: <span className="text-[18px]">📊</span>,
         command: ({ editor, range }) => {
             editor.chain().focus().deleteRange(range).run();
-            setPresentationDialogOpen?.(true);
+            // Blur editor to close slash menu
+            setTimeout(() => {
+                editor.commands.blur();
+                setPresentationDialogOpen?.(true);
+            }, 100);
         },
     },
     {
@@ -356,7 +360,10 @@ const staticFormattingCommands = [
             editor.chain().focus().deleteRange(range).run();
             currentEditor = editor;
             currentRange = range;
-            setGenerateImageDialogOpen?.(true);
+            setTimeout(() => {
+                editor.commands.blur();
+                setGenerateImageDialogOpen?.(true);
+            }, 100);
         },
     },
     {
@@ -388,7 +395,10 @@ const staticFormattingCommands = [
             editor.chain().focus().deleteRange(range).run();
             currentEditor = editor;
             currentRange = range;
-            setYoutubeDialogOpen?.(true);
+            setTimeout(() => {
+                editor.commands.blur();
+                setYoutubeDialogOpen?.(true);
+            }, 100);
         },
     },
     {
@@ -400,7 +410,10 @@ const staticFormattingCommands = [
             editor.chain().focus().deleteRange(range).run();
             currentEditor = editor;
             currentRange = range;
-            setTwitterDialogOpen?.(true);
+            setTimeout(() => {
+                editor.commands.blur();
+                setTwitterDialogOpen?.(true);
+            }, 100);
         },
     },
 ];
