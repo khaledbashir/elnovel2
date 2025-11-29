@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import { SimpleChat } from "@/components/chat/simple-chat";
 import { DmsLeftNav } from "@/components/dms/left-nav";
@@ -72,7 +74,7 @@ export default function SimpleChatPage() {
       <div className="flex-shrink-0 p-2 border-b border-border bg-card flex items-center justify-end">
         <ThemeToggle />
       </div>
-      
+
       <div className="flex flex-1 min-h-0 w-full relative">
         {/* Navigation Sidebar with Toggle */}
         <div className={cn(
@@ -81,7 +83,7 @@ export default function SimpleChatPage() {
         )}>
           <DmsLeftNav />
         </div>
-        
+
         {/* Sidebar Toggle Button */}
         <button
           onClick={() => setIsNavSidebarCollapsed(!isNavSidebarCollapsed)}
@@ -103,14 +105,14 @@ export default function SimpleChatPage() {
           <div className="flex-1 h-full overflow-y-auto">
             <TailwindAdvancedEditor documentId={null} workspaceId={null} />
           </div>
-          
+
           {/* Right pane: Chat (fixed, internal scroll) */}
           {!isChatPanelCollapsed && (
-            <div 
+            <div
               className="relative flex h-full border-l border-border bg-card/50 transition-all duration-300"
               style={{ width: chatWidth }}
             >
-              <div 
+              <div
                 className="w-1.5 cursor-col-resize absolute top-0 left-0 h-full bg-border hover:bg-primary transition-colors z-10"
                 onMouseDown={handleMouseDown}
               />
@@ -123,7 +125,7 @@ export default function SimpleChatPage() {
             </div>
           )}
         </div>
-        
+
         {/* Chat Panel Toggle Button */}
         <button
           onClick={() => setIsChatPanelCollapsed(!isChatPanelCollapsed)}
