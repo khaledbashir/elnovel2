@@ -10,7 +10,8 @@
     "lint": "biome lint .",
     "format": "biome format . ",
     "typecheck": "tsc --noEmit",
-    "migrate": "node scripts/migrate.js"
+    "migrate": "node scripts/migrate.js",
+    "clean:docker": "./scripts/safe-docker-clean.sh"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.1.0",
