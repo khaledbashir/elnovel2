@@ -30,6 +30,7 @@ import { useState } from "react";
 let setYoutubeDialogOpen: ((open: boolean) => void) | null = null;
 let setTwitterDialogOpen: ((open: boolean) => void) | null = null;
 let setGenerateImageDialogOpen: ((open: boolean) => void) | null = null;
+let setPresentationDialogOpen: ((open: boolean) => void) | null = null;
 let currentEditor: any = null;
 let currentRange: any = null;
 
@@ -37,11 +38,13 @@ export function SlashCommandDialogs() {
     const [youtubeOpen, setYoutubeOpen] = useState(false);
     const [twitterOpen, setTwitterOpen] = useState(false);
     const [generateImageOpen, setGenerateImageOpen] = useState(false);
+    const [presentationOpen, setPresentationOpen] = useState(false);
 
     // Expose setters globally
     setYoutubeDialogOpen = setYoutubeOpen;
     setTwitterDialogOpen = setTwitterOpen;
     setGenerateImageDialogOpen = setGenerateImageOpen;
+    setPresentationDialogOpen = setPresentationOpen;
 
     return (
         <>
@@ -124,6 +127,67 @@ export function SlashCommandDialogs() {
                         notifications.error(
                             "Invalid Twitter link",
                             "Please enter a correct Twitter/X link.",
+                        );
+                    }
+                }}
+            />
+            <InputDialog
+                open={presentationOpen}
+                onOpenChange={setPresentationOpen}
+                title="Generate Presentation"
+                description="Describe the presentation topic and requirements."
+                placeholder="Help an AI startup team create a big model market analysis PPT"
+                onSubmit={async (prompt) => {
+                    if (prompt && prompt.length > 0) {
+                        try {
+                            // Show loading notification
+                            notifications.info(
+                                "Generating presentation...",
+                                "This may take a moment. The PDF will download automatically."
+                            );
+
+                            const response = await fetch("/api/generate-slides", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ prompt }),
+                            });
+
+                            if (response.ok) {
+                                const data = await response.json();
+
+                                // Assuming the API returns a URL or blob to the PDF
+                                // We'll need to handle the actual download/display
+                                if (data.url) {
+                                    window.open(data.url, "_blank");
+                                } else if (data.pdf) {
+                                    // Handle base64 PDF or other format
+                                    const blob = new Blob([Buffer.from(data.pdf, 'base64')], { type: 'application/pdf' });
+                                    const url = URL.createObjectURL(blob);
+                                    window.open(url, "_blank");
+                                }
+
+                                notifications.success(
+                                    "Presentation generated!",
+                                    "Your presentation PDF is ready."
+                                );
+                            } else {
+                                const error = await response.json();
+                                notifications.error(
+                                    "Generation failed",
+                                    error.error || "Failed to generate presentation."
+                                );
+                            }
+                        } catch (error) {
+                            console.error("Error generating presentation:", error);
+                            notifications.error(
+                                "Error",
+                                "Failed to generate presentation. Please try again."
+                            );
+                        }
+                    } else {
+                        notifications.error(
+                            "Invalid prompt",
+                            "Please enter a description for the presentation."
                         );
                     }
                 }}
@@ -271,6 +335,16 @@ const staticFormattingCommands = [
                     error instanceof Error ? error.message : String(error),
                 );
             }
+        },
+    },
+    {
+        title: "Generate Presentation",
+        description: "AI will generate professional slides/poster in PDF format.",
+        searchTerms: ["presentation", "slides", "ppt", "poster", "deck"],
+        icon: <span className="text-[18px]">📊</span>,
+        command: ({ editor, range }) => {
+            editor.chain().focus().deleteRange(range).run();
+            setPresentationDialogOpen?.(true);
         },
     },
     {
