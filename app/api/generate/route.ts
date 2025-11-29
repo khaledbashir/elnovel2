@@ -4,22 +4,22 @@ import { kv } from "@vercel/kv";
 import { streamText } from "ai";
 import { match } from "ts-pattern";
 
-// Configure Vercel AI Gateway
-const gatewayKey = process.env.AI_GATEWAY_API_KEY;
+// Configure direct Z.AI connection
+const zaiApiKey = process.env.ZAI_API_KEY;
 
-if (!gatewayKey) {
-  console.error("CRITICAL: No AI Gateway Key found");
+if (!zaiApiKey) {
+  console.error("CRITICAL: No Z.AI API Key found");
 }
 
 const openai = createOpenAI({
-  baseURL: 'https://gateway.ai.vercel.dev/v1',
-  apiKey: gatewayKey,
+  baseURL: 'https://api.z.ai/api/coding/paas/v4',
+  apiKey: zaiApiKey,
 });
 
 export async function POST(req: Request): Promise<Response> {
-  // Check if the AI_GATEWAY_API_KEY is set, if not return 400
-  if (!process.env.AI_GATEWAY_API_KEY || process.env.AI_GATEWAY_API_KEY === "") {
-    return new Response("Missing AI_GATEWAY_API_KEY - make sure to add it to your .env file.", {
+  // Check if the ZAI_API_KEY is set, if not return 400
+  if (!process.env.ZAI_API_KEY || process.env.ZAI_API_KEY === "") {
+    return new Response("Missing ZAI_API_KEY - make sure to add it to your .env file.", {
       status: 400,
     });
   }

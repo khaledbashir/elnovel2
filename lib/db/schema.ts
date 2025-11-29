@@ -125,3 +125,21 @@ export const stream = mysqlTable(
 );
 
 export type Stream = InferSelectModel<typeof stream>;
+
+export const slashCommand = mysqlTable("SlashCommand", {
+  id: varchar("id", { length: 36 }).primaryKey().notNull(),
+  title: varchar("title", { length: 100 }).notNull(),
+  description: text("description"),
+  icon: varchar("icon", { length: 50 }),
+  searchTerms: text("searchTerms"),
+  prompt: text("prompt").notNull(),
+  model: varchar("model", { length: 50 }).default("gpt-4"),
+  provider: varchar("provider", { length: 50 }).default("openai"),
+  isActive: boolean("isActive").default(true),
+  isSystem: boolean("isSystem").default(false),
+  userId: varchar("userId", { length: 36 }).references(() => user.id),
+  createdAt: timestamp("createdAt").notNull(),
+  updatedAt: timestamp("updatedAt").notNull(),
+});
+
+export type SlashCommand = InferSelectModel<typeof slashCommand>;

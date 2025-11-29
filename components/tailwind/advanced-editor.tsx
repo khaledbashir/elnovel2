@@ -29,7 +29,7 @@ import GenerativeMenuSwitch from "./generative/generative-menu-switch";
 import { uploadFn } from "./image-upload";
 import { TextButtons } from "./selectors/text-buttons";
 import { TableSelector } from "./selectors/table-selector";
-import { slashCommand, suggestionItems, SlashCommandDialogs } from "./slash-command";
+import { slashCommand, suggestionItems, SlashCommandDialogs, loadDynamicCommands } from "./slash-command";
 import Magic from "./ui/icons/magic";
 import { AISelector } from "./generative/ai-selector";
 import { removeAIHighlight } from "novel";
@@ -64,6 +64,7 @@ const TailwindAdvancedEditor = ({
     const [aiPanelWidth, setAIPanelWidth] = useState(500);
     const [isResizing, setIsResizing] = useState(false);
     const [isAIPanelCollapsed, setIsAIPanelCollapsed] = useState(false);
+    const [isSelectionEmpty, setIsSelectionEmpty] = useState(true);
 
     // Handle panel resizing
     const handleMouseDown = () => {
@@ -212,6 +213,8 @@ const TailwindAdvancedEditor = ({
         };
 
         loadContent();
+        // Load dynamic slash commands from database
+        loadDynamicCommands();
     }, [documentId]);
 
     // Listen for custom event to open AI selector from slash command
@@ -528,6 +531,9 @@ const TailwindAdvancedEditor = ({
                                 className="w-full min-h-[500px] break-words"
                                 onCreate={({ editor }) => {
                                     editorRef.current = editor;
+                                    editor.on("selectionUpdate", () => {
+                                        setIsSelectionEmpty(editor.state.selection.empty);
+                                    });
                                     console.log("Editor initialized successfully");
                                 }}
                                 onDestroy={() => {
@@ -654,6 +660,11 @@ const TailwindAdvancedEditor = ({
                                     )}
                                 </EditorBubble>
                                 <div className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-background to-transparent" />
+                                {openAI && isSelectionEmpty && (
+                                    <div className="absolute top-[20%] left-1/2 -translate-x-1/2 z-50 flex w-fit max-w-[90vw] overflow-hidden rounded-md border border-muted bg-background shadow-xl">
+                                        <AISelector open={openAI} onOpenChange={setOpenAI} />
+                                    </div>
+                                )}
                             </EditorContent>
                         </div>
                     </div>

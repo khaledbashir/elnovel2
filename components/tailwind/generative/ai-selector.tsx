@@ -92,7 +92,7 @@ export function AISelector({ onOpenChange }: AISelectorProps) {
                   } else {
                     // No selection, get previous text for context
                     const pos = editor.state.selection.from;
-                    text = getPrevText(editor, pos);
+                    text = getPrevText(editor, {chars: 5000});
                   }
 
                   complete(text, {
@@ -121,7 +121,7 @@ export function AISelector({ onOpenChange }: AISelectorProps) {
                 } else {
                   // No selection, get previous text for context
                   const pos = editor.state.selection.from;
-                  text = getPrevText(editor, pos);
+                  text = getPrevText(editor, {chars: 5000});
                 }
 
                 complete(text, {

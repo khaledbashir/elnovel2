@@ -137,100 +137,8 @@ const dispatchOpenAI = (detail: Record<string, any>) =>
         window.dispatchEvent(new CustomEvent("novel-open-ai", { detail })),
     );
 
-export const suggestionItems = createSuggestionItems([
-    {
-        title: "Ask AI",
-        description: "Use AI to generate or edit content.",
-        searchTerms: ["ai", "generate", "ask", "magic"],
-        icon: <Magic className="h-[18px] w-[18px] text-emerald-600" />,
-        command: ({ editor, range }) => {
-            editor.chain().focus().deleteRange(range).run();
-            // Dispatch event to open AI selector (overlay now handles display when no selection exists)
-            dispatchOpenAI({ option: "continue" });
-        },
-    },
-    {
-        title: "Continue Writing",
-        description: "AI will continue from where you left off.",
-        searchTerms: ["continue", "ai", "generate"],
-        icon: <StepForward size={18} className="text-emerald-600" />,
-        command: ({ editor, range }) => {
-            editor.chain().focus().deleteRange(range).run();
-            dispatchOpenAI({ option: "continue" });
-        },
-    },
-    {
-        title: "Improve Writing",
-        description: "AI will improve the selected text.",
-        searchTerms: ["improve", "enhance", "better", "ai"],
-        icon: <RefreshCcwDot size={18} className="text-emerald-600" />,
-        command: ({ editor, range }) => {
-            const selectedText = editor.state.doc.textBetween(
-                range.from,
-                range.to,
-            );
-            if (selectedText) {
-                dispatchOpenAI({ option: "improve", text: selectedText });
-            } else {
-                editor.chain().focus().deleteRange(range).run();
-                dispatchOpenAI({ option: "continue" });
-            }
-        },
-    },
-    {
-        title: "Fix Grammar",
-        description: "AI will fix grammar and spelling errors.",
-        searchTerms: ["fix", "grammar", "spell", "correct", "ai"],
-        icon: <CheckCheck size={18} className="text-emerald-600" />,
-        command: ({ editor, range }) => {
-            const selectedText = editor.state.doc.textBetween(
-                range.from,
-                range.to,
-            );
-            if (selectedText) {
-                dispatchOpenAI({ option: "fix", text: selectedText });
-            } else {
-                editor.chain().focus().deleteRange(range).run();
-                dispatchOpenAI({ option: "continue" });
-            }
-        },
-    },
-    {
-        title: "Make Shorter",
-        description: "AI will make the text more concise.",
-        searchTerms: ["shorter", "concise", "summarize", "ai"],
-        icon: <ArrowDownWideNarrow size={18} className="text-emerald-600" />,
-        command: ({ editor, range }) => {
-            const selectedText = editor.state.doc.textBetween(
-                range.from,
-                range.to,
-            );
-            if (selectedText) {
-                dispatchOpenAI({ option: "shorter", text: selectedText });
-            } else {
-                editor.chain().focus().deleteRange(range).run();
-                dispatchOpenAI({ option: "continue" });
-            }
-        },
-    },
-    {
-        title: "Make Longer",
-        description: "AI will expand the text with more details.",
-        searchTerms: ["longer", "expand", "elaborate", "ai"],
-        icon: <WrapText size={18} className="text-emerald-600" />,
-        command: ({ editor, range }) => {
-            const selectedText = editor.state.doc.textBetween(
-                range.from,
-                range.to,
-            );
-            if (selectedText) {
-                dispatchOpenAI({ option: "longer", text: selectedText });
-            } else {
-                editor.chain().focus().deleteRange(range).run();
-                dispatchOpenAI({ option: "continue" });
-            }
-        },
-    },
+// Static formatting commands (non-AI)
+const staticFormattingCommands = [
     {
         title: "Text",
         description: "Just start typing with plain text.",
@@ -343,29 +251,14 @@ export const suggestionItems = createSuggestionItems([
         icon: <TableIcon size={18} />,
         command: ({ editor, range }) => {
             try {
-                console.log("Table command triggered");
-                console.log("Editor instance:", editor);
-                console.log(
-                    "Has insertTable command:",
-                    !!editor.commands.insertTable,
-                );
-
-                // Delete the slash command text
                 editor.chain().focus().deleteRange(range).run();
-
-                // Insert the table
                 const result = editor
                     .chain()
                     .focus()
                     .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
                     .run();
 
-                console.log("Table insertion result:", result);
-
                 if (!result) {
-                    console.error(
-                        "Table insertion failed - command returned false",
-                    );
                     notifications.error(
                         "Table insertion failed",
                         "Check console for more details.",
@@ -399,7 +292,6 @@ export const suggestionItems = createSuggestionItems([
         icon: <ImageIcon size={18} />,
         command: ({ editor, range }) => {
             editor.chain().focus().deleteRange(range).run();
-            // upload image
             const input = document.createElement("input");
             input.type = "file";
             input.accept = "image/*";
@@ -437,11 +329,84 @@ export const suggestionItems = createSuggestionItems([
             setTwitterDialogOpen?.(true);
         },
     },
-]);
+];
+
+// Icon mapping for string icon names to components
+const iconMap: Record<string, any> = {
+    "StepForward": StepForward,
+    "RefreshCcwDot": RefreshCcwDot,
+    "CheckCheck": CheckCheck,
+    "ArrowDownWideNarrow": ArrowDownWideNarrow,
+    "WrapText": WrapText,
+};
+
+// Fetch dynamic AI commands from the database
+let dynamicAICommands: any[] = [];
+
+export const loadDynamicCommands = async () => {
+    try {
+        const response = await fetch("/api/slash-commands");
+        if (response.ok) {
+            const commands = await response.json();
+            dynamicAICommands = commands
+                .filter((cmd: any) => cmd.isActive)
+                .map((cmd: any) => {
+                    // Parse icon: if it starts with a letter, it's a lucide icon name, else it's an emoji
+                    let icon = <Magic className="h-[18px] w-[18px] text-emerald-600" />;
+                    if (cmd.icon) {
+                        if (iconMap[cmd.icon]) {
+                            const IconComponent = iconMap[cmd.icon];
+                            icon = <IconComponent size={18} className="text-emerald-600" />;
+                        } else {
+                            // Treat as emoji or text
+                            icon = <span className="text-[18px]">{cmd.icon}</span>;
+                        }
+                    }
+
+                    return {
+                        title: cmd.title,
+                        description: cmd.description || "",
+                        searchTerms: cmd.searchTerms ? cmd.searchTerms.split(",").map((t: string) => t.trim()) : [],
+                        icon,
+                        command: ({ editor, range }: any) => {
+                            editor.chain().focus().deleteRange(range).run();
+                            dispatchOpenAI({ option: "custom", prompt: cmd.prompt, model: cmd.model, provider: cmd.provider });
+                        },
+                    };
+                });
+        }
+    } catch (error) {
+        console.error("Failed to load dynamic slash commands:", error);
+    }
+};
+
+// Combine static and dynamic commands
+export const getSuggestionItems = () => {
+    // Add "Ask AI" as the first AI command
+    const askAICommand = {
+        title: "Ask AI",
+        description: "Use AI to generate or edit content.",
+        searchTerms: ["ai", "generate", "ask", "magic"],
+        icon: <Magic className="h-[18px] w-[18px] text-emerald-600" />,
+        command: ({ editor, range }: any) => {
+            editor.chain().focus().deleteRange(range).run();
+            dispatchOpenAI({ option: "continue" });
+        },
+    };
+
+    return createSuggestionItems([
+        askAICommand,
+        ...dynamicAICommands,
+        ...staticFormattingCommands,
+    ]);
+};
+
+export const suggestionItems = getSuggestionItems();
 
 export const slashCommand = Command.configure({
     suggestion: {
-        items: () => suggestionItems,
+        items: () => getSuggestionItems(),
         render: renderItems,
     },
 });
+
