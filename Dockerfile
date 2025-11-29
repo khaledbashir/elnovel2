@@ -44,7 +44,7 @@ RUN adduser --system --uid 1001 nextjs
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=builder --chown=nextjs:nodejs /app/tambo ./tambo
+COPY --from=builder --chown=nextjs:nodejs /app/tambo-cloud ./tambo-cloud
 
 # Make sure the server.js file exists and is executable
 RUN if [ ! -f "server.js" ]; then echo "server.js not found in standalone output"; ls -la .next/standalone; exit 1; fi
