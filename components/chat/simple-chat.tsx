@@ -5,7 +5,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { ScrollableMessageContainer } from "@/components/chat-helpers/scrollable-message-container";
 import { Streamdown } from "streamdown";
-import { markdownComponents } from "@/components/chat-helpers/markdown-components";
 import { ChevronDown, ChevronRight, Bot, User, AlertCircle } from "lucide-react";
 
 type ChatMessage = {
@@ -188,7 +187,7 @@ export function SimpleChat({ className, threadId }: { className?: string; thread
 
             {m.text ? (
               <div className={cn("prose dark:prose-invert max-w-none", m.role === "user" && "prose-invert")}>
-                <Streamdown components={markdownComponents}>{m.text}</Streamdown>
+                <Streamdown>{m.text}</Streamdown>
               </div>
             ) : (
               <span className="flex items-center gap-2 text-muted-foreground italic text-sm">
