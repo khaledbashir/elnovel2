@@ -45,6 +45,8 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/tambo-cloud ./tambo-cloud
+COPY --from=builder --chown=nextjs:nodejs /app/drizzle.config.ts ./
+COPY --from=builder --chown=nextjs:nodejs /app/lib/db ./lib/db
 
 # Make sure the server.js file exists and is executable
 RUN if [ ! -f "server.js" ]; then echo "server.js not found in standalone output"; ls -la .next/standalone; exit 1; fi
