@@ -21,10 +21,17 @@ const openai = createOpenAI({
 
 export async function POST(req: Request) {
     try {
-        const { messages, id: threadId, system } = await req.json();
-        console.log("[Chat API] Received request for thread", threadId);
+        let { messages, id: threadId, system } = await req.json();
 
-        // 1. Ensure thread exists or create it
+        // Ensure threadId exists
+        if (!threadId) {
+            console.warn("[Chat API] No threadId provided, generating new one");
+            threadId = uuidv4();
+        }
+
+        console.log("[Chat API] Processing request for thread", threadId);
+
+        // 1. Ensure thread exists or create it (Non-fatal)
         try {
             const existingThread = await query('SELECT id FROM threads WHERE id = ?', [threadId]);
             if (!Array.isArray(existingThread) || existingThread.length === 0) {
@@ -32,11 +39,11 @@ export async function POST(req: Request) {
                 await query('INSERT INTO threads (id, title) VALUES (?, ?)', [threadId, messages[0].content.substring(0, 50)]);
             }
         } catch (dbError) {
-            console.error('[Chat API] DB Error (Thread):', dbError);
-            throw dbError;
+            console.error('[Chat API] DB Error (Thread) - Continuing without saving:', dbError);
+            // Don't throw, allow chat to proceed without history
         }
 
-        // 2. Save User Message
+        // 2. Save User Message (Non-fatal)
         try {
             const lastMessage = messages[messages.length - 1];
             await query('INSERT INTO messages (id, thread_id, role, content) VALUES (?, ?, ?, ?)', [
@@ -46,8 +53,7 @@ export async function POST(req: Request) {
                 lastMessage.content
             ]);
         } catch (dbError) {
-            console.error('[Chat API] DB Error (Message):', dbError);
-            throw dbError;
+            console.error('[Chat API] DB Error (Message) - Continuing without saving:', dbError);
         }
 
         // 3. Stream Response
