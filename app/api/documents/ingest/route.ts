@@ -1,7 +1,22 @@
 import { NextResponse } from 'next/server';
 import { saveDocument } from '@/lib/vector-db';
-import pdf from 'pdf-parse';
 import { v4 as uuidv4 } from 'uuid';
+
+// Polyfill DOMMatrix for pdf-parse/pdf.js in Node environment
+if (typeof global.DOMMatrix === 'undefined') {
+    // @ts-ignore
+    global.DOMMatrix = class DOMMatrix {
+        constructor() {
+            this.a = 1; this.b = 0; this.c = 0; this.d = 1;
+            this.e = 0; this.f = 0;
+        }
+        translate() { return this; }
+        scale() { return this; }
+        rotate() { return this; }
+        multiply() { return this; }
+        inverse() { return this; }
+    };
+}
 
 // Force Node.js runtime for pdf-parse
 export const runtime = 'nodejs';
@@ -53,7 +68,9 @@ export async function POST(req: Request) {
 
         // Parse based on file type
         if (file.type === 'application/pdf') {
-            const data = await pdf(buffer);
+            // Dynamically import pdf-parse to avoid build-time issues
+            const pdfParse = (await import('pdf-parse')).default;
+            const data = await pdfParse(buffer);
             text = data.text;
         } else {
             text = buffer.toString('utf-8');
