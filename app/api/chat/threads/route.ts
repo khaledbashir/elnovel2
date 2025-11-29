@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import { query } from "@/lib/db";
+import { query } from "@/lib/database";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-    try {
-        // Get distinct thread_ids and their latest message time
-        const threads = await query(`
+  try {
+    // Get distinct thread_ids and their latest message time
+    const threads = await query(`
       SELECT 
         thread_id, 
         MAX(created_at) as last_message_at,
@@ -17,9 +17,9 @@ export async function GET() {
       LIMIT 50
     `);
 
-        return NextResponse.json({ threads });
-    } catch (error) {
-        console.error("Failed to fetch threads:", error);
-        return NextResponse.json({ error: "Failed to fetch threads" }, { status: 500 });
-    }
+    return NextResponse.json({ threads });
+  } catch (error) {
+    console.error("Failed to fetch threads:", error);
+    return NextResponse.json({ error: "Failed to fetch threads" }, { status: 500 });
+  }
 }
