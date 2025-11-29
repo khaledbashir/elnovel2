@@ -26,6 +26,7 @@ import {
     DropdownMenuTrigger,
     DropdownMenuSeparator,
 } from "@/components/tailwind/ui/dropdown-menu";
+import { toast } from "sonner";
 
 interface Workspace {
     id: string;
@@ -203,7 +204,7 @@ export function Sidebar({
                         id="recent-1"
                         label="Quick Notes"
                         icon={<Clock className="w-4 h-4" />}
-                        onClick={() => alert("Quick Notes feature coming soon!")}
+                        onClick={() => toast.info("Quick Notes feature coming soon! 📝")}
                     />
                 </SidebarSection>
 
@@ -277,13 +278,13 @@ export function Sidebar({
                         id="tpl-1"
                         label="Project Plan"
                         icon={<FileText className="w-4 h-4" />}
-                        onClick={() => alert("Templates coming soon!")}
+                        onClick={() => toast.info("Templates coming soon! 📄")}
                     />
                     <SidebarItem
                         id="tpl-2"
                         label="Meeting Notes"
                         icon={<FileText className="w-4 h-4" />}
-                        onClick={() => alert("Templates coming soon!")}
+                        onClick={() => toast.info("Templates coming soon! 📄")}
                     />
                 </SidebarSection>
             </ScrollArea>
@@ -299,6 +300,12 @@ export function Sidebar({
                     id="settings"
                     label="Settings"
                     icon={<Settings className="w-4 h-4" />}
+                />
+                <SidebarItem
+                    id="admin"
+                    label="AI Commands"
+                    icon={<Hash className="w-4 h-4" />}
+                    onClick={() => window.location.href = '/admin/slash-commands'}
                 />
             </div>
         </div>
