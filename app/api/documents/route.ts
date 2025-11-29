@@ -1,39 +1,48 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getDocumentsByWorkspace, createDocument } from '@/lib/db-operations';
+import { NextResponse } from 'next/server';
+import pool from '@/lib/db';
 import { v4 as uuidv4 } from 'uuid';
 
-export async function GET(request: NextRequest) {
+export async function GET(req: Request) {
   try {
-    const { searchParams } = new URL(request.url);
+    const { searchParams } = new URL(req.url);
     const workspaceId = searchParams.get('workspaceId');
 
     if (!workspaceId) {
-      return NextResponse.json({ error: 'workspaceId is required' }, { status: 400 });
+      return NextResponse.json({ error: 'Workspace ID is required' }, { status: 400 });
     }
 
-    const documents = await getDocumentsByWorkspace(workspaceId);
-    return NextResponse.json(documents);
+    const [rows] = await pool.query(
+      'SELECT * FROM documents WHERE workspace_id = ? ORDER BY created_at DESC',
+      [workspaceId]
+    );
+    
+    return NextResponse.json(rows);
   } catch (error) {
-    console.error('Error fetching documents:', error);
+    console.error('Database Error:', error);
     return NextResponse.json({ error: 'Failed to fetch documents' }, { status: 500 });
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const { name, workspaceId, tamboThreadId } = await request.json();
-
-    if (!name || !workspaceId) {
-      return NextResponse.json({ error: 'Name and workspaceId are required' }, { status: 400 });
+    const { title, workspace_id, tambo_thread_id } = await req.json();
+    
+    if (!title || !workspace_id) {
+      return NextResponse.json({ error: 'Title and Workspace ID are required' }, { status: 400 });
     }
 
     const id = uuidv4();
-    const threadId = tamboThreadId || uuidv4();
-    const newDocument = await createDocument(id, workspaceId, name, threadId);
+    // Initialize with empty JSON object for content
+    const content = JSON.stringify({});
+    
+    await pool.query(
+      'INSERT INTO documents (id, workspace_id, title, content, tambo_thread_id) VALUES (?, ?, ?, ?, ?)',
+      [id, workspace_id, title, content, tambo_thread_id || null]
+    );
 
-    return NextResponse.json(newDocument, { status: 201 });
+    return NextResponse.json({ id, title, workspace_id, tambo_thread_id });
   } catch (error) {
-    console.error('Error creating document:', error);
+    console.error('Database Error:', error);
     return NextResponse.json({ error: 'Failed to create document' }, { status: 500 });
   }
 }

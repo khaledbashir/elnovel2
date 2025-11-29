@@ -6,9 +6,9 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import Providers from "./providers";
 
-const title = "Social Garden SOW Generator";
+const title = "AI Workbench";
 const description =
-  "Professional Scope of Work generator with AI-powered assistance. Built for Social Garden.";
+  "Professional AI-powered document editor and workspace.";
 
 export const metadata: Metadata = {
   title,

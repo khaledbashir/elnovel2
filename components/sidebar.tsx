@@ -102,19 +102,6 @@ export function Sidebar({
         }
     };
 
-    const toggleWorkspace = (workspaceId: string) => {
-        setExpandedWorkspaces(prev => {
-            const next = new Set(prev);
-            if (next.has(workspaceId)) {
-                next.delete(workspaceId);
-            } else {
-                next.add(workspaceId);
-                fetchDocuments(workspaceId);
-            }
-            return next;
-        });
-    };
-
     const handleCreateWorkspace = async () => {
         const name = prompt("Enter workspace name:");
         if (!name) return;
@@ -125,31 +112,34 @@ export function Sidebar({
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name }),
             });
-            if (response.ok) {
-                fetchWorkspaces();
-            }
+            const newWorkspace = await response.json();
+            setWorkspaces(prev => [newWorkspace, ...prev]);
+            onWorkspaceSelect(newWorkspace.id);
         } catch (error) {
             console.error("Failed to create workspace:", error);
         }
     };
 
     const handleCreateDocument = async (workspaceId: string) => {
-        const name = prompt("Enter document name:");
-        if (!name) return;
+        const title = prompt("Enter document title:");
+        if (!title) return;
 
         try {
             const response = await fetch("/api/documents", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, workspaceId }),
+                body: JSON.stringify({ title, workspace_id: workspaceId }),
             });
-            if (response.ok) {
-                fetchDocuments(workspaceId);
-            }
+            const newDoc = await response.json();
+            setDocuments(prev => [newDoc, ...prev]);
+            onDocumentSelect(newDoc.id);
         } catch (error) {
             console.error("Failed to create document:", error);
         }
     };
+
+    const toggleWorkspace = (workspaceId: string) => {
+
 
     const deleteWorkspace = async (id: string) => {
         if (!confirm("Delete this workspace and all its documents?")) return;
