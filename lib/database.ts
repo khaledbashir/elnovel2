@@ -2,11 +2,11 @@ import mysql from 'mysql2/promise';
 
 // Database connection configuration
 const dbConfig = {
-  host: process.env.DB_HOST || 'ahmad_elnovel22',
+  host: process.env.DB_HOST || '127.0.0.1',
   port: parseInt(process.env.DB_PORT || '3306'),
-  user: process.env.DB_USER || 'elnovel22',
-  password: process.env.DB_PASSWORD || 'elonvel22',
-  database: process.env.DB_NAME || 'elnovel22',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || '',
+  database: process.env.DB_NAME || 'elnovel2',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,

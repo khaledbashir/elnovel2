@@ -4,10 +4,11 @@ const mysql = require('mysql2/promise');
 
 // Database connection configuration
 const dbConfig = {
-  host: 'ahmad_sow-workbench-db',
-  user: 'mysql',
-  password: 'ef9b3440eef9a9829415',
-  database: 'ahmad',
+  host: process.env.DB_HOST || '127.0.0.1',
+  port: parseInt(process.env.DB_PORT || '3306'),
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || '',
+  database: process.env.DB_NAME || 'elnovel2',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,

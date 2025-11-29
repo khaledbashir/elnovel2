@@ -15,7 +15,7 @@ if (!apiKey) {
 }
 
 const zai = createOpenAI({
-    baseURL: process.env.ZAI_API_URL || 'https://api.z.ai/api/coding/paas/v4',
+    baseURL: process.env.ZAI_API_URL || 'https://api.z.ai/api/paas/v4',
     apiKey: apiKey,
 });
 
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
         // 3. Stream Response
         console.log('[Chat API] Calling LLM...');
         const result = await streamText({
-            model: zai('GLM-4.6'),
+            model: zai('glm-4.6'),
             messages: convertToCoreMessages(messages),
             system: system || `You are an advanced AI Agent.
 
