@@ -15,7 +15,7 @@ if (typeof global.Path2D === 'undefined') {
 }
 
 import { saveDocument } from '@/lib/vector-db';
-import pdf from 'pdf-parse';
+// import pdf from 'pdf-parse'; // Moved to dynamic import
 
 // Force dynamic rendering to avoid build-time execution
 export const dynamic = 'force-dynamic';
@@ -40,6 +40,9 @@ export async function POST(req: NextRequest) {
         // Parse based on file type
         if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
             try {
+                // Dynamically require pdf-parse to ensure polyfills are applied first
+                // @ts-ignore
+                const pdf = (await import('pdf-parse')).default;
                 const data = await pdf(buffer);
                 text = data.text;
                 pageCount = data.numpages;
