@@ -53,11 +53,10 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Social Garden Brand Colors
-        "sg-dark": "hsl(var(--sg-dark))",
-        "sg-green": "hsl(var(--sg-green))",
-        "sg-green-dark": "hsl(var(--sg-green-dark))",
-        "sg-green-hover": "hsl(var(--sg-green-hover))",
+        // Papyrus Brand Colors
+        "papyrus-brown": "hsl(var(--papyrus-brown))",
+        "papyrus-light": "hsl(var(--papyrus-light))",
+        "papyrus-blue": "hsl(var(--papyrus-blue))",
       },
       borderRadius: {
         lg: "var(--radius)",

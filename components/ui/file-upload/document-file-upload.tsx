@@ -3,18 +3,14 @@ import FileUpload from "@/components/ui/file-upload/file-upload";
 import type { UploadedFile } from "@/components/ui/file-upload/file-upload";
 
 /**
- * SOW File Upload wrapper
+ * Document File Upload wrapper
  *
  * A thin wrapper around the generic `FileUpload` component that exposes
- * common defaults and an SOW-focused API for uploading one or more
- * project briefs (PDF/Word) in the SOW flows.
- *
- * This component intentionally keeps the API minimal so it can be
- * easily swapped out for a more advanced uploader later (server
- * integration, chunked uploads, virus scanning, etc.).
+ * common defaults and a document-focused API for uploading one or more
+ * files (PDF/Word).
  */
 
-export interface SOWFileUploadProps {
+export interface DocumentFileUploadProps {
   onFilesChange?: (files: UploadedFile[]) => void;
   maxFiles?: number;
   accept?: string;
@@ -26,22 +22,19 @@ export interface SOWFileUploadProps {
 
 const DEFAULT_ACCEPT = "application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
-export default function SOWFileUpload({
+export default function DocumentFileUpload({
   onFilesChange,
   maxFiles = 1,
   accept = DEFAULT_ACCEPT,
   className,
   title = "Upload Documents",
-  description = "Attach PDF or Word documents containing project requirements.",
+  description = "Attach PDF or Word documents.",
   disabled = false,
-}: SOWFileUploadProps) {
+}: DocumentFileUploadProps) {
   /**
    * FileUpload already normalizes the file objects into the `UploadedFile`
    * shape used across the app. We simply pass the props through and provide
-   * SOW-specific defaults (maxFiles = 1 and helpful labels).
-   *
-   * The wrapper exists to centralize SOW-specific UX changes so the rest of
-   * the app can just import `SOWFileUpload`.
+   * document-specific defaults.
    */
 
   return (

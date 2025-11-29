@@ -1,5 +1,6 @@
 {
-  "name": "novel-next-app",
+  "name": "papyrus",
+  "description": "AI-Powered Document Intelligence Platform",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -23,8 +24,6 @@
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@tailwindcss/typography": "^0.5.10",
-    "@tambo-ai/react": "^0.65.1",
-    "@tambo-ai/typescript-sdk": "^0.77.0",
     "@tiptap/core": "^2.27.1",
     "@tiptap/extension-bubble-menu": "^2.27.1",
     "@tiptap/extension-table": "^2.27.1",

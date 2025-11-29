@@ -13,7 +13,7 @@ import { createOpenAI } from '@ai-sdk/openai';
 // Z.AI Provider Configuration
 const zaiProvider = createOpenAI({
     baseURL: process.env.ZAI_API_URL || 'https://api.z.ai/api/coding/paas/v4',
-    apiKey: "18f65090a96a425898a8398a5c4518ce.DDtUvTTnUmK020Wx",
+    apiKey: process.env.ZAI_API_KEY,
 });
 
 const zai = zaiProvider.embedding('text-embedding-3-small');

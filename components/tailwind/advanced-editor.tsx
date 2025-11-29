@@ -33,7 +33,7 @@ import { slashCommand, suggestionItems, SlashCommandDialogs } from "./slash-comm
 import Magic from "./ui/icons/magic";
 import { AISelector } from "./generative/ai-selector";
 import { removeAIHighlight } from "novel";
-import { insertSOWToEditor } from "@/lib/editor/insert-sow";
+import { insertDocumentToEditor } from "@/lib/editor/insert-document";
 import { GenerativeUIPanel } from "@/components/generative-ui-panel";
 import { cn } from "@/lib/utils";
 
@@ -229,9 +229,9 @@ const TailwindAdvancedEditor = ({
         };
     }, []);
 
-    // Listen for SOW content insertion event
+    // Listen for document content insertion event
     useEffect(() => {
-        const handleInsertSOW = (event: CustomEvent) => {
+        const handleInsertDocument = (event: CustomEvent) => {
             const {
                 scopes,
                 projectTitle,
@@ -243,7 +243,7 @@ const TailwindAdvancedEditor = ({
 
             try {
                 // Transform the data to match the expected format
-                const sowData = {
+                const docData = {
                     clientName,
                     projectTitle,
                     scopes: scopes.map((scope: any, idx: number) => ({
@@ -267,11 +267,11 @@ const TailwindAdvancedEditor = ({
                     discount,
                 };
 
-                console.log("Inserting SOW data:", sowData);
+                console.log("Inserting document data:", docData);
 
                 // Check if editor is available
                 if (editorRef.current) {
-                    insertSOWToEditor(editorRef.current, sowData);
+                    insertDocumentToEditor(editorRef.current, docData);
                 } else {
                     console.error(
                         "Editor not available - waiting for initialization",
@@ -284,8 +284,8 @@ const TailwindAdvancedEditor = ({
                     // Wait a moment and try again
                     setTimeout(() => {
                         if (editorRef.current) {
-                            // Retry the insertSOW operation
-                            insertSOWToEditor(editorRef.current, sowData);
+                            // Retry the insert operation
+                            insertDocumentToEditor(editorRef.current, docData);
                         } else {
                             console.error(
                                 "Editor still not available after timeout",
@@ -298,9 +298,9 @@ const TailwindAdvancedEditor = ({
                     }, 2000);
                 }
             } catch (error) {
-                console.error("Error preparing SOW content:", error);
+                console.error("Error preparing document content:", error);
                 notifications.error(
-                    "Failed to prepare SOW content",
+                    "Failed to prepare document content",
                     error instanceof Error ? error.message : String(error),
                 );
             }
@@ -343,7 +343,7 @@ const TailwindAdvancedEditor = ({
 
                 const opt: Html2PdfOptions = {
                     margin: [10, 10, 20, 10], // Top, Left, Bottom, Right (mm)
-                    filename: "SOW_Export.pdf",
+                    filename: "Document_Export.pdf",
                     image: { type: "jpeg", quality: 0.98 },
                     html2canvas: {
                         scale: 2,
@@ -449,8 +449,8 @@ const TailwindAdvancedEditor = ({
         };
 
         window.addEventListener(
-            "insert-sow-content",
-            handleInsertSOW as EventListener,
+            "insert-document-content",
+            handleInsertDocument as EventListener,
         );
         window.addEventListener(
             "export-editor-pdf",
@@ -459,8 +459,8 @@ const TailwindAdvancedEditor = ({
 
         return () => {
             window.removeEventListener(
-                "insert-sow-content",
-                handleInsertSOW as EventListener,
+                "insert-document-content",
+                handleInsertDocument as EventListener,
             );
             window.removeEventListener(
                 "export-editor-pdf",
@@ -664,13 +664,10 @@ const TailwindAdvancedEditor = ({
                     <div
                         onMouseDown={handleMouseDown}
                         className={cn(
-                            "w-1.5 bg-border hover:bg-primary/50 active:bg-primary cursor-col-resize flex-shrink-0 transition-colors relative group",
+                            "w-1 bg-border hover:bg-primary cursor-col-resize flex-shrink-0 transition-colors",
                             isResizing && "bg-primary"
                         )}
-                        title="Drag to resize"
-                    >
-                        <div className="absolute inset-y-0 -left-1 -right-1" />
-                    </div>
+                    />
                     <div
                         className="border-l border-border bg-background flex-shrink-0"
                         style={{ width: `${aiPanelWidth}px` }}

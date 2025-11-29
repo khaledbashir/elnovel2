@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import SOWFileUpload from "@/components/ui/file-upload/sow/sow-file-upload";
+import DocumentFileUpload from "@/components/ui/file-upload/document-file-upload";
 import { UploadedFile } from "@/hooks/use-file-upload";
 import { FileText, ArrowRight } from "lucide-react";
 import { notifications } from "@/lib/utils";
 
-export const SimpleSOWPage = () => {
+export const SimpleDocumentPage = () => {
     const [files, setFiles] = useState<UploadedFile[]>([]);
 
     const handleFilesChange = (newFiles: UploadedFile[]) => {
@@ -18,18 +18,18 @@ export const SimpleSOWPage = () => {
             <div className="w-full max-w-3xl space-y-8">
                 <div className="text-center space-y-2">
                     <h1 className="text-3xl font-bold tracking-tight text-foreground">
-                        SOW Generator
+                        Document Generator
                     </h1>
                     <p className="text-muted-foreground text-lg">
-                        Upload your client brief or requirements to get started.
+                        Upload your brief or requirements to get started.
                     </p>
                 </div>
 
                 <div className="bg-card border border-border rounded-xl shadow-sm p-8">
-                    <SOWFileUpload
+                    <DocumentFileUpload
                         onFilesChange={handleFilesChange}
                         title="Upload Documents"
-                        description="Attach PDF or Word documents containing project requirements."
+                        description="Attach PDF or Word documents containing requirements."
                         className="w-full"
                     />
 
@@ -39,12 +39,12 @@ export const SimpleSOWPage = () => {
                                 className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium"
                                 onClick={() =>
                                     notifications.success(
-                                        "SOW Generation Started",
+                                        "Generation Started",
                                         `Started with ${files.length} file${files.length !== 1 ? "s" : ""}`,
                                     )
                                 }
                             >
-                                Generate SOW
+                                Generate Document
                                 <ArrowRight size={18} />
                             </button>
                         </div>

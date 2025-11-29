@@ -1,109 +1,68 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { saveDocument } from '@/lib/vector-db';
-import { v4 as uuidv4 } from 'uuid';
+import pdf from 'pdf-parse';
 
-// Polyfill DOMMatrix for pdf-parse/pdf.js in Node environment
-if (typeof global.DOMMatrix === 'undefined') {
-    // @ts-ignore
-    global.DOMMatrix = class DOMMatrix {
-        constructor() {
-            this.a = 1; this.b = 0; this.c = 0; this.d = 1;
-            this.e = 0; this.f = 0;
-        }
-        translate() { return this; }
-        scale() { return this; }
-        rotate() { return this; }
-        multiply() { return this; }
-        inverse() { return this; }
-    };
-}
-
-// Force Node.js runtime for pdf-parse
-export const runtime = 'nodejs';
-
-// Simple Recursive Character Text Splitter
-function splitText(text: string, chunkSize: number = 1000, overlap: number = 200): string[] {
-    const chunks: string[] = [];
-    let startIndex = 0;
-
-    while (startIndex < text.length) {
-        let endIndex = startIndex + chunkSize;
-
-        // If we are not at the end, try to find a break point (newline or space)
-        if (endIndex < text.length) {
-            const nextNewLine = text.lastIndexOf('\n', endIndex);
-            const nextSpace = text.lastIndexOf(' ', endIndex);
-
-            if (nextNewLine > startIndex) {
-                endIndex = nextNewLine;
-            } else if (nextSpace > startIndex) {
-                endIndex = nextSpace;
-            }
-        }
-
-        chunks.push(text.slice(startIndex, endIndex).trim());
-        startIndex = endIndex - overlap; // Move back for overlap
-        if (startIndex < 0) startIndex = 0; // Safety
-
-        // Avoid infinite loops if chunk size is too small for a single word
-        if (endIndex <= startIndex + overlap) {
-            startIndex = endIndex;
-        }
-    }
-
-    return chunks;
-}
-
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
         const formData = await req.formData();
         const file = formData.get('file') as File;
 
         if (!file) {
-            return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
+            return NextResponse.json({ error: 'No file provided' }, { status: 400 });
         }
 
+        console.log(`[Ingest] Processing file: ${file.name} (${file.size} bytes)`);
+
+        // Convert file to buffer
         const buffer = Buffer.from(await file.arrayBuffer());
-        let text = '';
+        let text = "";
+        let pageCount = 0;
 
         // Parse based on file type
-        if (file.type === 'application/pdf') {
-            // Dynamically import pdf-parse to avoid build-time issues
-            const pdfParse = (await import('pdf-parse')).default;
-            const data = await pdfParse(buffer);
-            text = data.text;
+        if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+            try {
+                const data = await pdf(buffer);
+                text = data.text;
+                pageCount = data.numpages;
+            } catch (e) {
+                console.error("[Ingest] PDF Parse Error:", e);
+                return NextResponse.json({ error: 'Failed to parse PDF' }, { status: 500 });
+            }
         } else {
+            // Assume text for other types for now (or implement other parsers)
             text = buffer.toString('utf-8');
         }
 
-        // Split text
-        const chunks = splitText(text);
+        if (!text || text.trim().length === 0) {
+            return NextResponse.json({ error: 'No text extracted from document' }, { status: 400 });
+        }
 
-        // Save chunks to Vector DB
-        const docId = uuidv4();
-        const promises = chunks.map((chunk, index) => {
-            return saveDocument(
-                `${docId}-${index}`,
-                chunk,
-                {
-                    source: file.name,
-                    page: index + 1, // Rough approximation
-                    docId: docId,
-                    timestamp: Date.now()
-                }
-            );
-        });
+        // Generate ID
+        const docId = crypto.randomUUID();
+        const metadata = {
+            id: docId,
+            fileName: file.name,
+            fileType: file.type,
+            fileSize: file.size,
+            uploadedAt: new Date().toISOString(),
+            pageCount: pageCount,
+            wordCount: text.split(/\s+/).length
+        };
 
-        await Promise.all(promises);
+        // Save to Vector DB
+        await saveDocument(docId, text, metadata);
+
+        console.log(`[Ingest] Successfully ingested ${file.name}`);
 
         return NextResponse.json({
             success: true,
-            chunks: chunks.length,
-            message: `Successfully indexed ${file.name}`
+            id: docId,
+            text: text.substring(0, 200) + "...", // Preview
+            metadata: metadata
         });
 
     } catch (error: any) {
-        console.error('Ingestion failed:', error);
+        console.error('[Ingest] Fatal Error:', error);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }

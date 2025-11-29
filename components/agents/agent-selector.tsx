@@ -4,26 +4,15 @@ import * as React from "react";
 import * as Select from "@radix-ui/react-select";
 import { ChevronDown, Settings, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useTamboThread } from "@tambo-ai/react";
-
-interface Agent {
-  id: string;
-  name: string;
-  description?: string;
-  system_instructions: string;
-  icon: string;
-  is_default: boolean;
-}
-
 interface AgentSelectorProps {
   onManageAgents?: () => void;
+  onAgentSelect?: (agent: Agent) => void;
 }
 
-export function AgentSelector({ onManageAgents }: AgentSelectorProps) {
+export function AgentSelector({ onManageAgents, onAgentSelect }: AgentSelectorProps) {
   const [agents, setAgents] = React.useState<Agent[]>([]);
   const [selectedAgentId, setSelectedAgentId] = React.useState<string>("");
   const [loading, setLoading] = React.useState(true);
-  const { startNewThread } = useTamboThread();
 
   // Load agents
   React.useEffect(() => {
@@ -31,7 +20,7 @@ export function AgentSelector({ onManageAgents }: AgentSelectorProps) {
       try {
         const res = await fetch("/api/agents");
         const data = await res.json();
-        
+
         if (Array.isArray(data)) {
           setAgents(data);
 
@@ -39,15 +28,9 @@ export function AgentSelector({ onManageAgents }: AgentSelectorProps) {
           const defaultAgent = data.find((a: Agent) => a.is_default);
           if (defaultAgent) {
             setSelectedAgentId(defaultAgent.id);
-            // Start thread with default agent's system instructions
-            startNewThread?.({
-              initialMessages: [
-                {
-                  role: "system",
-                  content: defaultAgent.system_instructions,
-                },
-              ],
-            });
+            if (onAgentSelect) {
+              onAgentSelect(defaultAgent);
+            }
           }
         } else {
           console.error("Failed to load agents:", data);
@@ -61,23 +44,14 @@ export function AgentSelector({ onManageAgents }: AgentSelectorProps) {
     }
 
     loadAgents();
-  }, []);
+  }, [onAgentSelect]);
 
   const handleAgentChange = (agentId: string) => {
     setSelectedAgentId(agentId);
     const agent = agents.find((a) => a.id === agentId);
-    
-    if (agent && startNewThread) {
-      // Start new thread with selected agent's system instructions
-      // This uses Tambo's system prompt override feature
-      startNewThread({
-        initialMessages: [
-          {
-            role: "system",
-            content: agent.system_instructions,
-          },
-        ],
-      });
+
+    if (agent && onAgentSelect) {
+      onAgentSelect(agent);
     }
   };
 

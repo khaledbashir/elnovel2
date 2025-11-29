@@ -6,15 +6,15 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import Providers from "./providers";
 
-const title = "AI Workbench";
+const title = "Papyrus - AI Document Platform";
 const description =
-  "Professional AI-powered document editor and workspace.";
+  "Smart documents powered by AI";
 
 export const metadata: Metadata = {
   title,
   description,
   icons: {
-    icon: '/favicropped-Site-Icon-32x32.png',
+    icon: "/favicon.ico",
   },
   openGraph: {
     title,

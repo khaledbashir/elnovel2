@@ -3,7 +3,12 @@ import { Editor } from '@tiptap/react';
 /**
  * SOW Data Structure
  */
-interface SOWData {
+import { Editor } from '@tiptap/react';
+
+/**
+ * Document Data Structure
+ */
+interface DocumentData {
     clientName: string;
     projectTitle: string;
     scopes: Array<{
@@ -39,18 +44,18 @@ const toNumber = (v: unknown): number => {
 };
 
 /**
- * Utility: Format number as AUD currency
+ * Utility: Format currency
  */
-const formatAUD = (n: number): string =>
-    new Intl.NumberFormat("en-AU", {
+const formatCurrency = (n: number): string =>
+    new Intl.NumberFormat("en-US", {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
     }).format(n);
 
 /**
- * Calculate scope total (before GST)
+ * Calculate scope total
  */
-const calculateScopeTotal = (scope: SOWData['scopes'][0]): number => {
+const calculateScopeTotal = (scope: DocumentData['scopes'][0]): number => {
     if (!scope.roles || scope.roles.length === 0) return 0;
     return scope.roles.reduce((sum, row) => {
         const hours = toNumber(row.hours);
@@ -60,28 +65,25 @@ const calculateScopeTotal = (scope: SOWData['scopes'][0]): number => {
 };
 
 /**
- * Generate HTML string for entire SOW document
- * TipTap can parse HTML directly, so we generate clean HTML instead of JSON nodes
+ * Generate HTML string for entire document
  */
-function generateSOWHTML(sowData: SOWData): string {
+function generateDocumentHTML(docData: DocumentData): string {
     const html: string[] = [];
 
     // Calculate financial totals
-    const subtotal = sowData.scopes.reduce((sum, scope) => sum + calculateScopeTotal(scope), 0);
-    const discountAmount = subtotal * ((sowData.discount || 0) / 100);
-    const afterDiscount = subtotal - discountAmount;
-    const gst = afterDiscount * 0.1;
-    const total = afterDiscount + gst;
+    const subtotal = docData.scopes.reduce((sum, scope) => sum + calculateScopeTotal(scope), 0);
+    const discountAmount = subtotal * ((docData.discount || 0) / 100);
+    const total = subtotal - discountAmount;
 
     // Document Title
-    html.push(`<h1>${sowData.projectTitle}</h1>`);
-    html.push(`<p><strong>Client:</strong> ${sowData.clientName}</p>`);
+    html.push(`<h1>${docData.projectTitle}</h1>`);
+    html.push(`<p><strong>Client:</strong> ${docData.clientName}</p>`);
     html.push(`<hr />`);
 
     // Each Scope
-    sowData.scopes.forEach((scope, scopeIndex) => {
+    docData.scopes.forEach((scope, scopeIndex) => {
         // Scope heading
-        html.push(`<h2>Scope ${scopeIndex + 1}: ${scope.title}</h2>`);
+        html.push(`<h2>Section ${scopeIndex + 1}: ${scope.title}</h2>`);
         html.push(`<p><em>${scope.description}</em></p>`);
 
         // Deliverables
@@ -107,7 +109,7 @@ function generateSOWHTML(sowData: SOWData): string {
             html.push(`<th>ROLE</th>`);
             html.push(`<th>HOURS</th>`);
             html.push(`<th>RATE</th>`);
-            html.push(`<th>TOTAL COST + GST</th>`);
+            html.push(`<th>TOTAL</th>`);
             html.push(`</tr>`);
             html.push(`</thead>`);
 
@@ -116,14 +118,14 @@ function generateSOWHTML(sowData: SOWData): string {
             scope.roles.forEach(row => {
                 const hours = toNumber(row.hours);
                 const rate = toNumber(row.rate);
-                const cost = hours * rate * 1.1; // Include GST
+                const cost = hours * rate;
 
                 html.push(`<tr>`);
                 html.push(`<td>${row.task}</td>`);
                 html.push(`<td>${row.role}</td>`);
                 html.push(`<td>${hours}</td>`);
-                html.push(`<td>AUD $${formatAUD(rate)}</td>`);
-                html.push(`<td>AUD $${formatAUD(cost)}</td>`);
+                html.push(`<td>$${formatCurrency(rate)}</td>`);
+                html.push(`<td>$${formatCurrency(cost)}</td>`);
                 html.push(`</tr>`);
             });
             html.push(`</tbody>`);
@@ -131,9 +133,7 @@ function generateSOWHTML(sowData: SOWData): string {
 
             // Scope total
             const scopeTotal = calculateScopeTotal(scope);
-            const scopeGST = scopeTotal * 0.1;
-            const scopeTotalWithGST = scopeTotal + scopeGST;
-            html.push(`<p><strong>Scope Total:</strong> AUD $${formatAUD(scopeTotalWithGST)} (inc. GST)</p>`);
+            html.push(`<p><strong>Section Total:</strong> $${formatCurrency(scopeTotal)}</p>`);
         }
 
         // Assumptions
@@ -147,7 +147,7 @@ function generateSOWHTML(sowData: SOWData): string {
         }
 
         // Separator between scopes
-        if (scopeIndex < sowData.scopes.length - 1) {
+        if (scopeIndex < docData.scopes.length - 1) {
             html.push(`<hr />`);
         }
     });
@@ -155,43 +155,34 @@ function generateSOWHTML(sowData: SOWData): string {
     // Financial Summary
     html.push(`<hr />`);
     html.push(`<h2>Financial Summary</h2>`);
-    html.push(`<p>Subtotal: AUD $${formatAUD(subtotal)}</p>`);
+    html.push(`<p>Subtotal: $${formatCurrency(subtotal)}</p>`);
 
-    if (sowData.discount && sowData.discount > 0) {
-        html.push(`<p>Discount (${sowData.discount}%): AUD -$${formatAUD(discountAmount)}</p>`);
-        html.push(`<p>After Discount: AUD $${formatAUD(afterDiscount)}</p>`);
+    if (docData.discount && docData.discount > 0) {
+        html.push(`<p>Discount (${docData.discount}%): -$${formatCurrency(discountAmount)}</p>`);
     }
 
-    html.push(`<p>GST (10%): AUD +$${formatAUD(gst)}</p>`);
-    html.push(`<p><strong>Grand Total:</strong> AUD $${formatAUD(total)}</p>`);
+    html.push(`<p><strong>Grand Total:</strong> $${formatCurrency(total)}</p>`);
 
     // Project Overview
-    if (sowData.projectOverview) {
+    if (docData.projectOverview) {
         html.push(`<hr />`);
         html.push(`<h2>Project Overview</h2>`);
-        html.push(`<p>${sowData.projectOverview}</p>`);
+        html.push(`<p>${docData.projectOverview}</p>`);
     }
 
     // Budget Notes
-    if (sowData.budgetNotes) {
+    if (docData.budgetNotes) {
         html.push(`<h2>Budget Notes</h2>`);
-        html.push(`<p>${sowData.budgetNotes}</p>`);
+        html.push(`<p>${docData.budgetNotes}</p>`);
     }
 
     return html.join('');
 }
 
 /**
- * Inserts SOW data into editor using HTML (Plan B - Revised)
- * 
- * This approach generates a clean HTML string and lets TipTap's native
- * HTML parser convert it into proper nodes automatically, avoiding
- * the fragile JSON node construction approach.
- * 
- * TipTap supports HTML insertion natively via insertContent(), which is
- * simpler and more reliable than markdown parsing.
+ * Inserts document data into editor using HTML
  */
-export function insertSOWToEditor(editor: Editor, sowData: SOWData) {
+export function insertDocumentToEditor(editor: Editor, docData: DocumentData) {
     if (!editor) {
         console.error('Editor not available');
         return;
@@ -199,12 +190,11 @@ export function insertSOWToEditor(editor: Editor, sowData: SOWData) {
 
     try {
         // Generate the complete HTML document
-        const htmlContent = generateSOWHTML(sowData);
+        const htmlContent = generateDocumentHTML(docData);
 
         console.log('Generated HTML for insertion');
 
         // Insert the HTML at the end of the document
-        // TipTap will automatically parse and convert it to nodes
         editor.chain()
             .focus('end')
             .insertContent(htmlContent)
@@ -213,9 +203,9 @@ export function insertSOWToEditor(editor: Editor, sowData: SOWData) {
         // Scroll to the newly inserted content
         editor.commands.focus('end');
 
-        console.log('✅ SOW content inserted successfully via HTML');
+        console.log('✅ Document content inserted successfully via HTML');
     } catch (error) {
-        console.error('❌ Failed to insert SOW content:', error);
+        console.error('❌ Failed to insert document content:', error);
         throw error;
     }
 }

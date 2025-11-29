@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useTamboContextAttachment } from "@tambo-ai/react";
+
 
 export interface UploadedDocument {
     id: string;
@@ -51,9 +51,6 @@ export const DocumentUploader = React.memo(function DocumentUploader({
     const [isUploading, setIsUploading] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
-
-    // Tambo context attachment hook
-    const { addContextAttachment } = useTamboContextAttachment();
 
     // Format file size to human readable format
     const formatFileSize = (bytes: number): string => {
@@ -111,7 +108,7 @@ export const DocumentUploader = React.memo(function DocumentUploader({
                     const formData = new FormData();
                     formData.append("file", file);
 
-                    const response = await fetch("/api/ingest-brief", {
+                    const response = await fetch("/api/documents/ingest", {
                         method: "POST",
                         body: formData,
                     });
@@ -129,23 +126,8 @@ export const DocumentUploader = React.memo(function DocumentUploader({
                         successDoc.status = "success";
                     }
 
-                    // Add as a context attachment with the extracted text
-                    addContextAttachment({
-                        name: file.name,
-                        icon: <FileText className="w-4 h-4" />,
-                        metadata: {
-                            type: file.type,
-                            size: file.size,
-                            uploadedAt: new Date().toISOString(),
-                            // Include the extracted text so AI can access it
-                            text: result.text,
-                            pages: result.pages,
-                            wordCount: result.metadata?.wordCount,
-                        },
-                    });
-
                     toast.success(
-                        `Document "${file.name}" added to conversation`,
+                        `Document "${file.name}" added to knowledge base`,
                     );
                 } catch (error: any) {
                     console.error("Upload error:", error);
@@ -167,7 +149,7 @@ export const DocumentUploader = React.memo(function DocumentUploader({
                 }
             }
         },
-        [maxFiles, maxFileSize, disabled, addContextAttachment, onDocumentsChange],
+        [maxFiles, maxFileSize, disabled, onDocumentsChange],
     );
 
     // Handle file selection via input

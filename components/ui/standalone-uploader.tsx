@@ -10,7 +10,12 @@ import {
     Paperclip,
 } from "lucide-react";
 import { cn, notifications } from "@/lib/utils";
-import { Tooltip } from "@/components/tambo/suggestions-tooltip";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface StandaloneUploaderProps {
     variant?: "dropzone" | "button";
@@ -66,7 +71,7 @@ export function StandaloneUploader({
 
             console.log("Uploading file to API...");
 
-            const response = await fetch("/api/ingest-brief", {
+            const response = await fetch("/api/documents/ingest", {
                 method: "POST",
                 body: formData,
             });
@@ -152,25 +157,32 @@ export function StandaloneUploader({
                     className="hidden"
                     disabled={isUploading}
                 />
-                <Tooltip content="Upload Document (PDF/Word)" side="top">
-                    <button
-                        type="button"
-                        onClick={triggerUpload}
-                        disabled={isUploading}
-                        className={cn(
-                            "w-10 h-10 rounded-lg border border-border bg-background text-foreground transition-colors hover:bg-muted disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-                            isUploading && "animate-pulse",
-                            className,
-                        )}
-                        aria-label="Upload Brief"
-                    >
-                        {isUploading ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                            <FileText className="w-4 h-4" />
-                        )}
-                    </button>
-                </Tooltip>
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <button
+                                type="button"
+                                onClick={triggerUpload}
+                                disabled={isUploading}
+                                className={cn(
+                                    "w-10 h-10 rounded-lg border border-border bg-background text-foreground transition-colors hover:bg-muted disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                                    isUploading && "animate-pulse",
+                                    className,
+                                )}
+                                aria-label="Upload Brief"
+                            >
+                                {isUploading ? (
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                    <FileText className="w-4 h-4" />
+                                )}
+                            </button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top">
+                            <p>Upload Document (PDF/Word)</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
             </>
         );
     }
