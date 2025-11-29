@@ -92,7 +92,7 @@ export function GenerativeUIPanel({ onClose, onNewThread }: { onClose: () => voi
 
             <div className="flex-1 overflow-hidden relative">
                 {/* We pass a key to force re-render when threadId changes */}
-                <DataStreamProvider>
+                {/* <DataStreamProvider>
                     <Chat
                         key={threadId}
                         id={threadId}
@@ -102,7 +102,10 @@ export function GenerativeUIPanel({ onClose, onNewThread }: { onClose: () => voi
                         isReadonly={false}
                         autoResume={true}
                     />
-                </DataStreamProvider>
+                </DataStreamProvider> */}
+                <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+                    Chat temporarily disabled for debugging
+                </div>
             </div>
         </div>
     );
