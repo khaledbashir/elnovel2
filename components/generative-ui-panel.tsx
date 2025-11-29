@@ -2,8 +2,7 @@ import { generateUUID } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { DataStreamProvider } from "@/components/data-stream-provider";
-import { Chat } from "@/components/chat";
+import { MinimalChat } from "@/components/minimal-chat";
 
 // ... (keep theme definition if needed for other things, but Chat handles its own UI)
 
@@ -91,18 +90,7 @@ export function GenerativeUIPanel({ onClose, onNewThread }: { onClose: () => voi
             </div>
 
             <div className="flex-1 overflow-hidden relative">
-                {/* We pass a key to force re-render when threadId changes */}
-                <DataStreamProvider>
-                    <Chat
-                        key={threadId}
-                        id={threadId}
-                        initialMessages={initialMessages}
-                        initialChatModel="glm-4.6"
-                        initialVisibilityType="private"
-                        isReadonly={false}
-                        autoResume={true}
-                    />
-                </DataStreamProvider>
+                <MinimalChat threadId={threadId} className="h-full" />
             </div>
         </div>
     );
