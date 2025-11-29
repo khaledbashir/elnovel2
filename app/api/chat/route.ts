@@ -15,7 +15,7 @@ if (!apiKey) {
 }
 
 const zai = createOpenAI({
-    baseURL: process.env.ZAI_API_URL || 'https://api.z.ai/api/paas/v4',
+    baseURL: process.env.ZAI_API_URL || 'https://api.z.ai/api/coding/paas/v4',
     apiKey: apiKey,
 });
 

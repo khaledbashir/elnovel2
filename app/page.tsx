@@ -7,6 +7,7 @@ import { Sidebar } from "@/components/sidebar";
 import { TopActionBar } from "@/components/top-action-bar";
 import TailwindAdvancedEditor from "@/components/tailwind/advanced-editor";
 import { SimpleChat } from "@/components/chat/simple-chat";
+import { ChatHistorySidebar } from "@/components/chat/chat-history-sidebar";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight, PanelRightClose, PanelRightOpen } from "lucide-react";
 
@@ -20,7 +21,12 @@ export default function Page() {
   const [chatPanelWidth, setChatPanelWidth] = useState(440);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isChatPanelCollapsed, setIsChatPanelCollapsed] = useState(false);
+  const [currentThreadId, setCurrentThreadId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleNewThread = useCallback(() => {
+    setCurrentThreadId(null);
+  }, []);
 
   // Load saved panel width and sidebar states from localStorage
   useEffect(() => {
@@ -165,8 +171,25 @@ export default function Page() {
             aria-label="Resize chat panel"
             style={{ transition: isResizing ? 'none' : 'background-color 0.2s ease' }}
           />
-          <div className="flex-1 flex flex-col bg-card border-l-2 border-border shadow-lg min-w-0">
-            <SimpleChat className="flex-1 min-h-0" />
+
+          <div className="flex-1 flex bg-card border-l-2 border-border shadow-lg min-w-0 overflow-hidden">
+            {/* History Sidebar (Left side of chat panel) */}
+            <div className="w-64 flex-shrink-0 border-r border-border hidden md:flex">
+              <ChatHistorySidebar
+                currentThreadId={currentThreadId}
+                onSelectThread={setCurrentThreadId}
+                onNewThread={handleNewThread}
+                className="w-full"
+              />
+            </div>
+
+            {/* Chat Area */}
+            <div className="flex-1 flex flex-col min-w-0">
+              <SimpleChat
+                className="flex-1 min-h-0"
+                threadId={currentThreadId}
+              />
+            </div>
           </div>
         </div>
       )}
