@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Chat } from "@/components/chat";
+import { DataStreamProvider } from "@/components/data-stream-provider";
 
 // ... (keep theme definition if needed for other things, but Chat handles its own UI)
 
@@ -90,14 +91,16 @@ export function GenerativeUIPanel({ onClose, onNewThread }: { onClose: () => voi
             </div>
 
             <div className="flex-1 overflow-hidden relative">
-                <Chat
-                    id={threadId}
-                    initialMessages={initialMessages}
-                    initialChatModel="glm-4.6"
-                    initialVisibilityType="private"
-                    isReadonly={false}
-                    autoResume={true}
-                />
+                <DataStreamProvider>
+                    <Chat
+                        id={threadId}
+                        initialMessages={initialMessages}
+                        initialChatModel="glm-4.6"
+                        initialVisibilityType="private"
+                        isReadonly={false}
+                        autoResume={true}
+                    />
+                </DataStreamProvider>
             </div>
         </div>
     );
