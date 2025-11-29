@@ -1,4 +1,4 @@
-"use client";
+"use server";
 
 import { generateId } from "ai";
 import { createStreamableValue } from "ai/rsc";

@@ -1,5 +1,6 @@
 import { createOpenAI } from '@ai-sdk/openai';
 import { streamText, convertToCoreMessages } from 'ai';
+
 import { query } from '@/lib/database';
 import { DocumentManager } from '@/lib/document-manager';
 import { searchSimilar } from '@/lib/vector-db';

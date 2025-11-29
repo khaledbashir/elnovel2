@@ -73,6 +73,7 @@
     "openai": "^4.28.4",
     "papaparse": "^5.5.3",
     "pdf-parse": "^2.4.5",
+    "postgres": "^3.4.7",
     "prism-react-renderer": "^2.4.1",
     "prosemirror-example-setup": "^1.2.3",
     "prosemirror-markdown": "^1.13.2",
