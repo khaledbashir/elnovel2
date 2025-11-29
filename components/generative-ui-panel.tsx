@@ -1,5 +1,8 @@
 import { Chat } from "@/components/chat";
 import { generateUUID } from "@/lib/utils";
+import { useState, useEffect } from "react";
+import { Loader2, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 // ... (keep theme definition if needed for other things, but Chat handles its own UI)
 
