@@ -14,7 +14,8 @@ export const POST = async (req: NextRequest) => {
             apiKey: process.env.ZAI_API_KEY,
             baseURL: process.env.ZAI_API_URL,
         }),
-        model: "glm-4-plus",
+        keepSystemRole: true,
+        model: process.env.ZAI_MODEL || "glm-4.6",
     }),
     endpoint: "/api/copilotkit",
   });
