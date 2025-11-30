@@ -34,8 +34,6 @@ import Magic from "./ui/icons/magic";
 import { AISelector } from "./generative/ai-selector";
 import { removeAIHighlight } from "novel";
 import { insertDocumentToEditor } from "@/lib/editor/insert-document";
-import { GenerativeUIPanel } from "@/components/generative-ui-panel";
-import { cn } from "@/lib/utils";
 
 const hljs = require("highlight.js");
 
@@ -60,45 +58,7 @@ const TailwindAdvancedEditor = ({
     const [openColor, setOpenColor] = useState(false);
     const [openLink, setOpenLink] = useState(false);
     const [openAI, setOpenAI] = useState(false);
-    const [isAIPanelOpen, setIsAIPanelOpen] = useState(false);
-    const [aiPanelWidth, setAIPanelWidth] = useState(500);
-    const [isResizing, setIsResizing] = useState(false);
-    const [isAIPanelCollapsed, setIsAIPanelCollapsed] = useState(false);
     const [isSelectionEmpty, setIsSelectionEmpty] = useState(true);
-
-    // Handle panel resizing
-    const handleMouseDown = () => {
-        setIsResizing(true);
-    };
-
-    const handleMouseUp = () => {
-        setIsResizing(false);
-    };
-
-    const handleMouseMove = (e: MouseEvent) => {
-        if (!isResizing) return;
-        // Calculate width from the right edge of the screen
-        const newWidth = window.innerWidth - e.clientX;
-
-        // Constrain width between min and max values
-        if (newWidth >= 300 && newWidth <= 800) {
-            setAIPanelWidth(newWidth);
-        }
-    };
-
-    useEffect(() => {
-        if (isResizing) {
-            document.addEventListener('mousemove', handleMouseMove);
-            document.addEventListener('mouseup', handleMouseUp);
-        } else {
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('mouseup', handleMouseUp);
-        }
-        return () => {
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('mouseup', handleMouseUp);
-        };
-    }, [isResizing]);
 
     // Force blur editor when clicking outside to close slash menu
     useEffect(() => {
@@ -534,13 +494,6 @@ const TailwindAdvancedEditor = ({
                             onOpenChange={setOpenColor}
                         />
                         <div className="flex-1" />
-                        <button
-                            onClick={() => setIsAIPanelOpen(!isAIPanelOpen)}
-                            className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition-colors"
-                        >
-                            <Magic className="h-4 w-4" />
-                            AI Chat
-                        </button>
                     </div>
                     <div className="flex-1 min-h-0 overflow-y-auto overflow-x-auto [scrollbar-gutter:stable] p-4">
                         <div className="w-full min-w-0 max-w-[900px] xl:max-w-[1200px] mx-auto bg-card p-6 md:p-12 rounded-lg border border-border shadow-sm">
@@ -691,32 +644,7 @@ const TailwindAdvancedEditor = ({
                 </EditorRoot>
             </div>
 
-            {/* AI Panel Sidebar with Resize Handle */}
-            {isAIPanelOpen && (
-                <>
-                    {/* Resize Handle */}
-                    <div
-                        onMouseDown={handleMouseDown}
-                        className={cn(
-                            "w-1 bg-border hover:bg-primary cursor-col-resize flex-shrink-0 transition-colors",
-                            isResizing && "bg-primary"
-                        )}
-                        style={{ cursor: 'col-resize', zIndex: 50 }}
-                    />
-                    <div
-                        className="border-l border-border bg-background flex-shrink-0"
-                        style={{ width: `${aiPanelWidth}px` }}
-                    >
-                        <GenerativeUIPanel
-                            onClose={() => setIsAIPanelOpen(false)}
-                            onNewThread={() => {
-                                // This will be handled within GenerativeUIPanel or we can pass a prop if needed
-                                // For now, the new chat button inside GenerativeUIPanel handles the state reset
-                            }}
-                        />
-                    </div>
-                </>
-            )}
+
         </div>
     );
 };
