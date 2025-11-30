@@ -8,6 +8,8 @@ import { TopActionBar } from "@/components/top-action-bar";
 import TailwindAdvancedEditor from "@/components/tailwind/advanced-editor";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { CopilotSidebar } from "@copilotkit/react-ui";
+import "@copilotkit/react-ui/styles.css";
 
 export default function Page() {
   const [selectedDocument, setSelectedDocument] = useState<string | null>(null);
@@ -74,11 +76,19 @@ export default function Page() {
           workspaceId={selectedWorkspace}
           documentId={selectedDocument}
         />
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden relative">
           <TailwindAdvancedEditor
             documentId={selectedDocument}
             workspaceId={selectedWorkspace}
           />
+          <CopilotSidebar
+                defaultOpen={true}
+                clickOutsideToClose={false}
+                labels={{
+                    title: "Copilot Assistant",
+                    initial: "Hi! I can help you edit this document. Try asking me to generate content or summarize the text.",
+                }}
+            />
         </div>
       </div>
 
