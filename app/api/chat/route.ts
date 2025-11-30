@@ -5,24 +5,13 @@ import { query } from '@/lib/database';
 import { DocumentManager } from '@/lib/document-manager';
 import { searchSimilar } from '@/lib/vector-db';
 import { componentGeneratorTool } from '@/lib/ai/component-generator';
+import { getProviderConfig } from '@/lib/ai/provider-config';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 
-// Configure Vercel AI Gateway
-const gatewayKey = process.env.AI_GATEWAY_API_KEY;
-
-if (!gatewayKey) {
-    console.error("CRITICAL: No AI Gateway Key found");
-}
-
-const openai = createOpenAI({
-    baseURL: 'https://gateway.ai.vercel.dev/v1',
-    apiKey: gatewayKey,
-});
-
 export async function POST(req: Request) {
     try {
-        let { messages, id: threadId, system } = await req.json();
+        let { messages, id: threadId, system, provider = 'zai', model = 'glm-4.6' } = await req.json();
 
         // Ensure threadId exists
         if (!threadId) {
@@ -72,10 +61,27 @@ export async function POST(req: Request) {
                 console.error('[Chat API] DB Error (Message) - Continuing without saving:', dbError);
             }
 
-            // 3. Stream Response
-            console.log('[Chat API] Calling LLM via Vercel Gateway...');
+
+            // 3. Get provider configuration
+            const providerConfig = getProviderConfig(provider);
+            if (!providerConfig) {
+                return new Response(JSON.stringify({ error: `Unknown provider: ${provider}` }), { status: 400 });
+            }
+
+            if (!providerConfig.apiKey) {
+                return new Response(JSON.stringify({ error: `API key not configured for provider: ${provider}` }), { status: 500 });
+            }
+
+            // Create OpenAI client with provider's config
+            const openai = createOpenAI({
+                baseURL: providerConfig.baseURL,
+                apiKey: providerConfig.apiKey,
+            });
+
+            // 4. Stream Response
+            console.log(`[Chat API] Calling ${provider}/${model} via OpenAI-compatible API...`);
             const result = await streamText({
-                model: openai('glm-4.6'),
+                model: openai(model),
                 messages: convertToCoreMessages(messages),
                 system: system || `You are an advanced AI Agent.
 
