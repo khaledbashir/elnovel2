@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ThemeToggle } from "@/components/tailwind/ui/theme-toggle";
 import { CopilotSidebar } from "@copilotkit/react-ui";
+import "@copilotkit/react-ui/styles.css";
 
 export default function SimpleChatPage() {
   const [isNavSidebarCollapsed, setIsNavSidebarCollapsed] = useState(false);
