@@ -84,6 +84,24 @@ const TailwindAdvancedEditor = ({
         },
     });
 
+    useCopilotAction({
+        name: "setContent",
+        description: "Replace the editor content",
+        parameters: [
+            {
+                name: "content",
+                type: "string",
+                description: "Full content to set in the editor",
+                required: true,
+            },
+        ],
+        handler: async ({ content }) => {
+            if (editorRef.current) {
+                editorRef.current.commands.setContent(content);
+            }
+        },
+    });
+
     // Force blur editor when clicking outside to close slash menu
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {

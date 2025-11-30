@@ -82,13 +82,17 @@ export default function Page() {
             workspaceId={selectedWorkspace}
           />
           <CopilotSidebar
-                defaultOpen={true}
-                clickOutsideToClose={false}
-                labels={{
-                    title: "Copilot Assistant",
-                    initial: "Hi! I can help you edit this document. Try asking me to generate content or summarize the text.",
-                }}
-            />
+            defaultOpen={true}
+            clickOutsideToClose={false}
+            draggable
+            className="resizable-panel"
+            labels={{
+              title: "Copilot Assistant",
+              initial:
+                "Ask me to generate or edit content. I can write, fix grammar, summarize, and insert directly into the editor.",
+            }}
+          />
+          <div className="resizable-handle resizable-handle-left" />
         </div>
       </div>
 

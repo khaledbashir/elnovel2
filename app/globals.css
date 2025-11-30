@@ -73,13 +73,13 @@ body.slash-command-dialog-open [cmdk-root] {
   }
 
   .dark {
-    /* Dark Mode */
-    --background: 33 20% 10%;
-    /* #1f1c19 - Dark brown/black */
-    --card: 33 20% 14%;
-    /* #262320 */
-    --popover: 33 20% 14%;
-    /* #262320 */
+    /* Dark Mode - Pitch Black Variant */
+    --background: 0 0% 0%;
+    /* #000000 */
+    --card: 0 0% 4%;
+    /* near black */
+    --popover: 0 0% 6%;
+    /* near black */
     --popover-foreground: 40 20% 90%;
     /* Light paper text */
     --secondary: 33 20% 20%;
@@ -88,24 +88,18 @@ body.slash-command-dialog-open [cmdk-root] {
     /* #332f2b */
     --accent: 217 91% 60%;
     /* #3b82f6 - Modern Blue */
-    --foreground: 40 20% 90%;
-    /* Light paper text */
-    --card-foreground: 40 20% 90%;
-    /* Light paper text */
-    --muted-foreground: 40 10% 60%;
-    /* Muted paper */
-    --secondary-foreground: 40 20% 90%;
-    /* Light paper text */
-    --border: 33 20% 25%;
-    /* #403b36 */
-    --input: 33 20% 25%;
-    /* #403b36 */
-    --ring: 31 53% 64%;
-    /* Papyrus Light */
-    --primary: 31 53% 64%;
-    /* Papyrus Light */
-    --primary-foreground: 33 20% 10%;
-    /* Dark brown/black */
+    --foreground: 0 0% 92%;
+    /* light text */
+    --card-foreground: 0 0% 92%;
+    --muted-foreground: 0 0% 65%;
+    --secondary-foreground: 0 0% 92%;
+    --border: 0 0% 18%;
+    /* dark gray */
+    --input: 0 0% 18%;
+    --ring: 217 91% 60%;
+    /* blue accent */
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
     --destructive: 0 62.8% 30.6%;
     /* #7f1d1d */
     --destructive-foreground: 0 0% 98%;
