@@ -10,6 +10,7 @@ import { ThemeProvider, useTheme } from "next-themes";
 import { Toaster } from "sonner";
 import useLocalStorage from "@/hooks/use-local-storage";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { CopilotKit } from "@copilotkit/react-core";
 
 export const AppContext = createContext<{
     font: string;
@@ -57,9 +58,11 @@ export default function Providers({ children }: { children: ReactNode }) {
                 }}
             >
                 <SidebarProvider>
-                    <ToasterProvider />
-                    {children}
-                    {/* Vercel Analytics removed - {process.env.NODE_ENV === "production" && <Analytics />} */}
+                    <CopilotKit runtimeUrl="/api/copilotkit" publicApiKey="ck_pub_49b3cd1211f0e920eadaf3c72a2d6e92">
+                        <ToasterProvider />
+                        {children}
+                        {/* Vercel Analytics removed - {process.env.NODE_ENV === "production" && <Analytics />} */}
+                    </CopilotKit>
                 </SidebarProvider>
             </AppContext.Provider>
         </ThemeProvider>

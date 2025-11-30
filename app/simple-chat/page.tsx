@@ -8,6 +8,7 @@ import TailwindAdvancedEditor from "@/components/tailwind/advanced-editor";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ThemeToggle } from "@/components/tailwind/ui/theme-toggle";
+import { CopilotSidebar } from "@copilotkit/react-ui";
 
 export default function SimpleChatPage() {
   const [isNavSidebarCollapsed, setIsNavSidebarCollapsed] = useState(false);
@@ -46,8 +47,16 @@ export default function SimpleChatPage() {
 
         <div className="flex flex-1 h-full overflow-hidden">
           {/* Left pane: Editor (independent scroll) */}
-          <div className="flex-1 h-full overflow-y-auto">
+          <div className="flex-1 h-full overflow-y-auto relative">
             <TailwindAdvancedEditor documentId={null} workspaceId={null} />
+             <CopilotSidebar
+                defaultOpen={true}
+                clickOutsideToClose={false}
+                labels={{
+                    title: "Copilot Assistant",
+                    initial: "Hi! I can help you edit this document. Try asking me to generate content or summarize the text.",
+                }}
+            />
           </div>
         </div>
       </div>

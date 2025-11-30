@@ -34,6 +34,7 @@ import Magic from "./ui/icons/magic";
 import { AISelector } from "./generative/ai-selector";
 import { removeAIHighlight } from "novel";
 import { insertDocumentToEditor } from "@/lib/editor/insert-document";
+import { useCopilotReadable, useCopilotAction } from "@copilotkit/react-core";
 
 const hljs = require("highlight.js");
 
@@ -59,6 +60,29 @@ const TailwindAdvancedEditor = ({
     const [openLink, setOpenLink] = useState(false);
     const [openAI, setOpenAI] = useState(false);
     const [isSelectionEmpty, setIsSelectionEmpty] = useState(true);
+
+    useCopilotReadable({
+        description: "The content of the editor",
+        value: editorRef.current?.getText() || "",
+    });
+
+    useCopilotAction({
+        name: "appendContent",
+        description: "Append content to the editor",
+        parameters: [
+            {
+                name: "content",
+                type: "string",
+                description: "The content to append to the editor",
+                required: true,
+            },
+        ],
+        handler: async ({ content }) => {
+            if (editorRef.current) {
+                editorRef.current.chain().focus().insertContent(content).run();
+            }
+        },
+    });
 
     // Force blur editor when clicking outside to close slash menu
     useEffect(() => {
