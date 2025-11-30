@@ -1,7 +1,6 @@
 "use client";
 
 import type { UseChatHelpers } from "@ai-sdk/react";
-import { Trigger } from "@radix-ui/react-select";
 import type { UIMessage } from "ai";
 import equal from "fast-deep-equal";
 import {
@@ -29,6 +28,7 @@ import {
   PromptInput,
   PromptInputModelSelect,
   PromptInputModelSelectContent,
+  PromptInputModelSelectTrigger,
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputToolbar,
@@ -481,7 +481,7 @@ function PureModelSelectorCompact({
       }}
       value={selectedModel?.name}
     >
-      <Trigger asChild>
+      <PromptInputModelSelectTrigger asChild>
         <Button className="h-8 px-2" variant="ghost">
           <CpuIcon size={16} />
           <span className="hidden font-medium text-xs sm:block">
@@ -489,7 +489,7 @@ function PureModelSelectorCompact({
           </span>
           <ChevronDownIcon size={16} />
         </Button>
-      </Trigger>
+      </PromptInputModelSelectTrigger>
       <PromptInputModelSelectContent className="min-w-[260px] p-0">
         <div className="flex flex-col gap-px">
           {chatModels.map((model) => (

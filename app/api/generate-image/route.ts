@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export const runtime = "edge"; // Use edge runtime for speed
+export const runtime = "nodejs"; // Use nodejs runtime for compatibility
 
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
