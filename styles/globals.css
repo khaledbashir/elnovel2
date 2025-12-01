@@ -547,6 +547,12 @@
   overflow-y: hidden !important;
   transition: border-color 0.2s, box-shadow 0.2s, background 0.2s !important;
   box-sizing: border-box !important;
+  pointer-events: auto !important;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  cursor: text !important;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
 .copilot-chat-container textarea:focus {
@@ -561,18 +567,19 @@
   color: hsl(var(--muted-foreground)) !important;
 }
 
-/* Hide the send button completely */
+/* Hide the send button visually but keep it functional for Enter key */
 .copilot-chat-container button[type="submit"],
 .copilot-chat-container [class*="sendButton"],
-.copilot-chat-container [class*="SendButton"],
-.copilot-chat-container [class*="send"] {
-  display: none !important;
-  visibility: hidden !important;
-  width: 0 !important;
-  height: 0 !important;
+.copilot-chat-container [class*="SendButton"] {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
   padding: 0 !important;
-  margin: 0 !important;
-  opacity: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
 }
 
 /* Thinking/loading indicator */
