@@ -373,6 +373,42 @@
   overflow: hidden;
 }
 
+/* Force the CopilotChat root to fill container and use flex column */
+.copilot-chat-container > div,
+.copilot-chat-container > [class*="copilotKit"],
+.copilot-chat-container > [data-copilotkit] {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  flex: 1 !important;
+  min-height: 0 !important;
+}
+
+/* Force all nested wrapper divs to use flex column layout */
+.copilot-chat-container > div > div,
+.copilot-chat-container > div > div > div {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 !important;
+  min-height: 0 !important;
+  height: 100% !important;
+}
+
+/* Override CopilotKit default chat wrapper styles */
+.copilot-chat-container [class*="Chat"],
+.copilot-chat-container [class*="chat"],
+.copilot-chat-container [class*="Window"],
+.copilot-chat-container [class*="window"],
+.copilot-chat-container [class*="Container"],
+.copilot-chat-container [class*="Wrapper"] {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+}
+
 /* Hide the default CopilotChat header since we have our own */
 .copilot-chat-container [class*="copilotKitHeader"],
 .copilot-chat-container header[class*="Header"] {
@@ -380,12 +416,17 @@
 }
 
 /* Messages container - takes up available space and scrolls */
-.copilot-chat-container [class*="Messages"] {
-  flex: 1 !important;
+.copilot-chat-container [class*="Messages"],
+.copilot-chat-container [class*="messages"],
+.copilot-chat-container [class*="MessageList"],
+.copilot-chat-container [class*="messageList"] {
+  flex: 1 1 auto !important;
   overflow-y: auto !important;
   padding: 16px !important;
   background: hsl(var(--background)) !important;
   order: 1 !important;
+  min-height: 0 !important;
+  max-height: none !important;
 }
 
 /* Initial message / empty state */
@@ -631,12 +672,13 @@
    Kill all internal spacing
    ======================================== */
 
-/* Target the entire input section - kill all child spacing */
-.copilot-chat-container > div:last-child,
-.copilot-chat-container [data-copilotkit] > div:last-child {
-  padding: 8px 12px !important;
-  min-height: 0 !important;
-  height: auto !important;
+/* Force input area to stay at bottom and not expand */
+.copilot-chat-container [class*="Input"],
+.copilot-chat-container [class*="inputContainer"],
+.copilot-chat-container [class*="InputContainer"] {
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+  margin-top: auto !important;
 }
 
 /* Universal selector for anything inside input area */
@@ -654,6 +696,7 @@
   padding: 8px 12px !important;
   min-height: 0 !important;
   height: auto !important;
+  flex-shrink: 0 !important;
 }
 
 /* Remove any flex-grow on children */
