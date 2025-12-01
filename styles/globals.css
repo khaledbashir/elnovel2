@@ -5,31 +5,54 @@
 @layer base {
   :root {
     /* Social Garden Brand Colors */
-    --sg-dark: 190 44% 14%; /* #0e2e33 */
-    --sg-green: 159 75% 51%; /* #20e28f */
-    --sg-green-dark: 160 65% 42%; /* #15a366 */
-    --sg-green-hover: 161 68% 37%; /* #10a35a */
+    --sg-dark: 190 44% 14%;
+    /* #0e2e33 */
+    --sg-green: 159 75% 51%;
+    /* #20e28f */
+    --sg-green-dark: 160 65% 42%;
+    /* #15a366 */
+    --sg-green-hover: 161 68% 37%;
+    /* #10a35a */
 
     /* Light Mode - app/brand colors used by Tambo mapping */
-    --background: 0 0% 100%; /* #ffffff */
-    --foreground: 210 10% 23%; /* #3a3a3a - improved contrast */
-    --card: 0 0% 100%; /* #ffffff */
-    --card-foreground: 210 10% 23%; /* #3a3a3a */
-    --popover: 0 0% 100%; /* #ffffff */
-    --popover-foreground: 210 10% 23%; /* #3a3a3a */
-    --primary: 190 44% 14%; /* SG Dark #0e2e33 */
-    --primary-foreground: 0 0% 100%; /* White */
-    --secondary: 210 20% 96%; /* #f5f7fa - softer light gray */
-    --secondary-foreground: 210 10% 23%; /* #3a3a3a */
-    --muted: 210 20% 96%; /* #f5f7fa */
-    --muted-foreground: 215 16% 47%; /* #6b7280 - better muted text */
-    --accent: 159 75% 51%; /* SG Green #20e28f */
-    --accent-foreground: 190 44% 14%; /* SG Dark */
-    --destructive: 0 84.2% 60.2%; /* Red */
-    --destructive-foreground: 0 0% 98%; /* #fafafa */
-    --border: 214 32% 91%; /* #e2e8f0 - softer border */
-    --input: 214 32% 91%; /* #e2e8f0 */
-    --ring: 159 75% 51%; /* SG Green #20e28f */
+    --background: 0 0% 100%;
+    /* #ffffff */
+    --foreground: 210 10% 23%;
+    /* #3a3a3a - improved contrast */
+    --card: 0 0% 100%;
+    /* #ffffff */
+    --card-foreground: 210 10% 23%;
+    /* #3a3a3a */
+    --popover: 0 0% 100%;
+    /* #ffffff */
+    --popover-foreground: 210 10% 23%;
+    /* #3a3a3a */
+    --primary: 190 44% 14%;
+    /* SG Dark #0e2e33 */
+    --primary-foreground: 0 0% 100%;
+    /* White */
+    --secondary: 210 20% 96%;
+    /* #f5f7fa - softer light gray */
+    --secondary-foreground: 210 10% 23%;
+    /* #3a3a3a */
+    --muted: 210 20% 96%;
+    /* #f5f7fa */
+    --muted-foreground: 215 16% 47%;
+    /* #6b7280 - better muted text */
+    --accent: 159 75% 51%;
+    /* SG Green #20e28f */
+    --accent-foreground: 190 44% 14%;
+    /* SG Dark */
+    --destructive: 0 84.2% 60.2%;
+    /* Red */
+    --destructive-foreground: 0 0% 98%;
+    /* #fafafa */
+    --border: 214 32% 91%;
+    /* #e2e8f0 - softer border */
+    --input: 214 32% 91%;
+    /* #e2e8f0 */
+    --ring: 159 75% 51%;
+    /* SG Green #20e28f */
     --radius: 0.5rem;
 
     /* Tambo Resizable Layout Variables (Light Mode) */
@@ -41,30 +64,50 @@
 
   .dark {
     /* Dark Mode Colors (map brand to Tambo variables) */
-    --sg-dark: 0 0% 6%; /* #0E0F0F */
-    --sg-green: 159 75% 51%; /* #20e28f */
+    --sg-dark: 0 0% 6%;
+    /* #0E0F0F */
+    --sg-green: 159 75% 51%;
+    /* #20e28f */
     --sg-green-dark: 160 65% 42%;
     --sg-green-hover: 161 68% 37%;
 
     /* Dark Mode - Softer blacks and better contrast */
-    --background: 220 13% 8%; /* #141417 - soft black instead of pure black */
-    --foreground: 210 10% 90%; /* #e4e4e7 - softer white */
-    --card: 220 13% 10%; /* #1a1a1e - slightly lighter than background */
-    --card-foreground: 210 10% 90%; /* #e4e4e7 */
-    --popover: 220 13% 10%; /* #1a1a1e */
-    --popover-foreground: 210 10% 90%; /* #e4e4e7 */
-    --primary: var(--sg-green); /* Brand primary (Green) for dark mode */
-    --primary-foreground: 220 13% 8%; /* Dark background */
-    --secondary: 220 13% 15%; /* #24242a - softer secondary */
-    --secondary-foreground: 210 10% 90%; /* #e4e4e7 */
-    --muted: 220 13% 15%; /* #24242a */
-    --muted-foreground: 215 15% 65%; /* #9ca3af - better muted text */
-    --accent: 220 13% 20%; /* #2a2a33 - softer accent background */
-    --accent-foreground: 210 10% 90%; /* #e4e4e7 */
-    --destructive: 0 62.8% 30.6%; /* Dark red */
-    --destructive-foreground: 210 10% 90%; /* #e4e4e7 */
-    --border: 220 13% 20%; /* #2a2a33 - visible but not harsh */
-    --input: 220 13% 20%; /* #2a2a33 */
+    --background: 220 13% 8%;
+    /* #141417 - soft black instead of pure black */
+    --foreground: 210 10% 90%;
+    /* #e4e4e7 - softer white */
+    --card: 220 13% 10%;
+    /* #1a1a1e - slightly lighter than background */
+    --card-foreground: 210 10% 90%;
+    /* #e4e4e7 */
+    --popover: 220 13% 10%;
+    /* #1a1a1e */
+    --popover-foreground: 210 10% 90%;
+    /* #e4e4e7 */
+    --primary: var(--sg-green);
+    /* Brand primary (Green) for dark mode */
+    --primary-foreground: 220 13% 8%;
+    /* Dark background */
+    --secondary: 220 13% 15%;
+    /* #24242a - softer secondary */
+    --secondary-foreground: 210 10% 90%;
+    /* #e4e4e7 */
+    --muted: 220 13% 15%;
+    /* #24242a */
+    --muted-foreground: 215 15% 65%;
+    /* #9ca3af - better muted text */
+    --accent: 220 13% 20%;
+    /* #2a2a33 - softer accent background */
+    --accent-foreground: 210 10% 90%;
+    /* #e4e4e7 */
+    --destructive: 0 62.8% 30.6%;
+    /* Dark red */
+    --destructive-foreground: 210 10% 90%;
+    /* #e4e4e7 */
+    --border: 220 13% 20%;
+    /* #2a2a33 - visible but not harsh */
+    --input: 220 13% 20%;
+    /* #2a2a33 */
     --ring: var(--sg-green);
 
     /* Tambo Resizable Layout Variables (Dark Mode) */
@@ -315,4 +358,319 @@
   .editor-container.with-panel {
     margin-right: 0;
   }
+}
+
+/* ========================================
+   CopilotChat Embedded Styles
+   ======================================== */
+
+/* Main container */
+.copilot-chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: hsl(var(--card));
+  overflow: hidden;
+}
+
+/* Hide the default CopilotChat header since we have our own */
+.copilot-chat-container [class*="copilotKitHeader"],
+.copilot-chat-container header[class*="Header"] {
+  display: none !important;
+}
+
+/* Messages container - takes up available space and scrolls */
+.copilot-chat-container [class*="Messages"] {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  padding: 16px !important;
+  background: hsl(var(--background)) !important;
+  order: 1 !important;
+}
+
+/* Initial message / empty state */
+.copilot-chat-container [class*="initial"],
+.copilot-chat-container [class*="emptyState"],
+.copilot-chat-container [class*="placeholder"] {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  padding: 32px 16px !important;
+  color: hsl(var(--muted-foreground)) !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  flex: 0 0 auto !important;
+}
+
+/* User messages */
+.copilot-chat-container [class*="userMessage"] {
+  background: hsl(var(--primary)) !important;
+  color: hsl(var(--primary-foreground)) !important;
+  border-radius: 16px 16px 4px 16px !important;
+  padding: 10px 14px !important;
+  max-width: 85% !important;
+  align-self: flex-end !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  width: fit-content !important;
+}
+
+/* Assistant messages */
+.copilot-chat-container [class*="assistantMessage"] {
+  background: hsl(var(--muted)) !important;
+  color: hsl(var(--foreground)) !important;
+  border-radius: 16px 16px 16px 4px !important;
+  padding: 10px 14px !important;
+  max-width: 85% !important;
+  align-self: flex-start !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  width: fit-content !important;
+}
+
+/* Message actions (copy, thumbs up/down) - only on hover */
+.copilot-chat-container [class*="messageActions"],
+.copilot-chat-container [class*="actions"] {
+  opacity: 0 !important;
+  transition: opacity 0.2s !important;
+  padding: 4px 0 !important;
+  gap: 4px !important;
+  display: flex !important;
+}
+
+.copilot-chat-container [class*="assistantMessage"]:hover [class*="messageActions"],
+.copilot-chat-container [class*="assistantMessage"]:hover [class*="actions"] {
+  opacity: 1 !important;
+}
+
+.copilot-chat-container [class*="messageActions"] button,
+.copilot-chat-container [class*="actions"] button {
+  padding: 4px !important;
+  border-radius: 4px !important;
+  background: transparent !important;
+  color: hsl(var(--muted-foreground)) !important;
+  transition: all 0.15s !important;
+}
+
+.copilot-chat-container [class*="messageActions"] button:hover,
+.copilot-chat-container [class*="actions"] button:hover {
+  background: hsl(var(--accent)) !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+/* Input container - fixed at bottom, minimal height */
+.copilot-chat-container [class*="Input"],
+.copilot-chat-container [class*="inputContainer"],
+.copilot-chat-container [class*="InputContainer"],
+.copilot-chat-container form {
+  background: hsl(var(--card)) !important;
+  border-top: 1px solid hsl(var(--border)) !important;
+  padding: 8px 12px !important;
+  flex-shrink: 0 !important;
+  order: 2 !important;
+  min-height: 0 !important;
+  height: auto !important;
+}
+
+/* Kill any extra wrappers inside input area */
+.copilot-chat-container [class*="Input"] > div,
+.copilot-chat-container [class*="inputContainer"] > div,
+.copilot-chat-container form > div {
+  padding: 0 !important;
+  margin: 0 !important;
+  min-height: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+/* Textarea styling - compact */
+.copilot-chat-container textarea {
+  width: 100% !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 120px !important;
+  background: hsl(var(--muted)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: 18px !important;
+  color: hsl(var(--foreground)) !important;
+  padding: 7px 14px !important;
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+  resize: none !important;
+  overflow-y: hidden !important;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s !important;
+  box-sizing: border-box !important;
+}
+
+.copilot-chat-container textarea:focus {
+  outline: none !important;
+  border-color: hsl(var(--primary)) !important;
+  background: hsl(var(--background)) !important;
+  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.1) !important;
+  overflow-y: auto !important;
+}
+
+.copilot-chat-container textarea::placeholder {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+/* Hide the send button completely */
+.copilot-chat-container button[type="submit"],
+.copilot-chat-container [class*="sendButton"],
+.copilot-chat-container [class*="SendButton"],
+.copilot-chat-container [class*="send"] {
+  display: none !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  opacity: 0 !important;
+}
+
+/* Thinking/loading indicator */
+.copilot-chat-container [class*="thinking"],
+.copilot-chat-container [class*="Thinking"],
+.copilot-chat-container [class*="loading"] {
+  padding: 8px 12px !important;
+  background: hsl(var(--muted)) !important;
+  border-radius: 12px !important;
+  color: hsl(var(--muted-foreground)) !important;
+  font-size: 13px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+/* Code blocks in messages */
+.copilot-chat-container pre {
+  background: hsl(var(--background)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: 8px !important;
+  padding: 12px !important;
+  overflow-x: auto !important;
+  margin: 8px 0 !important;
+}
+
+.copilot-chat-container code {
+  font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace !important;
+  font-size: 13px !important;
+}
+
+.copilot-chat-container :not(pre) > code {
+  background: hsl(var(--muted)) !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+}
+
+/* Scrollbar styling */
+.copilot-chat-container ::-webkit-scrollbar {
+  width: 6px;
+}
+
+.copilot-chat-container ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.copilot-chat-container ::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 3px;
+}
+
+.copilot-chat-container ::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.4);
+}
+
+/* ========================================
+   Resize Handle Styles
+   ======================================== */
+
+.resize-handle {
+  width: 4px;
+  cursor: col-resize;
+  background: hsl(var(--border));
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.resize-handle:hover {
+  background: hsl(var(--primary) / 0.5);
+}
+
+.resize-handle:active,
+.resize-handle.resizing {
+  background: hsl(var(--primary));
+}
+
+.resize-handle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 2px;
+  height: 24px;
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 1px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.resize-handle:hover::after {
+  opacity: 1;
+}
+
+/* ========================================
+   CopilotKit Aggressive Overrides
+   Kill all internal spacing
+   ======================================== */
+
+/* Target the entire input section - kill all child spacing */
+.copilot-chat-container > div:last-child,
+.copilot-chat-container [data-copilotkit] > div:last-child {
+  padding: 8px 12px !important;
+  min-height: 0 !important;
+  height: auto !important;
+}
+
+/* Universal selector for anything inside input area */
+.copilot-chat-container form *:not(textarea):not(button) {
+  padding: 0 !important;
+  margin: 0 !important;
+  min-height: 0 !important;
+}
+
+/* Force form to be compact */
+.copilot-chat-container form {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 8px 12px !important;
+  min-height: 0 !important;
+  height: auto !important;
+}
+
+/* Remove any flex-grow on children */
+.copilot-chat-container form > * {
+  flex-grow: 0 !important;
+}
+
+.copilot-chat-container form > *:has(textarea) {
+  flex-grow: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Fix textarea wrapper */
+.copilot-chat-container form div:has(> textarea) {
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  min-height: 0 !important;
 }

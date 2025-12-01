@@ -26,7 +26,7 @@ import TableRow from "@tiptap/extension-table-row";
 import TableCell from "@tiptap/extension-table-cell";
 import TableHeader from "@tiptap/extension-table-header";
 import { TextAlign } from "@tiptap/extension-text-align";
-import { BubbleMenu } from "@tiptap/extension-bubble-menu";
+
 
 import { MarkdownExtension } from "./markdown-extension";
 

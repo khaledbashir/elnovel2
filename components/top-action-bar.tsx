@@ -49,7 +49,7 @@ export function TopActionBar({ className, workspaceId, documentId }: TopActionBa
   }, [workspaceId, documentId]);
 
   return (
-    <div className={cn("p-4 border-b border-border flex items-center justify-between bg-card", className)}>
+    <div className={cn("px-4 py-3 border-b border-border flex items-center justify-between bg-card", className)}>
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <div className="flex items-center gap-1 hover:text-foreground transition-colors cursor-default">
           <Home size={14} />

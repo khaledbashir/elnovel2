@@ -58,7 +58,7 @@ export default function Providers({ children }: { children: ReactNode }) {
                 }}
             >
                 <SidebarProvider>
-                    <CopilotKit runtimeUrl="/api/copilotkit" publicApiKey="ck_pub_49b3cd1211f0e920eadaf3c72a2d6e92">
+                    <CopilotKit runtimeUrl="/api/copilotkit" publicApiKey="ck_pub_49b3cd1211f0e920eadaf3c72a2d6e92" showDevConsole={false}>
                         <ToasterProvider />
                         {children}
                         {/* Vercel Analytics removed - {process.env.NODE_ENV === "production" && <Analytics />} */}

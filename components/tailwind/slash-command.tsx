@@ -487,10 +487,12 @@ export const loadDynamicCommands = async () => {
                         },
                     };
                 });
+            return getSuggestionItems();
         }
     } catch (error) {
         console.error("Failed to load dynamic slash commands:", error);
     }
+    return getSuggestionItems();
 };
 
 // Combine static and dynamic commands

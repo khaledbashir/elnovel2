@@ -1,5 +1,7 @@
 "use client";
 import { defaultEditorContent } from "@/lib/content";
+import { Upload, FileUp } from "lucide-react";
+import { Button } from "./ui/button";
 import {
     EditorCommand,
     EditorCommandEmpty,
@@ -61,43 +63,326 @@ const TailwindAdvancedEditor = ({
     const [openAI, setOpenAI] = useState(false);
     const [isSelectionEmpty, setIsSelectionEmpty] = useState(true);
 
+    // CopilotKit: Expose editor content for context
     useCopilotReadable({
-        description: "The content of the editor",
+        description: "The content of the editor in plain text",
         value: editorRef.current?.getText() || "",
     });
 
+    // CopilotKit: Expose available editor capabilities
+    useCopilotReadable({
+        description: "Available editor extensions and capabilities",
+        value: `
+The editor supports these features that you can use:
+- **Tables**: Insert tables, add/delete rows and columns, merge cells, toggle headers
+- **Text Formatting**: Bold, italic, underline, strikethrough, code, highlight colors
+- **Headings**: H1, H2, H3 levels
+- **Lists**: Bullet lists, numbered lists, task/checkbox lists
+- **Links**: Insert and edit hyperlinks
+- **Images**: Insert images (via URL or upload)
+- **Code Blocks**: Syntax-highlighted code in multiple languages
+- **Math**: LaTeX/KaTeX mathematical equations
+- **Embeds**: YouTube videos, Twitter/X posts
+- **Alignment**: Left, center, right text alignment
+- **Blockquotes**: Quote blocks with left border
+- **Horizontal Rules**: Divider lines
+- **Colors**: Text color and background highlight colors
+
+When the user asks you to perform editor actions, use the appropriate action.
+For chat/discussion without editing, just respond normally without calling actions.
+        `.trim(),
+    });
+
+    // CopilotKit Action: Append content (non-destructive)
     useCopilotAction({
         name: "appendContent",
-        description: "Append content to the editor",
+        description: "Append content to the end of the editor. Use this when user wants to ADD content without replacing existing content.",
         parameters: [
             {
                 name: "content",
                 type: "string",
-                description: "The content to append to the editor",
+                description: "The content to append (can be markdown or plain text)",
                 required: true,
             },
         ],
         handler: async ({ content }) => {
             if (editorRef.current) {
-                editorRef.current.chain().focus().insertContent(content).run();
+                editorRef.current.chain().focus("end").insertContent(content).run();
             }
         },
     });
 
+    // CopilotKit Action: Replace all content
     useCopilotAction({
         name: "setContent",
-        description: "Replace the editor content",
+        description: "Replace ALL editor content. Use this only when user explicitly wants to REPLACE everything.",
         parameters: [
             {
                 name: "content",
                 type: "string",
-                description: "Full content to set in the editor",
+                description: "Full content to replace in the editor",
                 required: true,
             },
         ],
         handler: async ({ content }) => {
             if (editorRef.current) {
                 editorRef.current.commands.setContent(content);
+            }
+        },
+    });
+
+    // CopilotKit Action: Insert table
+    useCopilotAction({
+        name: "insertTable",
+        description: "Insert a table at the current cursor position",
+        parameters: [
+            {
+                name: "rows",
+                type: "number",
+                description: "Number of rows (default 3)",
+                required: false,
+            },
+            {
+                name: "cols",
+                type: "number", 
+                description: "Number of columns (default 3)",
+                required: false,
+            },
+            {
+                name: "withHeaderRow",
+                type: "boolean",
+                description: "Include a header row (default true)",
+                required: false,
+            },
+        ],
+        handler: async ({ rows = 3, cols = 3, withHeaderRow = true }) => {
+            if (editorRef.current) {
+                editorRef.current.chain().focus().insertTable({ rows, cols, withHeaderRow }).run();
+            }
+        },
+    });
+
+    // CopilotKit Action: Insert heading
+    useCopilotAction({
+        name: "insertHeading",
+        description: "Insert a heading at the current position",
+        parameters: [
+            {
+                name: "level",
+                type: "number",
+                description: "Heading level: 1, 2, or 3",
+                required: true,
+            },
+            {
+                name: "text",
+                type: "string",
+                description: "The heading text",
+                required: true,
+            },
+        ],
+        handler: async ({ level, text }) => {
+            if (editorRef.current) {
+                editorRef.current.chain()
+                    .focus()
+                    .insertContent(`<h${level}>${text}</h${level}>`)
+                    .run();
+            }
+        },
+    });
+
+    // CopilotKit Action: Insert list
+    useCopilotAction({
+        name: "insertList",
+        description: "Insert a list (bullet, numbered, or task list)",
+        parameters: [
+            {
+                name: "type",
+                type: "string",
+                description: "List type: 'bullet', 'numbered', or 'task'",
+                required: true,
+            },
+            {
+                name: "items",
+                type: "string",
+                description: "List items separated by newlines",
+                required: true,
+            },
+        ],
+        handler: async ({ type, items }) => {
+            if (editorRef.current) {
+                const itemsArray = items.split('\n').filter(Boolean);
+                let html = '';
+                
+                if (type === 'bullet') {
+                    html = `<ul>${itemsArray.map(item => `<li>${item}</li>`).join('')}</ul>`;
+                } else if (type === 'numbered') {
+                    html = `<ol>${itemsArray.map(item => `<li>${item}</li>`).join('')}</ol>`;
+                } else if (type === 'task') {
+                    html = `<ul data-type="taskList">${itemsArray.map(item => `<li data-type="taskItem" data-checked="false">${item}</li>`).join('')}</ul>`;
+                }
+                
+                editorRef.current.chain().focus().insertContent(html).run();
+            }
+        },
+    });
+
+    // CopilotKit Action: Format selected text
+    useCopilotAction({
+        name: "formatText",
+        description: "Apply formatting to selected text or toggle formatting at cursor",
+        parameters: [
+            {
+                name: "format",
+                type: "string",
+                description: "Format type: 'bold', 'italic', 'underline', 'strike', 'code', 'highlight'",
+                required: true,
+            },
+            {
+                name: "color",
+                type: "string",
+                description: "For highlight format, the color (e.g., 'yellow', 'green', 'blue', 'red')",
+                required: false,
+            },
+        ],
+        handler: async ({ format, color }) => {
+            if (editorRef.current) {
+                const chain = editorRef.current.chain().focus();
+                switch (format) {
+                    case 'bold': chain.toggleBold().run(); break;
+                    case 'italic': chain.toggleItalic().run(); break;
+                    case 'underline': chain.toggleUnderline().run(); break;
+                    case 'strike': chain.toggleStrike().run(); break;
+                    case 'code': chain.toggleCode().run(); break;
+                    case 'highlight': 
+                        if (color) {
+                            chain.toggleHighlight({ color }).run();
+                        } else {
+                            chain.toggleHighlight().run();
+                        }
+                        break;
+                }
+            }
+        },
+    });
+
+    // CopilotKit Action: Insert code block
+    useCopilotAction({
+        name: "insertCodeBlock",
+        description: "Insert a code block with syntax highlighting",
+        parameters: [
+            {
+                name: "language",
+                type: "string",
+                description: "Programming language (e.g., 'javascript', 'python', 'typescript', 'html', 'css')",
+                required: true,
+            },
+            {
+                name: "code",
+                type: "string",
+                description: "The code content",
+                required: true,
+            },
+        ],
+        handler: async ({ language, code }) => {
+            if (editorRef.current) {
+                editorRef.current.chain()
+                    .focus()
+                    .setCodeBlock({ language })
+                    .insertContent(code)
+                    .run();
+            }
+        },
+    });
+
+    // CopilotKit Action: Insert link
+    useCopilotAction({
+        name: "insertLink",
+        description: "Insert a hyperlink",
+        parameters: [
+            {
+                name: "text",
+                type: "string",
+                description: "The link text to display",
+                required: true,
+            },
+            {
+                name: "url",
+                type: "string",
+                description: "The URL to link to",
+                required: true,
+            },
+        ],
+        handler: async ({ text, url }) => {
+            if (editorRef.current) {
+                editorRef.current.chain()
+                    .focus()
+                    .insertContent(`<a href="${url}">${text}</a>`)
+                    .run();
+            }
+        },
+    });
+
+    // CopilotKit Action: Insert blockquote
+    useCopilotAction({
+        name: "insertBlockquote",
+        description: "Insert a blockquote",
+        parameters: [
+            {
+                name: "text",
+                type: "string",
+                description: "The quote text",
+                required: true,
+            },
+        ],
+        handler: async ({ text }) => {
+            if (editorRef.current) {
+                editorRef.current.chain()
+                    .focus()
+                    .insertContent(`<blockquote>${text}</blockquote>`)
+                    .run();
+            }
+        },
+    });
+
+    // CopilotKit Action: Insert horizontal rule
+    useCopilotAction({
+        name: "insertDivider",
+        description: "Insert a horizontal divider/rule",
+        parameters: [],
+        handler: async () => {
+            if (editorRef.current) {
+                editorRef.current.chain().focus().setHorizontalRule().run();
+            }
+        },
+    });
+
+    // CopilotKit Action: Set text alignment
+    useCopilotAction({
+        name: "setAlignment",
+        description: "Set text alignment for current paragraph or selection",
+        parameters: [
+            {
+                name: "alignment",
+                type: "string",
+                description: "Alignment: 'left', 'center', or 'right'",
+                required: true,
+            },
+        ],
+        handler: async ({ alignment }) => {
+            if (editorRef.current) {
+                editorRef.current.chain().focus().setTextAlign(alignment).run();
+            }
+        },
+    });
+
+    // CopilotKit Action: Clear all content
+    useCopilotAction({
+        name: "clearContent",
+        description: "Clear all content from the editor. Use only when user explicitly asks to clear/delete everything.",
+        parameters: [],
+        handler: async () => {
+            if (editorRef.current) {
+                editorRef.current.commands.clearContent();
             }
         },
     });
@@ -197,6 +482,8 @@ const TailwindAdvancedEditor = ({
         500,
     );
 
+    const [editorItems, setEditorItems] = useState(suggestionItems);
+
     useEffect(() => {
         // Load content from database if documentId is available
         const loadContent = async () => {
@@ -236,7 +523,9 @@ const TailwindAdvancedEditor = ({
 
         loadContent();
         // Load dynamic slash commands from database
-        loadDynamicCommands();
+        loadDynamicCommands().then((items) => {
+            if (items) setEditorItems(items);
+        });
     }, [documentId]);
 
     // Listen for custom event to open AI selector from slash command
@@ -520,23 +809,6 @@ const TailwindAdvancedEditor = ({
             {/* Main Editor Area */}
             <div className="flex-1 flex flex-col overflow-hidden">
                 <EditorRoot>
-                    <div className="sticky top-0 z-50 w-full bg-background border-b border-border px-3 py-2 flex items-center gap-2 flex-shrink-0 shadow-sm">
-                        <NodeSelector open={openNode} onOpenChange={setOpenNode} />
-                        <Separator orientation="vertical" />
-                        <LinkSelector open={openLink} onOpenChange={setOpenLink} />
-                        <Separator orientation="vertical" />
-                        <MathSelector />
-                        <Separator orientation="vertical" />
-                        <TextButtons />
-                        <Separator orientation="vertical" />
-                        <TableSelector />
-                        <Separator orientation="vertical" />
-                        <ColorSelector
-                            open={openColor}
-                            onOpenChange={setOpenColor}
-                        />
-                        <div className="flex-1" />
-                    </div>
                     <div className="flex-1 min-h-0 overflow-y-auto overflow-x-auto [scrollbar-gutter:stable] p-4">
                         <div className="w-full min-w-0 max-w-[900px] xl:max-w-[1200px] mx-auto bg-card p-6 md:p-12 rounded-lg border border-border shadow-sm">
                             <EditorContent
@@ -569,7 +841,7 @@ const TailwindAdvancedEditor = ({
                                             uploadFn,
                                         ),
                                     attributes: {
-                                        class: `prose prose-sm dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full break-words prose-a:text-sg-green hover:prose-a:text-sg-green-hover prose-blockquote:border-sg-green prose-strong:text-foreground prose-headings:text-foreground prose-p:text-foreground dark:prose-p:text-foreground prose-headings:mt-3 prose-headings:mb-2 prose-p:my-1 prose-ul:my-2 prose-ol:my-2 prose-li:my-0`,
+                                        class: `prose prose-sm dark:prose-invert prose-headings:font-title font-default focus:outline-none max-w-full break-words prose-a:text-primary hover:prose-a:text-primary/80 prose-blockquote:border-primary prose-strong:text-foreground prose-headings:text-foreground prose-p:text-foreground dark:prose-p:text-foreground prose-headings:mt-3 prose-headings:mb-2 prose-p:my-1 prose-ul:my-2 prose-ol:my-2 prose-li:my-0`,
                                         style: 'min-height: 500px; overflow-anchor: auto;',
                                     },
                                     transformPastedHTML: (html) => html,
@@ -585,7 +857,7 @@ const TailwindAdvancedEditor = ({
                                         No results
                                     </EditorCommandEmpty>
                                     <EditorCommandList>
-                                        {suggestionItems.map((item) => (
+                                        {editorItems.map((item) => (
                                             <EditorCommandItem
                                                 value={item.title}
                                                 onCommand={() => {
@@ -627,6 +899,7 @@ const TailwindAdvancedEditor = ({
                                 <EditorBubble
                                     tippyOptions={{
                                         placement: "top",
+                                        zIndex: 100,
                                         onHidden: () => {
                                             setOpenAI(false);
                                             editorRef.current
@@ -635,7 +908,7 @@ const TailwindAdvancedEditor = ({
                                                 .run();
                                         },
                                     }}
-                                    className="flex w-fit max-w-[90vw] overflow-hidden rounded-md border border-muted bg-background shadow-xl"
+                                    className="flex w-fit max-w-[90vw] overflow-hidden rounded-md border border-muted bg-background shadow-xl z-[100]"
                                 >
                                     {openAI ? (
                                         <AISelector
@@ -676,7 +949,7 @@ const TailwindAdvancedEditor = ({
                                 </EditorBubble>
                                 <div className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-background to-transparent" />
                                 {openAI && isSelectionEmpty && (
-                                    <div className="absolute top-[20%] left-1/2 -translate-x-1/2 z-50 flex w-fit max-w-[90vw] overflow-hidden rounded-md border border-muted bg-background shadow-xl">
+                                    <div className="absolute top-[20%] left-1/2 -translate-x-1/2 z-[100] flex w-fit max-w-[90vw] overflow-hidden rounded-md border border-muted bg-background shadow-xl">
                                         <AISelector open={openAI} onOpenChange={setOpenAI} />
                                     </div>
                                 )}

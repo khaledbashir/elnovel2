@@ -26,7 +26,7 @@ const GenerativeMenuSwitch = ({ children, open, onOpenChange }: GenerativeMenuSw
             if (editor) editor.chain().unsetHighlight().run();
           },
         }}
-        className="flex w-fit max-w-[90vw] overflow-hidden rounded-md border border-muted bg-background shadow-xl z-50">
+        className="flex w-fit max-w-[90vw] overflow-hidden rounded-md border border-muted bg-background shadow-xl z-[100]">
         {!open && (
           <Fragment>
             <Button
@@ -47,7 +47,7 @@ const GenerativeMenuSwitch = ({ children, open, onOpenChange }: GenerativeMenuSw
       {/* When opened programmatically (e.g., via slash-command), the bubble may be hidden due to lack of selection.
           Render the AI selector overlay absolutely inside the editor container so it is visible even without a selection. */}
       {open && selectionEmpty && (
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 z-50 flex items-center justify-center space-x-1">
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 z-[100] flex items-center justify-center space-x-1">
           <div className="h-1.5 w-1.5 animate-bounce rounded-full bg-emerald-600 [animation-delay:-0.3s]" />
           <div className="h-1.5 w-1.5 animate-bounce rounded-full bg-emerald-600 [animation-delay:-0.15s]" />
           <div className="h-1.5 w-1.5 animate-bounce rounded-full bg-emerald-600" />

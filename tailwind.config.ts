@@ -53,10 +53,7 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Papyrus Brand Colors
-        "papyrus-brown": "hsl(var(--papyrus-brown))",
-        "papyrus-light": "hsl(var(--papyrus-light))",
-        "papyrus-blue": "hsl(var(--papyrus-blue))",
+
       },
       borderRadius: {
         lg: "var(--radius)",

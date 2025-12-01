@@ -4,15 +4,7 @@ import * as React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Plus, Edit2, Trash2, Star, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-interface Agent {
-  id: string;
-  name: string;
-  description?: string;
-  system_instructions: string;
-  icon: string;
-  is_default: boolean;
-}
+import type { Agent } from "@/lib/db/agents";
 
 const EMOJI_OPTIONS = [
   "🤖", "💡", "👨‍💻", "📄", "🎨", "🔬", "📊", "✍️",

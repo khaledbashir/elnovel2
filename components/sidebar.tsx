@@ -175,7 +175,7 @@ export function Sidebar({
 
     return (
         <div className={cn(
-            "flex flex-col h-full bg-secondary/30 border-r border-border/50 w-64",
+            "flex flex-col h-full bg-card border-r border-border w-64",
             className
         )}>
             {/* User/Brand Header */}
@@ -191,20 +191,23 @@ export function Sidebar({
             <SidebarSearch onSearch={(q) => console.log(q)} />
 
             <ScrollArea className="flex-1 px-2">
-                {/* Favorites Section (Placeholder) */}
-                <SidebarSection title="Favorites" isCollapsible>
-                    <div className="px-3 py-2 text-xs text-muted-foreground italic">
-                        No favorites yet
-                    </div>
-                </SidebarSection>
-
-                {/* Recent Section (Placeholder) */}
+                {/* Recent Section */}
                 <SidebarSection title="Recent" isCollapsible>
                     <SidebarItem
                         id="recent-1"
                         label="Quick Notes"
                         icon={<Clock className="w-4 h-4" />}
                         onClick={() => toast.info("Quick Notes feature coming soon! 📝")}
+                    />
+                </SidebarSection>
+
+                {/* Tools Section */}
+                <SidebarSection title="Tools" isCollapsible>
+                    <SidebarItem
+                        id="slash-commands"
+                        icon={<Star className="w-4 h-4 text-primary" />}
+                        label="Slash Commands"
+                        onClick={() => window.location.href = "/admin/slash-commands"}
                     />
                 </SidebarSection>
 
@@ -271,26 +274,10 @@ export function Sidebar({
                         </div>
                     ))}
                 </SidebarSection>
-
-                {/* Templates Section */}
-                <SidebarSection title="Templates" isCollapsible={false}>
-                    <SidebarItem
-                        id="tpl-1"
-                        label="Project Plan"
-                        icon={<FileText className="w-4 h-4" />}
-                        onClick={() => toast.info("Templates coming soon! 📄")}
-                    />
-                    <SidebarItem
-                        id="tpl-2"
-                        label="Meeting Notes"
-                        icon={<FileText className="w-4 h-4" />}
-                        onClick={() => toast.info("Templates coming soon! 📄")}
-                    />
-                </SidebarSection>
             </ScrollArea>
 
             {/* Footer Actions */}
-            <div className="p-2 border-t border-border/50">
+            <div className="p-2 border-t border-border">
                 <SidebarItem
                     id="trash"
                     label="Trash"
@@ -300,12 +287,6 @@ export function Sidebar({
                     id="settings"
                     label="Settings"
                     icon={<Settings className="w-4 h-4" />}
-                />
-                <SidebarItem
-                    id="admin"
-                    label="AI Commands"
-                    icon={<Hash className="w-4 h-4" />}
-                    onClick={() => window.location.href = '/admin/slash-commands'}
                 />
             </div>
         </div>

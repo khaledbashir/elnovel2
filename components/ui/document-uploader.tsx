@@ -130,37 +130,37 @@ export function DocumentUploader({
                     className="w-full group relative"
                     type="button"
                 >
-                    <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-all">
-                        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-full mb-4 group-hover:scale-110 transition-transform">
+                    <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-border rounded-xl hover:bg-muted/50 transition-all">
+                        <div className="p-4 bg-muted rounded-full mb-4 group-hover:scale-110 transition-transform">
                             {isUploading ? (
-                                <Loader2 className="w-8 h-8 text-blue-600 dark:text-blue-400 animate-spin" />
+                                <Loader2 className="w-8 h-8 text-primary animate-spin" />
                             ) : (
-                                <Upload className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                                <Upload className="w-8 h-8 text-primary" />
                             )}
                         </div>
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
+                        <h3 className="text-lg font-semibold text-foreground mb-1">
                             {isUploading ? "Uploading..." : "Upload Client Brief"}
                         </h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400 text-center max-w-xs">
+                        <p className="text-sm text-muted-foreground text-center max-w-xs">
                             Click to upload PDF or Word document (max {maxSizeMB}MB)
                         </p>
-                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+                        <p className="text-xs text-muted-foreground/70 mt-2">
                             Supported: {acceptedTypes.join(', ')}
                         </p>
                     </div>
                 </button>
             ) : (
-                <div className="w-full p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm">
+                <div className="w-full p-4 bg-card border border-border rounded-xl shadow-sm">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3 flex-1 min-w-0">
                             <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg flex-shrink-0">
                                 <FileText className="w-6 h-6 text-green-600 dark:text-green-400" />
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p className="font-medium text-gray-900 dark:text-gray-100 truncate">
+                                <p className="font-medium text-foreground truncate">
                                     {uploadedFile.name}
                                 </p>
-                                <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                     <CheckCircle className="w-3 h-3 text-green-500 flex-shrink-0" />
                                     <span>Uploaded • {formatFileSize(uploadedFile.size)}</span>
                                 </div>
@@ -168,7 +168,7 @@ export function DocumentUploader({
                         </div>
                         <button
                             onClick={handleRemove}
-                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full text-gray-500 transition-colors flex-shrink-0 ml-2"
+                            className="p-2 hover:bg-muted rounded-full text-muted-foreground transition-colors flex-shrink-0 ml-2"
                             title="Remove file"
                             type="button"
                         >
