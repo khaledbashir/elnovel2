@@ -373,20 +373,9 @@
   overflow: hidden;
 }
 
-/* Force the CopilotChat root to fill container and use flex column */
-.copilot-chat-container > div,
-.copilot-chat-container > [class*="copilotKit"],
-.copilot-chat-container > [data-copilotkit] {
-  display: flex !important;
-  flex-direction: column !important;
-  height: 100% !important;
-  flex: 1 !important;
-  min-height: 0 !important;
-}
-
-/* Force all nested wrapper divs to use flex column layout */
-.copilot-chat-container > div > div,
-.copilot-chat-container > div > div > div {
+/* CopilotKit layout overrides */
+.copilot-chat-container .copilotKitWindow,
+.copilot-chat-container .copilotKitMessages {
   display: flex !important;
   flex-direction: column !important;
   flex: 1 !important;
@@ -394,17 +383,19 @@
   height: 100% !important;
 }
 
-/* Override CopilotKit default chat wrapper styles */
-.copilot-chat-container [class*="Chat"]:not([class*="Input"]):not(form),
-.copilot-chat-container [class*="chat"]:not([class*="input"]):not(form),
-.copilot-chat-container [class*="Window"],
-.copilot-chat-container [class*="window"] {
+.copilot-chat-container .copilotKitMessages {
+  padding: 16px !important;
+  background: hsl(var(--background)) !important;
+  overflow-y: auto !important;
+  order: 1 !important;
+  justify-content: flex-start !important;
+  gap: 12px !important;
+}
+
+.copilot-chat-container .copilotKitMessagesContainer {
   display: flex !important;
   flex-direction: column !important;
-  flex: 1 !important;
-  height: 100% !important;
-  min-height: 0 !important;
-  max-height: 100% !important;
+  gap: 12px !important;
 }
 
 /* Hide the default CopilotChat header since we have our own */
@@ -500,34 +491,26 @@
 }
 
 /* Input container - fixed at bottom, minimal height */
-.copilot-chat-container [class*="Input"],
-.copilot-chat-container [class*="inputContainer"],
-.copilot-chat-container [class*="InputContainer"],
-.copilot-chat-container form {
-  display: flex !important;
+.copilot-chat-container .copilotKitInputContainer {
   background: hsl(var(--card)) !important;
   border-top: 1px solid hsl(var(--border)) !important;
-  padding: 8px 12px !important;
-  flex-shrink: 0 !important;
-  flex-grow: 0 !important;
-  order: 2 !important;
-  min-height: 52px !important;
-  height: auto !important;
-  max-height: none !important;
+  padding: 8px 12px 12px !important;
+  margin-top: auto !important;
 }
 
-/* Kill any extra wrappers inside input area */
-.copilot-chat-container [class*="Input"] > div,
-.copilot-chat-container [class*="inputContainer"] > div,
-.copilot-chat-container form > div {
-  padding: 0 !important;
+.copilot-chat-container .copilotKitInput {
+  width: 100% !important;
   margin: 0 !important;
+  background: hsl(var(--muted)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: 16px !important;
+  padding: 10px 12px !important;
   min-height: 0 !important;
-  background: transparent !important;
-  border: none !important;
+}
+
+.copilot-chat-container .copilotKitInputControls {
   display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
+  gap: 6px !important;
 }
 
 /* Textarea styling - compact */
@@ -567,20 +550,6 @@
   color: hsl(var(--muted-foreground)) !important;
 }
 
-/* Hide the send button visually but keep it functional for Enter key */
-.copilot-chat-container button[type="submit"],
-.copilot-chat-container [class*="sendButton"],
-.copilot-chat-container [class*="SendButton"] {
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  padding: 0 !important;
-  margin: -1px !important;
-  overflow: hidden !important;
-  clip: rect(0, 0, 0, 0) !important;
-  white-space: nowrap !important;
-  border: 0 !important;
-}
 
 /* Thinking/loading indicator */
 .copilot-chat-container [class*="thinking"],
@@ -675,53 +644,4 @@
   opacity: 1;
 }
 
-/* ========================================
-   CopilotKit Aggressive Overrides
-   Kill all internal spacing
-   ======================================== */
-
-/* Force input area to stay at bottom and not expand */
-.copilot-chat-container [class*="Input"],
-.copilot-chat-container [class*="inputContainer"],
-.copilot-chat-container [class*="InputContainer"] {
-  flex-shrink: 0 !important;
-  flex-grow: 0 !important;
-  margin-top: auto !important;
-}
-
-/* Universal selector for anything inside input area */
-.copilot-chat-container form *:not(textarea):not(button) {
-  padding: 0 !important;
-  margin: 0 !important;
-  min-height: 0 !important;
-}
-
-/* Force form to be compact */
-.copilot-chat-container form {
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  padding: 8px 12px !important;
-  min-height: 0 !important;
-  height: auto !important;
-  flex-shrink: 0 !important;
-}
-
-/* Remove any flex-grow on children */
-.copilot-chat-container form > * {
-  flex-grow: 0 !important;
-}
-
-.copilot-chat-container form > *:has(textarea) {
-  flex-grow: 1 !important;
-  display: flex !important;
-  align-items: center !important;
-}
-
-/* Fix textarea wrapper */
-.copilot-chat-container form div:has(> textarea) {
-  padding: 0 !important;
-  margin: 0 !important;
-  width: 100% !important;
-  min-height: 0 !important;
-}
+/* CopilotKit default spacing utilities handle the rest */
