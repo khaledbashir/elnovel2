@@ -395,12 +395,10 @@
 }
 
 /* Override CopilotKit default chat wrapper styles */
-.copilot-chat-container [class*="Chat"],
-.copilot-chat-container [class*="chat"],
+.copilot-chat-container [class*="Chat"]:not([class*="Input"]):not(form),
+.copilot-chat-container [class*="chat"]:not([class*="input"]):not(form),
 .copilot-chat-container [class*="Window"],
-.copilot-chat-container [class*="window"],
-.copilot-chat-container [class*="Container"],
-.copilot-chat-container [class*="Wrapper"] {
+.copilot-chat-container [class*="window"] {
   display: flex !important;
   flex-direction: column !important;
   flex: 1 !important;
@@ -506,13 +504,16 @@
 .copilot-chat-container [class*="inputContainer"],
 .copilot-chat-container [class*="InputContainer"],
 .copilot-chat-container form {
+  display: flex !important;
   background: hsl(var(--card)) !important;
   border-top: 1px solid hsl(var(--border)) !important;
   padding: 8px 12px !important;
   flex-shrink: 0 !important;
+  flex-grow: 0 !important;
   order: 2 !important;
-  min-height: 0 !important;
+  min-height: 52px !important;
   height: auto !important;
+  max-height: none !important;
 }
 
 /* Kill any extra wrappers inside input area */
