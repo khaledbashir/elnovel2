@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { CopilotChat } from "@copilotkit/react-ui";
 import { useCopilotReadable } from "@copilotkit/react-core";
 import { AgentBuilder } from "@/components/agents/agent-builder";
@@ -50,6 +50,34 @@ export function CopilotPanel({ className }: CopilotPanelProps) {
       }
     }
     loadAgents();
+  }, []);
+
+  // Fix Enter key in CopilotKit input
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Check if the event target is a textarea inside the CopilotKit input
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'TEXTAREA' && target.closest('.copilot-chat-container')) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          // Prevent default behavior (new line)
+          e.preventDefault();
+          
+          // Find the submit button and click it
+          const submitButton = document.querySelector('.copilot-chat-container button[type="submit"], .copilot-chat-container [data-testid="send-button"]') as HTMLButtonElement;
+          if (submitButton && !submitButton.disabled) {
+            submitButton.click();
+          }
+        }
+      }
+    };
+
+    // Add event listener
+    document.addEventListener('keydown', handleKeyDown);
+    
+    // Clean up
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
   // Expose mode and agent to CopilotKit
