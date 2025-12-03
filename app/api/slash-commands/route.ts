@@ -40,8 +40,8 @@ export async function POST(req: NextRequest) {
             icon: icon || null,
             searchTerms: searchTerms || null,
             prompt,
-            model: model || "gpt-4",
-            provider: provider || "openai",
+            model: model || "glm-4.6",
+            provider: provider || "z.ai",
             isActive: true,
             isSystem: false,
             userId: null, // No auth for now

@@ -374,13 +374,20 @@
 }
 
 /* CopilotKit layout overrides */
-.copilot-chat-container .copilotKitWindow,
-.copilot-chat-container .copilotKitMessages {
+.copilot-chat-container .copilotKitWindow {
   display: flex !important;
   flex-direction: column !important;
   flex: 1 !important;
   min-height: 0 !important;
   height: 100% !important;
+}
+
+.copilot-chat-container .copilotKitMessages {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 !important;
+  min-height: 0 !important;
+  height: auto !important; /* Changed from 100% to auto to prevent overlap */
 }
 
 .copilot-chat-container .copilotKitMessages {
@@ -496,6 +503,9 @@
   border-top: 1px solid hsl(var(--border)) !important;
   padding: 8px 12px 12px !important;
   margin-top: auto !important;
+  order: 10 !important; /* Ensure it stays at the bottom */
+  position: relative !important;
+  z-index: 20 !important;
 }
 
 .copilot-chat-container .copilotKitInput {

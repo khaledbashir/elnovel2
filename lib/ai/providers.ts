@@ -1,4 +1,4 @@
-import { gateway } from "@ai-sdk/gateway";
+import { createOpenAI } from "@ai-sdk/openai";
 import {
   customProvider,
   extractReasoningMiddleware,
@@ -6,6 +6,11 @@ import {
 } from "ai";
 
 import { isTestEnvironment } from "../constants";
+
+const zai = createOpenAI({
+  baseURL: process.env.ZAI_API_URL || "https://api.z.ai/api/coding/paas/v4",
+  apiKey: process.env.ZAI_API_KEY,
+});
 
 export const myProvider = isTestEnvironment
   ? (() => {
@@ -26,12 +31,9 @@ export const myProvider = isTestEnvironment
     })()
   : customProvider({
       languageModels: {
-        "chat-model": gateway.languageModel("xai/grok-2-vision-1212"),
-        "chat-model-reasoning": wrapLanguageModel({
-          model: gateway.languageModel("xai/grok-3-mini"),
-          middleware: extractReasoningMiddleware({ tagName: "think" }),
-        }),
-        "title-model": gateway.languageModel("xai/grok-2-1212"),
-        "artifact-model": gateway.languageModel("xai/grok-2-1212"),
+        "chat-model": zai("glm-4.6"),
+        "chat-model-reasoning": zai("glm-4.6"),
+        "title-model": zai("glm-4.6"),
+        "artifact-model": zai("glm-4.6"),
       },
     });
